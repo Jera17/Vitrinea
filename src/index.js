@@ -9,7 +9,7 @@ const config = {
 // const img = new Image();
 // img.src = 'assets/Ring_Diamonds.png';
 const img = new Image();
-img.src = 'assets/Ring_Diamonds - copia.png';
+img.src = 'assets/Ring_Diamonds.png';
 
 
 
@@ -113,7 +113,7 @@ async function main() {
     for (const hand of hands) {
       // ------- Pruebas tracking Anillo -------
 
-      drawLine(ctx, hand)
+      drawImage(ctx, hand)
 
       for (const keypoint of hand.keypoints) {
         const name = keypoint.name.split('_')[0].toString().toLowerCase()
@@ -185,7 +185,7 @@ function drawPoint(ctx, x, y, r, color) {
   ctx.closePath()
 }
 
-function drawLine(ctx, hand) {
+function drawImage(ctx, hand) {
   const x1 = hand.keypoints[9].x
   const y1 = hand.keypoints[9].y
   const x2 = hand.keypoints[10].x
@@ -193,25 +193,39 @@ function drawLine(ctx, hand) {
   ctx.beginPath()
   ctx.save()
   
-  //set position x and y from hand
+  //set the position center of the canva and from hand
   const pstx = ((x1+x2)/2)
   const psty = ((y1+y2)/2)
   ctx.translate(pstx,psty)
 
+  //set angle of the image
   var componenteX = 1
   if((x1-x2) > 0 ){
     componenteX = -1
   }
-
-  console.log("> " + componenteX)
-
   const pendiente = ((y2 - y1) / (x2 - x1))
   const angleHand = Math.atan(pendiente)
-  console.log(angleHand+(Math.PI/2))
-
   ctx.rotate(angleHand+((Math.PI/2)*componenteX))
 
-  ctx.drawImage(img, 0-(img.width/36), 0-(img.height/36), img.width/18, img.height/18)
+  //Scale
+
+  // const Ld = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2))
+  var Ld = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2))
+  var La = Ld/3
+  console.log("Largo Dedo " + Ld)
+  console.log("Largo Anillo " + La)
+  var Aa = (img.width*La)/img.height
+  console.log("Ancho anillo " + Aa)
+
+  console.log(Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2)))
+  var resolucion = Math.sqrt(Math.pow((640 - 0), 2) + Math.pow((480 - 0), 2))
+  console.log(resolucion)
+  var Ra = (Ld/resolucion)*100
+  console.log(Ra)
+
+  //Draw Image
+  ctx.drawImage(img, 0-(Aa/2), 0-((La/1.25)), Aa, La)
+  // ctx.drawImage(img, 0-(img.width/36), 0-(img.height/36), img.width/18, img.height/18)
   
   ctx.restore()
   ctx.closePath()
