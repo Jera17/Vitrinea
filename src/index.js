@@ -12,8 +12,6 @@ const img = new Image();
 img.src = 'assets/Ring_Diamonds - copia.png';
 
 
-//const pendiente = ((y2 - y1) / (x2 - x1))
-//const angleHand = Math.atan(pendiente)
 
 let diamondRingObject = {
   name : "Diamond Ring",
@@ -52,7 +50,7 @@ async function createDetector() {
     {
       runtime: "mediapipe",
       modelType: "full",
-      maxHands: 2,
+      maxHands: 1,
       solutionPath: `https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1646424915`,
     }
   )
@@ -116,7 +114,6 @@ async function main() {
       // ------- Pruebas tracking Anillo -------
 
       drawLine(ctx, hand)
-      //drawLine(ctx, hand.keypoints[9].x, hand.keypoints[9].y, hand.keypoints[10].x, hand.keypoints[10].y)
 
       for (const keypoint of hand.keypoints) {
         const name = keypoint.name.split('_')[0].toString().toLowerCase()
@@ -201,38 +198,20 @@ function drawLine(ctx, hand) {
   const psty = ((y1+y2)/2)
   ctx.translate(pstx,psty)
 
-  console.log()
+  var componenteX = 1
+  if((x1-x2) > 0 ){
+    componenteX = -1
+  }
 
-  //Ecuacion de angulo de dos rectas
+  console.log("> " + componenteX)
 
-  // var productopunto = ((x1*x2)+(y1*y2))
-  // var vectorA = Math.sqrt((Math.pow(x1, 2))+ Math.pow(y1, 2))
-  // var vectorB = Math.sqrt((Math.pow(x2, 2))+ Math.pow(y2, 2))
+  const pendiente = ((y2 - y1) / (x2 - x1))
+  const angleHand = Math.atan(pendiente)
+  console.log(angleHand+(Math.PI/2))
 
-
-
-  var productopunto = ((x2*0)+(y2*4))
-  var vectorA = Math.sqrt((Math.pow(x2,2))+ Math.pow(y2, 2))
-  var vectorB = Math.sqrt((Math.pow(0,2))+ Math.pow(4, 2))
-
-  console.log("pp" + productopunto)
-  console.log(vectorA + " " + vectorB)
-
-  var resultado = productopunto/(vectorA*vectorB)
-  console.log(resultado)
-
-  var coseno = Math.acos(resultado)
-  console.log(coseno)
-
-  var rad = coseno * (180 / Math.PI)
-  console.log(rad)
-
-  ctx.rotate(0)
+  ctx.rotate(angleHand+((Math.PI/2)*componenteX))
 
   ctx.drawImage(img, 0-(img.width/36), 0-(img.height/36), img.width/18, img.height/18)
-
-  // console.log(pstx)
-  // console.log(psty)
   
   ctx.restore()
   ctx.closePath()
