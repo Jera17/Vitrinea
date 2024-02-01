@@ -11,14 +11,14 @@ const config = {
 const img = new Image();
 img.src = 'assets/Ring_Diamonds.png';
 
-
+const img2 = new Image();
+img2.src = 'assets/Ring_Diamonds_Back.png';
 
 let diamondRingObject = {
   name : "Diamond Ring",
   offset: 50,
   size : 90
 }
-
 
 const landmarkColors = {
   thumb: 'red',
@@ -107,12 +107,7 @@ async function main() {
       flipHorizontal: true
     })
 
-    // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ PRUEBAS ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-
-
     for (const hand of hands) {
-      // ------- Pruebas tracking Anillo -------
-
       drawImage(ctx, hand)
 
       for (const keypoint of hand.keypoints) {
@@ -212,19 +207,28 @@ function drawImage(ctx, hand) {
   // const Ld = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2))
   var Ld = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2))
   var La = Ld/3
-  console.log("Largo Dedo " + Ld)
-  console.log("Largo Anillo " + La)
   var Aa = (img.width*La)/img.height
-  console.log("Ancho anillo " + Aa)
-
-  console.log(Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2)))
   var resolucion = Math.sqrt(Math.pow((640 - 0), 2) + Math.pow((480 - 0), 2))
-  console.log(resolucion)
   var Ra = (Ld/resolucion)*100
-  console.log(Ra)
 
-  //Draw Image
-  ctx.drawImage(img, 0-(Aa/2), 0-((La/1.25)), Aa, La)
+  //Flip
+  var acumX = 0
+  var acumY = 0
+  var acumZ = 0
+
+  acumX = hand.keypoints3D[0].x + hand.keypoints3D[5].x + hand.keypoints3D[7].x
+  acumY = hand.keypoints3D[0].y + hand.keypoints3D[5].y + hand.keypoints3D[7].y
+  acumZ = hand.keypoints3D[0].z + hand.keypoints3D[5].z + hand.keypoints3D[7].z
+  console.log("X: " + acumX*100, "Y: " + acumY*100, "Z: " + acumZ*100)
+
+  if (hand.handedness === 'Left' && acumX < 0) {
+    ctx.drawImage(img, 0-(Aa/2), 0-((La/1.25)), Aa, La)
+    console.log(hand.handedness)
+  }else{
+    ctx.drawImage(img2, 0-(Aa/2), 0-((La/1.25)), Aa, La)
+    console.log(hand.handedness)
+  }
+
   // ctx.drawImage(img, 0-(img.width/36), 0-(img.height/36), img.width/18, img.height/18)
   
   ctx.restore()
