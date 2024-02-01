@@ -11,8 +11,6 @@ const config = {
 const img = new Image();
 img.src = 'assets/Ring_Diamonds.png';
 
-let counter = 0;
-let myArray = []
 
 
 let diamondRingObject = {
@@ -52,7 +50,7 @@ async function createDetector() {
     {
       runtime: "mediapipe",
       modelType: "full",
-      maxHands: 2,
+      maxHands: 1,
       solutionPath: `https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1646424915`,
     }
   )
@@ -210,27 +208,23 @@ function drawImage(ctx, hand) {
   ctx.rotate(angleHand+((Math.PI/2)*componenteX))
 
   //Scale
-  const FL = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2)) //FL = Finger Length
-  const RL = FL/3 //RL = Ring Length
-  const RW = (img.width*RL)/img.height // RW = Ring Width
 
-  //Flip
+  // const Ld = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2))
+  var Ld = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2))
+  var La = Ld/3
+  console.log("Largo Dedo " + Ld)
+  console.log("Largo Anillo " + La)
+  var Aa = (img.width*La)/img.height
+  console.log("Ancho anillo " + Aa)
 
-  console.log(hand)
-  // console.log("x " + hand.keypoints3D[0].x * 100)
-  // console.log("y " + hand.keypoints3D[0].y * 100)
-  // console.log("z " + hand.keypoints3D[0].z * 100)
-  // PreviousX = hand.keypoints3D[0].x
-  
-  // counter++
-  // console.log(counter)
-  // myArray[counter] = hand.keypoints3D[0].x
-  // for (let i = 1; i < counter; i++) {
-  //   console.log(myArray[i]-myArray[i-1])
-  // }
+  console.log(Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2)))
+  var resolucion = Math.sqrt(Math.pow((640 - 0), 2) + Math.pow((480 - 0), 2))
+  console.log(resolucion)
+  var Ra = (Ld/resolucion)*100
+  console.log(Ra)
 
   //Draw Image
-  ctx.drawImage(img, 0-(RW/2), 0-(RL/1.25), RW, RL)
+  ctx.drawImage(img, 0-(Aa/2), 0-((La/1.25)), Aa, La)
   // ctx.drawImage(img, 0-(img.width/36), 0-(img.height/36), img.width/18, img.height/18)
   
   ctx.restore()
