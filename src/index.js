@@ -8,6 +8,9 @@ const config = {
 
 // const img = new Image();
 // img.src = 'assets/Ring_Diamonds.png';
+var fingerIndex = 0
+var condicional = true
+
 const img = new Image();
 img.src = 'assets/Ring_Diamonds.png';
 
@@ -30,12 +33,9 @@ const landmarkColors = {
 }
 
 const gestureStrings = {
-  'thumb_up': '👍',
   'rock': '✊️',
   'paper': '🖐',
-  'scissors': '✌️',
-  'dont': '🙅',
-  'hole': ' 👌'
+  'scissors': '✌️'
 }
 
 const base = ['Horizontal ', 'Diagonal Up ']
@@ -108,7 +108,7 @@ async function main() {
     })
 
     for (const hand of hands) {
-      drawImage(ctx, hand)
+      drawImage(ctx, hand, fingerIndex)
 
       for (const keypoint of hand.keypoints) {
         const name = keypoint.name.split('_')[0].toString().toLowerCase()
@@ -126,6 +126,12 @@ async function main() {
 
         const result = predictions.gestures.reduce((p, c) => (p.score > c.score) ? p : c)
         const found = gestureStrings[result.name]
+
+          // ▓▓▓
+          if(found == '✊️' && condicional == true ){
+            cambiarDedo()
+          }
+
         // find gesture with highest match score
         const chosenHand = hand.handedness.toLowerCase()
         updateDebugInfo(predictions.poseData, chosenHand)
@@ -180,11 +186,54 @@ async function initCamera(width, height, fps) {
 //   ctx.closePath()
 // }
 
-function drawImage(ctx, hand) {
-  const x1 = hand.keypoints[9].x
-  const y1 = hand.keypoints[9].y
-  const x2 = hand.keypoints[10].x
-  const y2 =  hand.keypoints[10].y
+function cambiarDedo() {
+  condicional = false 
+  if (fingerIndex < 3) {
+    fingerIndex++
+  }else{
+    fingerIndex = 0
+  }
+  setTimeout(() => {  condicional = true; }, 1000);
+  //return
+}
+
+function drawImage(ctx, hand, fingerIndex) {
+
+  //Chose finger
+  switch (fingerIndex) {
+    case 0:
+      var fingerIndexKnuckle = 5
+      var fingerIndexPhalanges = 6
+      console.log('Indice')
+      break;
+    case 1:
+      var fingerIndexKnuckle = 9
+      var fingerIndexPhalanges = 10
+      console.log('Corazon')
+      break;
+    case 2:
+      var fingerIndexKnuckle = 13
+      var fingerIndexPhalanges = 14
+      console.log('Anular')
+      break;
+    case 3:
+      var fingerIndexKnuckle = 17
+      var fingerIndexPhalanges = 18
+      console.log('Meñique')
+      break;
+    default:
+      console.log('Error')
+      break;
+  }
+
+  console.log(fingerIndexKnuckle, fingerIndexPhalanges)
+  
+  const x1 = hand.keypoints[fingerIndexKnuckle].x
+  const y1 = hand.keypoints[fingerIndexKnuckle].y
+  const x2 = hand.keypoints[fingerIndexPhalanges].x
+  const y2 =  hand.keypoints[fingerIndexPhalanges].y
+
+
   ctx.beginPath()
   ctx.save()
   
@@ -212,30 +261,21 @@ function drawImage(ctx, hand) {
   var Ra = (Ld/resolucion)*100
 
   //Flip
-  var acumX = 0
-  var acumY = 0
   var acumZ = 0
   
-  acumX = ((hand.keypoints3D[5].x + hand.keypoints3D[10].x + hand.keypoints3D[17].x)/3)
-  acumY = ((hand.keypoints3D[5].y + hand.keypoints3D[10].y + hand.keypoints3D[17].y)/3)
   acumZ = ((hand.keypoints3D[5].z + hand.keypoints3D[10].z + hand.keypoints3D[17].z)/3)
-  console.log("X: " + acumX, "Y: " + acumY, "Z: " + acumZ)
 
   if (hand.handedness === 'Left') {
     if (acumZ > 0) {
       ctx.drawImage(img, 0-(Aa/2), 0-((La/1.25)), Aa, La)
-      console.log(hand.handedness)
     }else{
       ctx.drawImage(img2, 0-(Aa/2), 0-((La/1.25)), Aa, La)
-      console.log(hand.handedness)
     }
   }else{
     if (acumZ > 0) {
       ctx.drawImage(img, 0-(Aa/2), 0-((La/1.25)), Aa, La)
-      console.log(hand.handedness)
     }else{
       ctx.drawImage(img2, 0-(Aa/2), 0-((La/1.25)), Aa, La)
-      console.log(hand.handedness)
     }
   }
   
