@@ -113,7 +113,7 @@ async function main() {
       for (const keypoint of hand.keypoints) {
         const name = keypoint.name.split('_')[0].toString().toLowerCase()
         const color = landmarkColors[name]
-        drawPoint(ctx, keypoint.x, keypoint.y, 3, color)
+        //drawPoint(ctx, keypoint.x, keypoint.y, 3, color)
       }
 
       const keypoints3D = hand.keypoints3D.map(keypoint => [keypoint.x, keypoint.y, keypoint.z])
@@ -172,13 +172,13 @@ async function initCamera(width, height, fps) {
 }
 
 
-function drawPoint(ctx, x, y, r, color) {
-  ctx.beginPath()
-  ctx.arc(x, y, r, 0, 2 * Math.PI)
-  ctx.fillStyle = color
-  ctx.fill()
-  ctx.closePath()
-}
+// function drawPoint(ctx, x, y, r, color) {
+//   ctx.beginPath()
+//   ctx.arc(x, y, r, 0, 2 * Math.PI)
+//   ctx.fillStyle = color
+//   ctx.fill()
+//   ctx.closePath()
+// }
 
 function drawImage(ctx, hand) {
   const x1 = hand.keypoints[9].x
@@ -215,21 +215,29 @@ function drawImage(ctx, hand) {
   var acumX = 0
   var acumY = 0
   var acumZ = 0
+  
+  acumX = ((hand.keypoints3D[5].x + hand.keypoints3D[10].x + hand.keypoints3D[17].x)/3)
+  acumY = ((hand.keypoints3D[5].y + hand.keypoints3D[10].y + hand.keypoints3D[17].y)/3)
+  acumZ = ((hand.keypoints3D[5].z + hand.keypoints3D[10].z + hand.keypoints3D[17].z)/3)
+  console.log("X: " + acumX, "Y: " + acumY, "Z: " + acumZ)
 
-  acumX = hand.keypoints3D[0].x + hand.keypoints3D[5].x + hand.keypoints3D[7].x
-  acumY = hand.keypoints3D[0].y + hand.keypoints3D[5].y + hand.keypoints3D[7].y
-  acumZ = hand.keypoints3D[0].z + hand.keypoints3D[5].z + hand.keypoints3D[7].z
-  console.log("X: " + acumX*100, "Y: " + acumY*100, "Z: " + acumZ*100)
-
-  if (hand.handedness === 'Left' && acumX < 0) {
-    ctx.drawImage(img, 0-(Aa/2), 0-((La/1.25)), Aa, La)
-    console.log(hand.handedness)
+  if (hand.handedness === 'Left') {
+    if (acumZ > 0) {
+      ctx.drawImage(img, 0-(Aa/2), 0-((La/1.25)), Aa, La)
+      console.log(hand.handedness)
+    }else{
+      ctx.drawImage(img2, 0-(Aa/2), 0-((La/1.25)), Aa, La)
+      console.log(hand.handedness)
+    }
   }else{
-    ctx.drawImage(img2, 0-(Aa/2), 0-((La/1.25)), Aa, La)
-    console.log(hand.handedness)
+    if (acumZ > 0) {
+      ctx.drawImage(img, 0-(Aa/2), 0-((La/1.25)), Aa, La)
+      console.log(hand.handedness)
+    }else{
+      ctx.drawImage(img2, 0-(Aa/2), 0-((La/1.25)), Aa, La)
+      console.log(hand.handedness)
+    }
   }
-
-  // ctx.drawImage(img, 0-(img.width/36), 0-(img.height/36), img.width/18, img.height/18)
   
   ctx.restore()
   ctx.closePath()
