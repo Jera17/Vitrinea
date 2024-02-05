@@ -8,7 +8,7 @@ const config = {  video: { width: 640, height: 480, fps: 30 } }
 var idModel;
 if (!idModel) {
   var idModel = 0
-  var fingerIndex = 1 //0 = Index, 1 = Middel, 2 = Ring, 3 = Pinky, 4 = Thumb, 
+  var fingerIndex = 2 //0 = Thumb, 1 = Index, 2 = Middel, 3 = Ring, 4 = Pinky
   var condicional = true
 }
 //Identify gestures 
@@ -35,14 +35,11 @@ async function main() {
   const canvas = document.querySelector("#pose-canvas")
   const ctx = canvas.getContext("2d")
   const resultLayer = document.querySelector("#pose-results")
-  
-
   const knownGestures = [...gestures]
   const GE = new fp.GestureEstimator(knownGestures)
   // load handpose model
   const detector = await createDetector()
   console.log("mediaPose model loaded")
-
   // main estimation loop
   const estimateHands = async () => {
     // clear canvas overlay
@@ -58,38 +55,23 @@ async function main() {
       const predictions = GE.estimate(keypoints3D, 9)
 
       if (predictions.gestures.length > 0) {
-
         const result = predictions.gestures.reduce((p, c) => (p.score > c.score) ? p : c)
         const found = gestureStrings[result.name]
 
-        console.log(models.length)
-          // Gestures Control
-          if(condicional == true ){
-            if (found == '✊️') {
-              cambiarDedo()
-            }else if(found == '✌️' && idModel < 2){
-              condicional = false
-              idModel++
-              setTimeout(() => {  condicional = true; }, 1000);
-              resultLayer.innerText = models[idModel].nombre
-              setTimeout(() => { resultLayer.innerText = '' }, 3000)
-              
-            }else if(found == '✌️' && idModel == 2){
-              condicional = false
-              idModel = 0
-              setTimeout(() => {  condicional = true; }, 1000);
-              resultLayer.innerText = models[idModel].nombre
-              setTimeout(() => { resultLayer.innerText = '' }, 3000)
-            }
+        if (condicional) {
+          if (found === '✊️') {
+            cambiarDedo();
+          } else if (found === '✌️' && idModel < models.length - 1) {
+            updateModel(resultLayer, 1);
+          } else if (found === '✌️' && idModel === models.length - 1) {
+            updateModel(resultLayer, - (models.length - 1));
           }
-        //Sent to html the message for Result Layer
+        }
       }
 
     }
-    // ...and so on
     setTimeout(() => { estimateHands() }, 1000 / config.video.fps, )
   }
-
   estimateHands()
   console.log("Starting predictions")
 }
@@ -112,10 +94,17 @@ async function initCamera(width, height, fps) {
   // get video stream
   const stream = await navigator.mediaDevices.getUserMedia(constraints)
   video.srcObject = stream
-
   return new Promise(resolve => {
     video.onloadedmetadata = () => { resolve(video) }
   })
+}
+
+function updateModel(resultLayer, newId) {
+  condicional = false;
+  idModel = idModel + newId;
+  setTimeout(() => { condicional = true; }, 1000);
+  resultLayer.innerText = models[idModel].nombre;
+  setTimeout(() => { resultLayer.innerText = ''; }, 3000);
 }
 
 function cambiarDedo() {
@@ -136,30 +125,10 @@ function drawImage(ctx, hand, fingerIndex) {
   var imgBack = new Image();
   imgBack.src = models[idModel].back;
   //Chose finger
-  switch (fingerIndex) {
-    case 0:
-      var fingerIndexKnuckle = 5
-      var fingerIndexPhalanges = 6
-      break;
-    case 1:
-      var fingerIndexKnuckle = 9
-      var fingerIndexPhalanges = 10
-      break;
-    case 2:
-      var fingerIndexKnuckle = 13
-      var fingerIndexPhalanges = 14
-      break;
-    case 3:
-      var fingerIndexKnuckle = 17
-      var fingerIndexPhalanges = 18
-      break;
-    case 4:
-      var fingerIndexKnuckle = 2
-      var fingerIndexPhalanges = 3
-      break;
-    default:
-      break;
-  }
+  const fingerIdNodes = [2, 5, 9, 13, 17]
+  const fingerIndexKnuckle = fingerIdNodes[fingerIndex]
+  const fingerIndexPhalanges = fingerIdNodes[fingerIndex] + 1
+
   const x1 = hand.keypoints[fingerIndexKnuckle].x
   const y1 = hand.keypoints[fingerIndexKnuckle].y
   const x2 = hand.keypoints[fingerIndexPhalanges].x
@@ -183,7 +152,6 @@ function drawImage(ctx, hand, fingerIndex) {
 
   //Scale
 
-  // const Ld = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2))
   var Ld = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2))
   var La = Ld/3
   var Aa = (imgFront.width*La)/imgFront.height
@@ -194,28 +162,18 @@ function drawImage(ctx, hand, fingerIndex) {
   var acumZ = 0
   acumZ = ((hand.keypoints3D[5].z + hand.keypoints3D[10].z + hand.keypoints3D[17].z + (hand.keypoints3D[0].z/10))/4)
 
-  //draw Image
-  if (hand.handedness === 'Left') {
-    if (acumZ > 0) {
-      ctx.drawImage(imgFront, 0-(Aa/2), 0-((La/1.25)), Aa, La)
-    }else{
-      ctx.drawImage(imgBack, 0-(Aa/2), 0-((La/1.25)), Aa, La)
-    }
-  }else{
-    if (acumZ > 0) {
-      ctx.drawImage(imgFront, 0-(Aa/2), 0-((La/1.25)), Aa, La)
-    }else{
-      ctx.drawImage(imgBack, 0-(Aa/2), 0-((La/1.25)), Aa, La)
-    }
+  const isLeftHand = hand.handedness === 'Left';
+  if ((isLeftHand && acumZ > 0) || (!isLeftHand && acumZ > 0)) {
+    ctx.drawImage(imgFront, 0 - Aa / 2, 0 - La / 1.25, Aa, La);
+  } else {
+    ctx.drawImage(imgBack, 0 - Aa / 2, 0 - La / 1.25, Aa, La);
   }
-  console.log(hand.handedness)
-  
+
   ctx.restore()
   ctx.closePath()
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-
   initCamera(
     config.video.width, config.video.height, config.video.fps
   ).then(video => {
