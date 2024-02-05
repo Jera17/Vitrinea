@@ -3,7 +3,6 @@ import { gestures } from "./gestures.js"
 import { models } from "./models.js"
 //Cam Config
 const config = {  video: { width: 640, height: 480, fps: 30 } }
-
 //Initialize variables just 1 time when code start
 var idModel;
 if (!idModel) {
@@ -25,7 +24,7 @@ async function createDetector() {
       runtime: "mediapipe",
       modelType: "full",
       maxHands: 1,
-      solutionPath: `https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1646424915`,
+      solutionPath: `https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1646424915`
     }
   )
 }
@@ -39,7 +38,6 @@ async function main() {
   const GE = new fp.GestureEstimator(knownGestures)
   // load handpose model
   const detector = await createDetector()
-  console.log("mediaPose model loaded")
   // main estimation loop
   const estimateHands = async () => {
     // clear canvas overlay
@@ -68,14 +66,11 @@ async function main() {
           }
         }
       }
-
     }
     setTimeout(() => { estimateHands() }, 1000 / config.video.fps, )
   }
   estimateHands()
-  console.log("Starting predictions")
 }
-
 //Cam propieties
 async function initCamera(width, height, fps) {
   const constraints = {
@@ -151,7 +146,6 @@ function drawImage(ctx, hand, fingerIndex) {
   ctx.rotate(angleHand+((Math.PI/2)*componenteX))
 
   //Scale
-
   var Ld = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2))
   var La = Ld/3
   var Aa = (imgFront.width*La)/imgFront.height
@@ -179,12 +173,10 @@ window.addEventListener("DOMContentLoaded", () => {
   ).then(video => {
     video.play()
     video.addEventListener("loadeddata", event => {
-      console.log("Camera is ready")
       main()
-    })
+})
   })
   const canvas = document.querySelector("#pose-canvas")
   canvas.width = config.video.width
   canvas.height = config.video.height
-  console.log("Canvas initialized")
 })
