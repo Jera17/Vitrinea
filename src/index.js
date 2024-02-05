@@ -1,27 +1,29 @@
-
 import { gestures } from "./gestures.js"
+
+import { models } from "./models.js"
+
 const config = {
   video: { width: 640, height: 480, fps: 30 }
 }
 
 // ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ Imagen ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
-// const img = new Image();
-// img.src = 'assets/Ring_Diamonds.png';
-var fingerIndex = 0
+  
+//image
+var initializedVariable;
+
+if (!initializedVariable) {
+  // Your initialization code goes here
+  initializedVariable = "This is the initialized value";
+  var idModel = 0
+}
+
+console.log(initializedVariable)
+  
+  
+var fingerIndex = 1 //0 = Index, 1 = Middel, 2 = Ring, 3 = Pinky, 4 = Thumb, 
 var condicional = true
 
-const img = new Image();
-img.src = 'assets/Ring_Diamonds.png';
-
-const img2 = new Image();
-img2.src = 'assets/Ring_Diamonds_Back.png';
-
-let diamondRingObject = {
-  name : "Diamond Ring",
-  offset: 50,
-  size : 90
-}
 
 const landmarkColors = {
   thumb: 'red',
@@ -128,8 +130,22 @@ async function main() {
         const found = gestureStrings[result.name]
 
           // ▓▓▓
-          if(found == '✊️' && condicional == true ){
-            cambiarDedo()
+          if(condicional == true ){
+            if (found == '✊️') {
+              cambiarDedo()
+            }else if(found == '✌️' && idModel < 2){
+              condicional = false
+              idModel++
+              console.log(idModel + " +1")
+              setTimeout(() => {  condicional = true; }, 1000);
+              console.log(models[idModel].front)
+            }else if(found == '✌️' && idModel == 2){
+              condicional = false
+              idModel = 0
+              console.log(idModel + " Reiniciado")
+              setTimeout(() => {  condicional = true; }, 1000);
+              console.log(models[idModel].front)
+            }
           }
 
         // find gesture with highest match score
@@ -188,7 +204,7 @@ async function initCamera(width, height, fps) {
 
 function cambiarDedo() {
   condicional = false 
-  if (fingerIndex < 3) {
+  if (fingerIndex < 4) {
     fingerIndex++
   }else{
     fingerIndex = 0
@@ -197,36 +213,43 @@ function cambiarDedo() {
   //return
 }
 
+
 function drawImage(ctx, hand, fingerIndex) {
+
+
+  var imgFront = new Image();
+  imgFront.src = models[idModel].front;
+    
+  var imgBack = new Image();
+  imgBack.src = models[0].back;
+  
+  console.log(models[idModel].front)
 
   //Chose finger
   switch (fingerIndex) {
     case 0:
       var fingerIndexKnuckle = 5
       var fingerIndexPhalanges = 6
-      console.log('Indice')
       break;
     case 1:
       var fingerIndexKnuckle = 9
       var fingerIndexPhalanges = 10
-      console.log('Corazon')
       break;
     case 2:
       var fingerIndexKnuckle = 13
       var fingerIndexPhalanges = 14
-      console.log('Anular')
       break;
     case 3:
       var fingerIndexKnuckle = 17
       var fingerIndexPhalanges = 18
-      console.log('Meñique')
+      break;
+    case 4:
+      var fingerIndexKnuckle = 2
+      var fingerIndexPhalanges = 3
       break;
     default:
-      console.log('Error')
       break;
   }
-
-  console.log(fingerIndexKnuckle, fingerIndexPhalanges)
   
   const x1 = hand.keypoints[fingerIndexKnuckle].x
   const y1 = hand.keypoints[fingerIndexKnuckle].y
@@ -256,7 +279,7 @@ function drawImage(ctx, hand, fingerIndex) {
   // const Ld = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2))
   var Ld = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2))
   var La = Ld/3
-  var Aa = (img.width*La)/img.height
+  var Aa = (imgFront.width*La)/imgFront.height
   var resolucion = Math.sqrt(Math.pow((640 - 0), 2) + Math.pow((480 - 0), 2))
   var Ra = (Ld/resolucion)*100
 
@@ -265,17 +288,19 @@ function drawImage(ctx, hand, fingerIndex) {
   
   acumZ = ((hand.keypoints3D[5].z + hand.keypoints3D[10].z + hand.keypoints3D[17].z)/3)
 
+
+  //draw Image
   if (hand.handedness === 'Left') {
     if (acumZ > 0) {
-      ctx.drawImage(img, 0-(Aa/2), 0-((La/1.25)), Aa, La)
+      ctx.drawImage(imgFront, 0-(Aa/2), 0-((La/1.25)), Aa, La)
     }else{
-      ctx.drawImage(img2, 0-(Aa/2), 0-((La/1.25)), Aa, La)
+      ctx.drawImage(imgBack, 0-(Aa/2), 0-((La/1.25)), Aa, La)
     }
   }else{
     if (acumZ > 0) {
-      ctx.drawImage(img, 0-(Aa/2), 0-((La/1.25)), Aa, La)
+      ctx.drawImage(imgFront, 0-(Aa/2), 0-((La/1.25)), Aa, La)
     }else{
-      ctx.drawImage(img2, 0-(Aa/2), 0-((La/1.25)), Aa, La)
+      ctx.drawImage(imgBack, 0-(Aa/2), 0-((La/1.25)), Aa, La)
     }
   }
   
