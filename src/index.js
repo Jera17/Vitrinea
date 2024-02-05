@@ -1,30 +1,17 @@
+// Import Objects from other .Js
 import { gestures } from "./gestures.js"
-
 import { models } from "./models.js"
+//Cam Config
+const config = {  video: { width: 640, height: 480, fps: 30 } }
 
-const config = {
-  video: { width: 640, height: 480, fps: 30 }
-}
-
-// ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ Imagen ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-
-  
-//image
-var initializedVariable;
-
-if (!initializedVariable) {
-  // Your initialization code goes here
-  initializedVariable = "This is the initialized value";
+//Initialize variables just 1 time when code start
+var idModel;
+if (!idModel) {
   var idModel = 0
+  var fingerIndex = 1 //0 = Index, 1 = Middel, 2 = Ring, 3 = Pinky, 4 = Thumb, 
+  var condicional = true
 }
-
-console.log(initializedVariable)
-  
-  
-var fingerIndex = 1 //0 = Index, 1 = Middel, 2 = Ring, 3 = Pinky, 4 = Thumb, 
-var condicional = true
-
-
+//Color Hand Land Mark Tracker
 const landmarkColors = {
   thumb: 'red',
   index: 'blue',
@@ -33,19 +20,13 @@ const landmarkColors = {
   pinky: 'pink',
   wrist: 'white'
 }
-
+//Identify gestures 
 const gestureStrings = {
   'rock': '✊️',
   'paper': '🖐',
   'scissors': '✌️'
 }
-
-const base = ['Horizontal ', 'Diagonal Up ']
-const dont = {
-  left: [...base].map(i => i.concat(`Right`)),
-  right: [...base].map(i => i.concat(`Left`))
-}
-
+//Create Hand Detector
 async function createDetector() {
   return window.handPoseDetection.createDetector(
     window.handPoseDetection.SupportedModels.MediaPipeHands,
@@ -59,25 +40,15 @@ async function createDetector() {
 }
 
 async function main() {
-
   const video = document.querySelector("#pose-video")
   const canvas = document.querySelector("#pose-canvas")
   const ctx = canvas.getContext("2d")
-
   const resultLayer = {
     right: document.querySelector("#pose-result-right"),
     left: document.querySelector("#pose-result-left")
   }
-  // configure gesture estimator
-  // add "✌🏻" and "👍" as sample gestures
 
-//REVISAR PORQUE EXISTE LOS 2 GESTOS DE ARRIBA CON EL CODIGO DE ABAJO SI NO ESTAN EL EN gesture.js
-
-  const knownGestures = [
-    //fp.Gestures.VictoryGesture,
-    //fp.Gestures.ThumbsUpGesture,
-    ...gestures
-  ]
+  const knownGestures = [...gestures]
   const GE = new fp.GestureEstimator(knownGestures)
   // load handpose model
   const detector = await createDetector()
@@ -129,7 +100,7 @@ async function main() {
         const result = predictions.gestures.reduce((p, c) => (p.score > c.score) ? p : c)
         const found = gestureStrings[result.name]
 
-          // ▓▓▓
+          // Gestures Control
           if(condicional == true ){
             if (found == '✊️') {
               cambiarDedo()
@@ -167,9 +138,8 @@ async function main() {
   estimateHands()
   console.log("Starting predictions")
 }
-
+//Cam propieties
 async function initCamera(width, height, fps) {
-
   const constraints = {
     audio: false,
     video: {
@@ -183,7 +153,6 @@ async function initCamera(width, height, fps) {
   const video = document.querySelector("#pose-video")
   video.width = width
   video.height = height
-
   // get video stream
   const stream = await navigator.mediaDevices.getUserMedia(constraints)
   video.srcObject = stream
@@ -192,8 +161,7 @@ async function initCamera(width, height, fps) {
     video.onloadedmetadata = () => { resolve(video) }
   })
 }
-
-
+//Draw points from Hand Land Mark Tracker
 function drawPoint(ctx, x, y, r, color) {
   ctx.beginPath()
   ctx.arc(x, y, r, 0, 2 * Math.PI)
@@ -210,21 +178,15 @@ function cambiarDedo() {
     fingerIndex = 0
   }
   setTimeout(() => {  condicional = true; }, 1000);
-  //return
 }
 
-
 function drawImage(ctx, hand, fingerIndex) {
-
-
+  //Set sources Images
   var imgFront = new Image();
   imgFront.src = models[idModel].front;
     
   var imgBack = new Image();
   imgBack.src = models[0].back;
-  
-  console.log(models[idModel].front)
-
   //Chose finger
   switch (fingerIndex) {
     case 0:
@@ -250,16 +212,13 @@ function drawImage(ctx, hand, fingerIndex) {
     default:
       break;
   }
-  
   const x1 = hand.keypoints[fingerIndexKnuckle].x
   const y1 = hand.keypoints[fingerIndexKnuckle].y
   const x2 = hand.keypoints[fingerIndexPhalanges].x
   const y2 =  hand.keypoints[fingerIndexPhalanges].y
 
-
   ctx.beginPath()
   ctx.save()
-  
   //set the position center of the canva and from hand
   const pstx = ((x1+x2)/2)
   const psty = ((y1+y2)/2)
@@ -285,9 +244,7 @@ function drawImage(ctx, hand, fingerIndex) {
 
   //Flip
   var acumZ = 0
-  
-  acumZ = ((hand.keypoints3D[5].z + hand.keypoints3D[10].z + hand.keypoints3D[17].z + hand.keypoints3D[0].z)/4)
-
+  acumZ = ((hand.keypoints3D[5].z + hand.keypoints3D[10].z + hand.keypoints3D[17].z + (hand.keypoints3D[0].z/10))/4)
 
   //draw Image
   if (hand.handedness === 'Left') {
@@ -329,7 +286,6 @@ window.addEventListener("DOMContentLoaded", () => {
       main()
     })
   })
-
   const canvas = document.querySelector("#pose-canvas")
   canvas.width = config.video.width
   canvas.height = config.video.height
