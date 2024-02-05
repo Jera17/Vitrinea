@@ -54,11 +54,6 @@ async function main() {
 
     for (const hand of hands) {
       drawImage(ctx, hand, fingerIndex)
-
-      for (const keypoint of hand.keypoints) {
-        const name = keypoint.name.split('_')[0].toString().toLowerCase()
-      }
-
       const keypoints3D = hand.keypoints3D.map(keypoint => [keypoint.x, keypoint.y, keypoint.z])
       const predictions = GE.estimate(keypoints3D, 9)
 
@@ -67,6 +62,7 @@ async function main() {
         const result = predictions.gestures.reduce((p, c) => (p.score > c.score) ? p : c)
         const found = gestureStrings[result.name]
 
+        console.log(models.length)
           // Gestures Control
           if(condicional == true ){
             if (found == '✊️') {
@@ -97,6 +93,7 @@ async function main() {
   estimateHands()
   console.log("Starting predictions")
 }
+
 //Cam propieties
 async function initCamera(width, height, fps) {
   const constraints = {
