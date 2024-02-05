@@ -115,7 +115,7 @@ async function main() {
       for (const keypoint of hand.keypoints) {
         const name = keypoint.name.split('_')[0].toString().toLowerCase()
         const color = landmarkColors[name]
-        //drawPoint(ctx, keypoint.x, keypoint.y, 3, color)
+        drawPoint(ctx, keypoint.x, keypoint.y, 3, color)
       }
 
       const keypoints3D = hand.keypoints3D.map(keypoint => [keypoint.x, keypoint.y, keypoint.z])
@@ -194,13 +194,13 @@ async function initCamera(width, height, fps) {
 }
 
 
-// function drawPoint(ctx, x, y, r, color) {
-//   ctx.beginPath()
-//   ctx.arc(x, y, r, 0, 2 * Math.PI)
-//   ctx.fillStyle = color
-//   ctx.fill()
-//   ctx.closePath()
-// }
+function drawPoint(ctx, x, y, r, color) {
+  ctx.beginPath()
+  ctx.arc(x, y, r, 0, 2 * Math.PI)
+  ctx.fillStyle = color
+  ctx.fill()
+  ctx.closePath()
+}
 
 function cambiarDedo() {
   condicional = false 
@@ -286,7 +286,7 @@ function drawImage(ctx, hand, fingerIndex) {
   //Flip
   var acumZ = 0
   
-  acumZ = ((hand.keypoints3D[5].z + hand.keypoints3D[10].z + hand.keypoints3D[17].z)/3)
+  acumZ = ((hand.keypoints3D[5].z + hand.keypoints3D[10].z + hand.keypoints3D[17].z + hand.keypoints3D[0].z)/4)
 
 
   //draw Image
