@@ -303,6 +303,7 @@ function drawImage(ctx, hand, fingerIndex) {
       ctx.drawImage(imgBack, 0-(Aa/2), 0-((La/1.25)), Aa, La)
     }
   }
+  console.log(hand.handedness)
   
   ctx.restore()
   ctx.closePath()
