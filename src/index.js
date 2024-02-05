@@ -11,15 +11,6 @@ if (!idModel) {
   var fingerIndex = 1 //0 = Index, 1 = Middel, 2 = Ring, 3 = Pinky, 4 = Thumb, 
   var condicional = true
 }
-//Color Hand Land Mark Tracker
-const landmarkColors = {
-  thumb: 'red',
-  index: 'blue',
-  middle: 'yellow',
-  ring: 'green',
-  pinky: 'pink',
-  wrist: 'white'
-}
 //Identify gestures 
 const gestureStrings = {
   'rock': '✊️',
@@ -43,38 +34,19 @@ async function main() {
   const video = document.querySelector("#pose-video")
   const canvas = document.querySelector("#pose-canvas")
   const ctx = canvas.getContext("2d")
-  const resultLayer = {
-    right: document.querySelector("#pose-result-right"),
-    left: document.querySelector("#pose-result-left")
-  }
+  const resultLayer = document.querySelector("#pose-results")
+  
 
   const knownGestures = [...gestures]
   const GE = new fp.GestureEstimator(knownGestures)
   // load handpose model
   const detector = await createDetector()
   console.log("mediaPose model loaded")
-  const pair = new Set()
 
-  function checkGestureCombination(chosenHand, poseData) {
-    const addToPairIfCorrect = (chosenHand) => {
-      const containsHand = poseData.some(finger => dont[chosenHand].includes(finger[2]))
-      if(!containsHand) return;
-      pair.add(chosenHand)
-    }
-
-    addToPairIfCorrect(chosenHand)
-    if(pair.size !== 2) return;
-    resultLayer.left.innerText = resultLayer.right.innerText = gestureStrings.dont
-    pair.clear()
-  }
   // main estimation loop
   const estimateHands = async () => {
-
     // clear canvas overlay
     ctx.clearRect(0, 0, config.video.width, config.video.height)
-    resultLayer.right.innerText = ''
-    resultLayer.left.innerText = ''
-
     // get hand landmarks from video
     const hands = await detector.estimateHands(video, {
       flipHorizontal: true
@@ -85,15 +57,10 @@ async function main() {
 
       for (const keypoint of hand.keypoints) {
         const name = keypoint.name.split('_')[0].toString().toLowerCase()
-        const color = landmarkColors[name]
-        drawPoint(ctx, keypoint.x, keypoint.y, 3, color)
       }
 
       const keypoints3D = hand.keypoints3D.map(keypoint => [keypoint.x, keypoint.y, keypoint.z])
       const predictions = GE.estimate(keypoints3D, 9)
-      if(!predictions.gestures.length) {
-        updateDebugInfo(predictions.poseData, 'left')
-      }
 
       if (predictions.gestures.length > 0) {
 
@@ -107,32 +74,24 @@ async function main() {
             }else if(found == '✌️' && idModel < 2){
               condicional = false
               idModel++
-              console.log(idModel + " +1")
               setTimeout(() => {  condicional = true; }, 1000);
-              console.log(models[idModel].front)
+              resultLayer.innerText = models[idModel].nombre
+              setTimeout(() => { resultLayer.innerText = '' }, 3000)
+              
             }else if(found == '✌️' && idModel == 2){
               condicional = false
               idModel = 0
-              console.log(idModel + " Reiniciado")
               setTimeout(() => {  condicional = true; }, 1000);
-              console.log(models[idModel].front)
+              resultLayer.innerText = models[idModel].nombre
+              setTimeout(() => { resultLayer.innerText = '' }, 3000)
             }
           }
-
-        // find gesture with highest match score
-        const chosenHand = hand.handedness.toLowerCase()
-        updateDebugInfo(predictions.poseData, chosenHand)
-
-        if(found !== gestureStrings.dont) {
-          resultLayer[chosenHand].innerText = found
-          continue
-        }
-        checkGestureCombination(chosenHand, predictions.poseData)
+        //Sent to html the message for Result Layer
       }
 
     }
     // ...and so on
-    setTimeout(() => { estimateHands() }, 1000 / config.video.fps)
+    setTimeout(() => { estimateHands() }, 1000 / config.video.fps, )
   }
 
   estimateHands()
@@ -161,14 +120,6 @@ async function initCamera(width, height, fps) {
     video.onloadedmetadata = () => { resolve(video) }
   })
 }
-//Draw points from Hand Land Mark Tracker
-function drawPoint(ctx, x, y, r, color) {
-  ctx.beginPath()
-  ctx.arc(x, y, r, 0, 2 * Math.PI)
-  ctx.fillStyle = color
-  ctx.fill()
-  ctx.closePath()
-}
 
 function cambiarDedo() {
   condicional = false 
@@ -186,7 +137,7 @@ function drawImage(ctx, hand, fingerIndex) {
   imgFront.src = models[idModel].front;
     
   var imgBack = new Image();
-  imgBack.src = models[0].back;
+  imgBack.src = models[idModel].back;
   //Chose finger
   switch (fingerIndex) {
     case 0:
@@ -264,15 +215,6 @@ function drawImage(ctx, hand, fingerIndex) {
   
   ctx.restore()
   ctx.closePath()
-}
-
-
-function updateDebugInfo(data, hand) {
-  const summaryTable = `#summary-${hand}`
-  for (let fingerIdx in data) {
-    document.querySelector(`${summaryTable} span#curl-${fingerIdx}`).innerHTML = data[fingerIdx][1]
-    document.querySelector(`${summaryTable} span#dir-${fingerIdx}`).innerHTML = data[fingerIdx][2]
-  }
 }
 
 window.addEventListener("DOMContentLoaded", () => {
