@@ -6,6 +6,7 @@ const paperGesture = new GestureDescription('paper'); // 🖐
 const scissorsGesture = new GestureDescription('scissors'); // ✌️
 
 // ------------------------- Crear propiedades de los gestos -------------------------
+
 // thumbsUpGesture.addDirection(Finger.Thumb, FingerDirection.VerticalUp, 1.0)
 // thumbsUpGesture.addDirection(Finger.Thumb, FingerDirection.DiagonalUpRight, 0.9)
 // thumbsUpGesture.addDirection(Finger.Thumb, FingerDirection.DiagonalUpLeft, 0.9)

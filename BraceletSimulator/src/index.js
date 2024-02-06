@@ -48,7 +48,7 @@ async function main() {
     })
 
     for (const hand of hands) {
-      drawImage(ctx, hand, fingerIndex)
+      drawImage(ctx, hand)
       const keypoints3D = hand.keypoints3D.map(keypoint => [keypoint.x, keypoint.y, keypoint.z])
       const predictions = GE.estimate(keypoints3D, 9)
 
@@ -57,9 +57,7 @@ async function main() {
         const found = gestureStrings[result.name]
 
         if (condicional) {
-          if (found === '✊️') {
-            cambiarDedo();
-          } else if (found === '✌️' && idModel < models.length - 1) {
+          if (found === '✌️' && idModel < models.length - 1) {
             updateModel(resultLayer, 1);
           } else if (found === '✌️' && idModel === models.length - 1) {
             updateModel(resultLayer, - (models.length - 1));
@@ -102,39 +100,25 @@ function updateModel(resultLayer, newId) {
   setTimeout(() => { resultLayer.innerText = ''; }, 3000);
 }
 
-function cambiarDedo() {
-  condicional = false 
-  if (fingerIndex < 4) {
-    fingerIndex++
-  }else{
-    fingerIndex = 0
-  }
-  setTimeout(() => {  condicional = true; }, 1000);
-}
-
-function drawImage(ctx, hand, fingerIndex) {
+function drawImage(ctx, hand) {
   //Set sources Images
   var imgFront = new Image();
   imgFront.src = models[idModel].front;
     
   var imgBack = new Image();
   imgBack.src = models[idModel].back;
-  //Chose finger
-  const fingerIdNodes = [2, 5, 9, 13, 17]
-  const fingerIndexKnuckle = fingerIdNodes[fingerIndex]
-  const fingerIndexPhalanges = fingerIdNodes[fingerIndex] + 1
-
-  const x1 = hand.keypoints[fingerIndexKnuckle].x
-  const y1 = hand.keypoints[fingerIndexKnuckle].y
-  const x2 = hand.keypoints[fingerIndexPhalanges].x
-  const y2 =  hand.keypoints[fingerIndexPhalanges].y
+  //Chose finge
+  const x1 = hand.keypoints[0].x
+  const y1 = hand.keypoints[0].y
+  const x2 = hand.keypoints[9].x
+  const y2 =  hand.keypoints[9].y
 
   ctx.beginPath()
   ctx.save()
   //set the position center of the canva and from hand
-  const pstx = ((x1+x2)/2)
-  const psty = ((y1+y2)/2)
-  ctx.translate(pstx,psty)
+  // const pstx = ((x1+x2)/2)
+  // const psty = ((y1+y2)/2)
+  ctx.translate(x1,y1)
 
   //set angle of the image
   var componenteX = 1
@@ -146,23 +130,18 @@ function drawImage(ctx, hand, fingerIndex) {
   const angleHand = Math.atan(pendiente)
   ctx.rotate(angleHand+((Math.PI/2)*componenteX))
 
+  console.log(hand.keypoints[0])
+  console.log(hand.keypoints3D[0])
+
   //Scale
-  var Ld = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2))
-  var La = Ld/3
-  var Aa = (imgFront.width*La)/imgFront.height
-  var resolucion = Math.sqrt(Math.pow((640 - 0), 2) + Math.pow((480 - 0), 2))
-  var Ra = (Ld/resolucion)*100
+  var WristLenght = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2)) 
 
   //Flip
-  var acumZ = 0
-  acumZ = ((hand.keypoints3D[5].z + hand.keypoints3D[10].z + hand.keypoints3D[17].z + (hand.keypoints3D[0].z/10))/4)
-
+  var HandRotationZ = ((hand.keypoints3D[5].z + hand.keypoints3D[10].z + hand.keypoints3D[17].z + (hand.keypoints3D[0].z/10))/4)
+  
   const isLeftHand = hand.handedness === 'Left';
-  if ((isLeftHand && acumZ > 0) || (!isLeftHand && acumZ > 0)) {
-    ctx.drawImage(imgFront, 0 - Aa / 2, 0 - La / 1.25, Aa, La);
-  } else {
-    ctx.drawImage(imgBack, 0 - Aa / 2, 0 - La / 1.25, Aa, La);
-  }
+  const selectedImage = (isLeftHand && HandRotationZ > 0) || (!isLeftHand && HandRotationZ > 0) ? imgFront : imgBack
+  ctx.drawImage(selectedImage, 0 - (WristLenght / 2), (WristLenght/3), WristLenght, WristLenght)
 
   ctx.restore()
   ctx.closePath()

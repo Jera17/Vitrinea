@@ -138,7 +138,6 @@ function drawImage(ctx, hand, fingerIndex) {
   if((x1-x2) > 0 ){
     componenteX = -1
   }
-  
   const pendiente = ((y2 - y1) / (x2 - x1))
   const angleHand = Math.atan(pendiente)
   ctx.rotate(angleHand+((Math.PI/2)*componenteX))
