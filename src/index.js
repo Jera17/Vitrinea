@@ -3,7 +3,7 @@ import { gestures } from "./gestures.js"
 import { models } from "./models.js"
 //Cam Config
 const config = {  video: { width: 640, height: 480, fps: 30 } }
-//Initialize variables just 1 time when code start
+//Initialize variables just ONE time when code start
 var idModel;
 if (!idModel) {
   var idModel = 0
