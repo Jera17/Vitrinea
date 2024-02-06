@@ -7,10 +7,10 @@ const config = {  video: { width: 640, height: 480, fps: 30 } }
 var idModel;
 if (!idModel) {
   var idModel = 0
-  var fingerIndex = 2 //0 = Thumb, 1 = Index, 2 = Middel, 3 = Ring, 4 = Pinky
+  var fingerIndex = 1 // 0 = Index, 1 = Middel, 2 = Ring, 3 = Pinky
   var condicional = true
 }
-//Identify gesture 
+//Identify gestures 
 const gestureStrings = {
   'rock': '✊️',
   'paper': '🖐',
@@ -97,14 +97,14 @@ async function initCamera(width, height, fps) {
 function updateModel(resultLayer, newId) {
   condicional = false;
   idModel = idModel + newId;
-  setTimeout(() => { condicional = true; }, 1000);
+  setTimeout(() => { condicional = true; }, 2000);
   resultLayer.innerText = models[idModel].nombre;
   setTimeout(() => { resultLayer.innerText = ''; }, 3000);
 }
 
 function cambiarDedo() {
   condicional = false 
-  if (fingerIndex < 4) {
+  if (fingerIndex < 3) {
     fingerIndex++
   }else{
     fingerIndex = 0
@@ -120,14 +120,11 @@ function drawImage(ctx, hand, fingerIndex) {
   var imgBack = new Image();
   imgBack.src = models[idModel].back;
   //Chose finger
-  const fingerIdNodes = [2, 5, 9, 13, 17]
-  const fingerIndexKnuckle = fingerIdNodes[fingerIndex]
-  const fingerIndexPhalanges = fingerIdNodes[fingerIndex] + 1
-
-  const x1 = hand.keypoints[fingerIndexKnuckle].x
-  const y1 = hand.keypoints[fingerIndexKnuckle].y
-  const x2 = hand.keypoints[fingerIndexPhalanges].x
-  const y2 =  hand.keypoints[fingerIndexPhalanges].y
+  const fingerIdNodes = [5, 9, 13, 17]
+  const x1 = hand.keypoints[fingerIdNodes[fingerIndex]].x
+  const y1 = hand.keypoints[fingerIdNodes[fingerIndex]].y
+  const x2 = hand.keypoints[fingerIdNodes[fingerIndex] + 1].x
+  const y2 =  hand.keypoints[fingerIdNodes[fingerIndex] + 1].y
 
   ctx.beginPath()
   ctx.save()
@@ -147,22 +144,15 @@ function drawImage(ctx, hand, fingerIndex) {
   ctx.rotate(angleHand+((Math.PI/2)*componenteX))
 
   //Scale
-  var Ld = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2))
-  var La = Ld/3
-  var Aa = (imgFront.width*La)/imgFront.height
-  var resolucion = Math.sqrt(Math.pow((640 - 0), 2) + Math.pow((480 - 0), 2))
-  var Ra = (Ld/resolucion)*100
+  var FingerLenght = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2)) 
 
   //Flip
-  var acumZ = 0
-  acumZ = ((hand.keypoints3D[5].z + hand.keypoints3D[10].z + hand.keypoints3D[17].z + (hand.keypoints3D[0].z/10))/4)
-
+  var HandRotationZ = 0
+  HandRotationZ = ((hand.keypoints3D[5].z + hand.keypoints3D[10].z + hand.keypoints3D[17].z + (hand.keypoints3D[0].z/10))/4)
+  
   const isLeftHand = hand.handedness === 'Left';
-  if ((isLeftHand && acumZ > 0) || (!isLeftHand && acumZ > 0)) {
-    ctx.drawImage(imgFront, 0 - Aa / 2, 0 - La / 1.25, Aa, La);
-  } else {
-    ctx.drawImage(imgBack, 0 - Aa / 2, 0 - La / 1.25, Aa, La);
-  }
+  const selectedImage = (isLeftHand && HandRotationZ > 0) || (!isLeftHand && HandRotationZ > 0) ? imgFront : imgBack
+  ctx.drawImage(selectedImage, (0 - FingerLenght / 4), (0 - FingerLenght/2) / 1.25, FingerLenght / 2, FingerLenght / 2 )
 
   ctx.restore()
   ctx.closePath()
