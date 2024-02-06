@@ -10,7 +10,7 @@ if (!idModel) {
   var fingerIndex = 1 // 0 = Index, 1 = Middel, 2 = Ring, 3 = Pinky
   var condicional = true
 }
-//Identify gestures 
+//Identify gesture
 const gestureStrings = {
   'rock': '✊️',
   'paper': '🖐',
