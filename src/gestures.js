@@ -19,7 +19,7 @@ const scissorsGesture = new GestureDescription('scissors'); // ✌️
 // all other fingers: curled
 for(let finger of [Finger.Index, Finger.Middle, Finger.Ring, Finger.Pinky]) {
     rockGesture.addCurl(finger, FingerCurl.FullCurl, 1.0);
-    rockGesture.addCurl(finger, FingerCurl.HalfCurl, 0.7);
+    rockGesture.addCurl(finger, FingerCurl.HalfCurl, 0.5);
 }
 
 // ------------------------------------- Paper -------------------------------------
@@ -31,8 +31,8 @@ for(let finger of Finger.all) {
 // ------------------------------------ Scissors ------------------------------------
 
 // index and middle finger: stretched out
-scissorsGesture.addCurl(Finger.Index, FingerCurl.NoCurl, 1.0);
-scissorsGesture.addCurl(Finger.Middle, FingerCurl.NoCurl, 1.0);
+scissorsGesture.addCurl(Finger.Index, FingerCurl.NoCurl, 0.9);
+scissorsGesture.addCurl(Finger.Middle, FingerCurl.NoCurl, 0.9);
 
 // ring: curled
 scissorsGesture.addCurl(Finger.Ring, FingerCurl.FullCurl, 1.0);
