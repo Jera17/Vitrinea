@@ -121,17 +121,17 @@ function drawImage(ctx, hand) {
   ctx.translate(x1,y1)
 
   //set angle of the image
-  var componenteX = 1
+  var componenteX = -1
   if((x1-x2) > 0 ){
-    componenteX = -1
+    componenteX = 1
   }
   
   const pendiente = ((y2 - y1) / (x2 - x1))
   const angleHand = Math.atan(pendiente)
-  ctx.rotate(angleHand+((Math.PI/2)*componenteX))
+  // ctx.rotate(angleHand+((Math.PI/2)*componenteX))
+  ctx.rotate(-Math.PI/180*componenteX)
 
-  console.log(hand.keypoints[0])
-  console.log(hand.keypoints3D[0])
+  console.log((10*hand.keypoints3D[0].x*(360/Math.PI))+90, (10*hand.keypoints3D[0].y*(360/Math.PI)), (10*hand.keypoints3D[0].z*(360/Math.PI))+90,)
 
   //Scale
   var WristLenght = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2)) 
