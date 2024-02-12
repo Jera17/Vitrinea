@@ -1,6 +1,6 @@
 {
-  "name": "recorded",
-  "version": "0.0.1",
+  "name": "mediapipe-in-javascript-master",
+  "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "browser-sync": "^2.27.11"
+  "dependencies": {
+    "@mediapipe/pose": "^0.5.1675469404"
   }
 }

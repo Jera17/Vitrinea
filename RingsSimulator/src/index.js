@@ -55,7 +55,6 @@ async function main() {
       if (predictions.gestures.length > 0) {
         const result = predictions.gestures.reduce((p, c) => (p.score > c.score) ? p : c)
         const found = gestureStrings[result.name]
-
         if (condicional) {
           if (found === '✊️') {
             cambiarDedo();

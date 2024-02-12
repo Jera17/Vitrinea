@@ -1,19 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <style>
+    #pose-video {
+      transform: scaleX(-1);
+    }
+  </style>
   <meta charset="utf-8">
+  <link rel="icon" href="favicon.ico">
   <script src="./public/camera_utils.js" crossorigin="anonymous"></script>
   <script src="./public/control_utils.js" crossorigin="anonymous"></script>
   <script src="./public/drawing_utils.js" crossorigin="anonymous"></script>
   <script src="./public/pose.js" crossorigin="anonymous"></script>
 </head>
-
 <body>
-  <div class="container">
-    <video class="input_video"></video>
-    <canvas class="output_canvas" width="1280px" height="720px"></canvas>
-  </div>
+  <article class="panel is-info">
+    <video id="pose-video" class="input_video5" style="position: absolute; top: 0; left: 0;"></video>
+    <canvas id="pose-canvas" width="640" height="480" style="position: absolute; top: 0; left: 0;"></canvas>
+    <div id="pose-results" class="layer pose-result"></div>
+    <canvas class="output5" width="640px" height="480px" style="position: absolute; top: 0; left: 640px;"></canvas>
+  </article>
+  <div style="visibility: show;" class="control5"></div>
+  <script type="text/javascript" src="./js/index.js"></script>
 </body>
 </html>
-
-<script src="./src/index.js" type="module"> </script>
