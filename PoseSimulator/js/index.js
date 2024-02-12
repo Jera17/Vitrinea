@@ -5,31 +5,48 @@ const canvasCtx5 = out5.getContext('2d');
 const canvas = document.querySelector("#pose-canvas")
 const ctx = canvas.getContext("2d")
 
-//cambia color, no sé porque
+/*
 function zColor(data) {
   //console.log(data.from.z)
   const z = clamp(data.from.z + 0.5, 0, 1);
   return `rgba(0, ${255 * z}, ${255 * (1 - z)}, 1)`;
 }
+*/
+function onResultsPose(results) {
+  ctx.clearRect(0, 0, video5.videoWidth, video5.videoHeight)
+    for (let i = 0; i < 32; i++) {
+      
+      var x = results.poseLandmarks[i].x * video5.videoWidth
+      var y = results.poseLandmarks[i].y * video5.videoHeight
+      var z = Math.pow((results.poseLandmarks[i].z)*2, 2)
 
-function drawCircle(x, y, radius, color) {
+          ctx.beginPath();
+        
+          ctx.arc(x, y, 3, 0, 2 * Math.PI);
+          ctx.fillStyle = 'red';
+          ctx.fill();
+          console.log(x, y)
+          ctx.closePath()
+        
+
+      // drawCircle(x, y);
+      // console.log(results.poseLandmarks[i].z, z)
+      // console.log(i, results.poseLandmarks[i].x*video5.videoWidth, results.poseLandmarks[i].y*video5.videoHeight)
+      
+  }
+
+function drawCircle(x, y) {
   ctx.clearRect(0, 0, video5.videoWidth, video5.videoHeight)
   ctx.beginPath();
-  ctx.arc(x, y, radius, 0, 2 * Math.PI);
-  ctx.fillStyle = color;
+
+  ctx.arc(x, y, 3, 0, 2 * Math.PI);
+  ctx.fillStyle = 'red';
   ctx.fill();
-  ctx.closePath();
+  console.log(x, y)
+  ctx.closePath()
 }
 
-
-function onResultsPose(results) {
-
-  x = results.poseLandmarks[0].x
-  y = results.poseLandmarks[0].y
-  z = Math.pow(results.poseLandmarks[0].z, 2)
-  console.log(results.poseLandmarks[0].z, z)
-  drawCircle(x * video5.videoWidth, y * video5.videoHeight, z, 'blue');
-
+/*
   document.body.classList.add('loaded');
   canvasCtx5.save();
   canvasCtx5.clearRect(0, 0, out5.width, out5.height);
@@ -70,9 +87,8 @@ function onResultsPose(results) {
           .map(index => results.poseLandmarks[index]),
       {color: zColor, fillColor: '#AAAAAA'});
   canvasCtx5.restore();
-  
+*/
 }
-
 const pose = new Pose({locateFile: (file) => {
   return `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.2/${file}`;
 }});
