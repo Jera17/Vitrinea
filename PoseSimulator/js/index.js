@@ -14,35 +14,56 @@ function zColor(data) {
 */
 function onResultsPose(results) {
   ctx.clearRect(0, 0, video5.videoWidth, video5.videoHeight)
-    for (let i = 0; i < 32; i++) {
-      
+
+    for (let i = 0; i <= 32; i++) {
       var x = results.poseLandmarks[i].x * video5.videoWidth
       var y = results.poseLandmarks[i].y * video5.videoHeight
-      var z = Math.pow((results.poseLandmarks[i].z)*2, 2)
+      drawNodes(x, y)
+      //console.log(i)
+    }
+    
+    var imgFront = new Image();
+    imgFront.src = 'assets/Tshirt_Green.png';
 
-          ctx.beginPath();
-        
-          ctx.arc(x, y, 3, 0, 2 * Math.PI);
-          ctx.fillStyle = 'red';
-          ctx.fill();
-          console.log(x, y)
-          ctx.closePath()
-        
+    const polygonIdNodes = [12, 11, 23]
+    const polygon = getCoords(polygonIdNodes)
 
-      // drawCircle(x, y);
-      // console.log(results.poseLandmarks[i].z, z)
-      // console.log(i, results.poseLandmarks[i].x*video5.videoWidth, results.poseLandmarks[i].y*video5.videoHeight)
-      
+    ctx.drawImage(imgFront, polygon.x0, polygon.y0, polygon.magX, polygon.magY)
+    console.log(imgFront, polygon.x0, polygon.y0, polygon.magX, polygon.magY)
+    console.log("Poligono dibujado con exito")
+
+    //drawImage()
+
+// function drawImage(){
+//   //Set sources Images
+//   var imgFront = new Image();
+//   imgFront.src = 'assets/Tshirt_Green.png';
+//   ctx.drawImage(imgFront, 20, 20, 200, 300)
+//   // ctx.drawImage(selectedImage, (0 - FingerLenght / 4), (0 - FingerLenght/2) / 1.25, FingerLenght / 2, FingerLenght / 2 )
+// }
+
+function getCoords(polygonIdNodes){
+  const x0 = results.poseLandmarks[polygonIdNodes[0]].x * video5.videoWidth
+  const y0 = results.poseLandmarks[polygonIdNodes[0]].y * video5.videoHeight
+  const x1 = results.poseLandmarks[polygonIdNodes[1]].x * video5.videoWidth
+  const y1 = results.poseLandmarks[polygonIdNodes[2]].y * video5.videoHeight
+  const magX = x1-x0
+  const magY = y1-y0
+  console.log(x0, y0, x1, y1, magX, magY)
+  console.log("Poligono calculado con exito")
+  return {
+    x0: x0,
+    y0: y0,
+    magX: magX,
+    magY: magY
   }
+}
 
-function drawCircle(x, y) {
-  ctx.clearRect(0, 0, video5.videoWidth, video5.videoHeight)
+function drawNodes(x, y) {
   ctx.beginPath();
-
   ctx.arc(x, y, 3, 0, 2 * Math.PI);
   ctx.fillStyle = 'red';
   ctx.fill();
-  console.log(x, y)
   ctx.closePath()
 }
 
