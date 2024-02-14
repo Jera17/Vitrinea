@@ -12,18 +12,23 @@ function onResultsPose(results) {
       drawNodes(x, y, 'red')
     }
     
+    canvas.width = video5.videoWidth;
+    canvas.height = video5.videoHeight;
+
     var imgFront = new Image();
     imgFront.src = 'assets/Tshirt_Green.png';
 
     const polygonIdNodes = [12, 11, 23]
     const polygon = getCoords(polygonIdNodes)
     if (12 > 11) {
-      ctx.drawImage(imgFront, polygon.x0-(polygon.tangX/3), polygon.y0-(polygon.tangY/6), polygon.tangX+(polygon.tangX/1.5), polygon.tangY+(polygon.tangY/3))
+      ctx.drawImage(imgFront, polygon.x0-(polygon.tangX/2.5), polygon.y0-(polygon.tangY/5), polygon.tangX+(polygon.tangX/1.25), polygon.tangY+(polygon.tangY/2.5))
     }else{
-      ctx.drawImage(imgFront, polygon.x1-(polygon.tangX/3), polygon.y0-(polygon.tangY/6), polygon.tangX+(polygon.tangX/1.5), polygon.tangY+(polygon.tangY/3))
+      ctx.drawImage(imgFront, polygon.x1-(polygon.tangX/2.5), polygon.y0-(polygon.tangY/5), polygon.tangX+(polygon.tangX/1.25), polygon.tangY+(polygon.tangY/2.5))
     }
     drawNodes(polygon.x0, polygon.y0, 'blue')
     drawNodes(polygon.x1, polygon.y1, 'blue')
+    drawNodes(polygon.x0-(polygon.tangX/2.5), polygon.y0-(polygon.tangY/5), 'blue')
+    drawNodes(polygon.x1+(polygon.tangX/2.5), polygon.y0-(polygon.tangY/5))
 
 function getCoords(polygonIdNodes){
   const x0 = (results.poseLandmarks[polygonIdNodes[0]].x * video5.videoWidth)
@@ -56,6 +61,7 @@ function drawNodes(x, y, color) {
   ctx.closePath()
 }
 }
+
 
 const pose = new Pose({locateFile: (file) => {
   return `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.2/${file}`;

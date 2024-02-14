@@ -2,8 +2,15 @@
 <html>
 <head>
   <style>
-    #pose-video {
+    .input_video5 {
       transform: scaleX(-1);
+    }
+    .layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
     }
   </style>
   <meta charset="utf-8">
@@ -15,8 +22,12 @@
 </head>
 <body>
   <article class="panel is-info">
-    <video id="pose-video" class="input_video5" style="position: absolute; top: 0; left: 0;"></video>
-    <canvas id="pose-canvas" width="800" height="600" style="position: absolute; top: 0; left: 0;"></canvas>
+    <div class="layer">
+      <video class="input_video5"></video>
+    </div><div class="layer">
+      <canvas id="pose-canvas"></canvas>
+    </div>
+    <!--- <canvas id="pose-canvas" class="layer" ></canvas> --->
   </article>
   <div style="visibility: show;" class="control5"></div>
   <script type="text/javascript" src="./js/index.js"></script>
