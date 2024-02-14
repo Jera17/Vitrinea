@@ -3,15 +3,9 @@ const out2 = document.getElementsByClassName('output2')[0];
 const controlsElement2 = document.getElementsByClassName('control2')[0];
 const canvasCtx = out2.getContext('2d');
 
-const fpsControl = new FPS();
-const spinner = document.querySelector('.loading');
-spinner.ontransitionend = () => {
-  spinner.style.display = 'none';
-};
 
 function onResultsFaceMesh(results) {
   document.body.classList.add('loaded');
-  fpsControl.tick();
 
   canvasCtx.save();
   canvasCtx.clearRect(0, 0, out2.width, out2.height);
@@ -54,40 +48,14 @@ const camera = new Camera(video2, {
   onFrame: async () => {
     await faceMesh.send({image: video2});
   },
-  width: 480,
-  height: 480
+  width: 510,
+  height: 382
 });
 camera.start();
 
 new ControlPanel(controlsElement2, {
-      selfieMode: true,
-      maxNumFaces: 1,
-      minDetectionConfidence: 0.5,
-      minTrackingConfidence: 0.5
+      selfieMode: true
     })
-    .add([
-      new StaticText({title: 'MediaPipe Face Mesh'}),
-      fpsControl,
-      new Toggle({title: 'Selfie Mode', field: 'selfieMode'}),
-      new Slider({
-        title: 'Max Number of Faces',
-        field: 'maxNumFaces',
-        range: [1, 4],
-        step: 1
-      }),
-      new Slider({
-        title: 'Min Detection Confidence',
-        field: 'minDetectionConfidence',
-        range: [0, 1],
-        step: 0.01
-      }),
-      new Slider({
-        title: 'Min Tracking Confidence',
-        field: 'minTrackingConfidence',
-        range: [0, 1],
-        step: 0.01
-      }),
-    ])
     .on(options => {
       video2.classList.toggle('selfie', options.selfieMode);
       faceMesh.setOptions(options);
