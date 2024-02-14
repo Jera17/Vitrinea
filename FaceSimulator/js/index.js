@@ -15,7 +15,7 @@ function onResultsFaceMesh(results) {
     for (const landmarks of results.multiFaceLandmarks) {
       drawConnectors(
           canvasCtx, landmarks, FACEMESH_TESSELATION,
-          {color: '#C0C0C070', lineWidth: 1});
+          {color: '#C0C0C070', lineWidth: 0.5});
       drawConnectors(
           canvasCtx, landmarks, FACEMESH_RIGHT_EYE,
           {color: '#FF3030'});
