@@ -3,6 +3,9 @@ const controlsElement5 = document.getElementsByClassName('control5')[0];
 const canvas = document.querySelector("#pose-canvas")
 const ctx = canvas.getContext("2d")
 
+var idArrays = 0
+var cooldown = true
+
 function onResultsPose(results) {
   ctx.clearRect(0, 0, video5.videoWidth, video5.videoHeight)
 
@@ -15,20 +18,48 @@ function onResultsPose(results) {
     canvas.width = video5.videoWidth;
     canvas.height = video5.videoHeight;
 
-    var imgFront = new Image();
-    imgFront.src = 'assets/Tshirt_Green.png';
+    var Clothe1 = new Image();
+    Clothe1.src = 'assets/Tshirt.png';
+    var Clothe2 = new Image();
+    Clothe2.src = 'assets/ShortDress.png';
+    var Clothe3 = new Image();
+    Clothe3.src = 'assets/LongDress.png';
 
-    const polygonIdNodes = [12, 11, 23]
-    const polygon = getCoords(polygonIdNodes)
-    if (12 > 11) {
-      ctx.drawImage(imgFront, polygon.x0-(polygon.tangX/2.5), polygon.y0-(polygon.tangY/5), polygon.tangX+(polygon.tangX/1.25), polygon.tangY+(polygon.tangY/2.5))
-    }else{
-      ctx.drawImage(imgFront, polygon.x1-(polygon.tangX/2.5), polygon.y0-(polygon.tangY/5), polygon.tangX+(polygon.tangX/1.25), polygon.tangY+(polygon.tangY/2.5))
+    //timer---------------
+    console.log('uwu')
+    if(cooldown){
+      if (idArrays <= 1) {
+        idArrays++
+      }else{
+        idArrays = 0
+      }
+      cooldown = false
+      console.log("Id Arrays " + idArrays + " Cooldown: " + cooldown)
+      setTimeout(() => { cooldown = true; }, 5000);
     }
+
+    // idArrays = 1
+    const NodesArray = [
+      [12, 11, 23], //Tshirt
+      [12, 11, 25], //Dress
+      [12, 11, 27] //Long Dress
+    ]
+    const clotheArray = [Clothe1, Clothe2, Clothe3]
+    const polygon = getCoords(NodesArray[idArrays])
+    const clotheId = clotheArray[idArrays]
+    
+    ctx.drawImage(clotheId, polygon.x0-(polygon.tangX/2.5), polygon.y0-(polygon.tangX/4), polygon.tangX+(polygon.tangX/1.25), polygon.tangY+(polygon.tangX/4))
+    
+    // if (12 > 11) {
+    //   ctx.drawImage(clotheId, polygon.x0-(polygon.tangX/2.5), polygon.y0-(polygon.tangX/5), polygon.tangX+(polygon.tangX/1.25), polygon.tangY+(polygon.tangY/2.5))
+    // }
+    // else{
+    //   ctx.drawImage(clotheId, polygon.x1-(polygon.tangX/2.5), polygon.y0-(polygon.tangX/5), polygon.tangX+(polygon.tangX/1.25), polygon.tangY+(polygon.tangY/2.5))
+    // }
     drawNodes(polygon.x0, polygon.y0, 'blue')
     drawNodes(polygon.x1, polygon.y1, 'blue')
-    drawNodes(polygon.x0-(polygon.tangX/2.5), polygon.y0-(polygon.tangY/5), 'blue')
-    drawNodes(polygon.x1+(polygon.tangX/2.5), polygon.y0-(polygon.tangY/5))
+    drawNodes(polygon.x0-(polygon.tangX/2.5), polygon.y0-(polygon.tangX/4), 'green')
+    drawNodes(polygon.x1+(polygon.tangX/2.5), polygon.y0-(polygon.tangX/4), 'green')
 
 function getCoords(polygonIdNodes){
   const x0 = (results.poseLandmarks[polygonIdNodes[0]].x * video5.videoWidth)
