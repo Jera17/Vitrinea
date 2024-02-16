@@ -5,6 +5,8 @@ const canvasCtx = out2.getContext('2d');
 const canvas = document.querySelector("#pose-canvas")
 const ctx = canvas.getContext("2d")
 
+var EarringPearl = new Image();
+EarringPearl.src = './assets/Earring_Pearl.png';
 
 function onResultsFaceMesh(results) {
   document.body.classList.add('loaded');
@@ -20,19 +22,22 @@ function onResultsFaceMesh(results) {
 
       const listaNodos = [323, 401];
       for (let i = 0; i < listaNodos.length; i++) {
-        console.log(listaNodos[i])
         const x0 = results.multiFaceLandmarks[0][listaNodos[0]].x * video2.videoWidth
         const y0 = results.multiFaceLandmarks[0][listaNodos[0]].y * video2.videoHeight
         const x1 = results.multiFaceLandmarks[0][listaNodos[1]].x * video2.videoWidth
         const y1 = results.multiFaceLandmarks[0][listaNodos[1]].y * video2.videoHeight
-        const xEaring = ((x0 + x1)/2)+((x0-x1)*0.75)
-        const yEaring = y0 + (y1 - y0)/3
+        const xEarring = ((x0 + x1)/2)+((x0-x1)*0.75)
+        const yEarring = y0 + (y1 - y0)/3
         if (x0 > x1) {
-        drawNodes(xEaring, yEaring, 2, 'red')
-        //ctx.drawImage("./assets/Earring_Pearl.png", 20, 20, 20, 20)
+        const imageX0 = results.multiFaceLandmarks[0][352].x * video2.videoWidth
+        const imageY0 = results.multiFaceLandmarks[0][352].y * video2.videoHeight
+        const imageY1 = results.multiFaceLandmarks[0][433].y * video2.videoHeight
+        console.log(imageX0, imageY0, imageY1)
+        const imageY = (imageY1 - imageY0)
+        const imageX = imageY*0.75
+        console.log("   " + xEarring, yEarring, imageY, imageX)
+        ctx.drawImage(EarringPearl, xEarring-(imageX/2), yEarring, imageX, imageY)
         }
-        drawNodes(x0, y0, 2, 'blue')
-        drawNodes(x1, y1, 2, 'green')
       }
       
       drawConnectors(
