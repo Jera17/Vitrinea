@@ -25,7 +25,7 @@ function onResultsFaceMesh(results) {
         const y0 = results.multiFaceLandmarks[0][listaNodos[0]].y * video2.videoHeight
         const x1 = results.multiFaceLandmarks[0][listaNodos[1]].x * video2.videoWidth
         const y1 = results.multiFaceLandmarks[0][listaNodos[1]].y * video2.videoHeight
-        const xEaring = x0
+        const xEaring = ((x0 + x1)/2)+((x0-x1)*0.75)
         const yEaring = y0 + (y1 - y0)/3
         if (x0 > x1) {
         drawNodes(xEaring, yEaring, 2, 'red')
@@ -65,7 +65,6 @@ function onResultsFaceMesh(results) {
   }
   canvasCtx.restore();
 
-  
 function drawNodes(x, y, r, color) {
   ctx.beginPath();
   ctx.arc(x, y, r, 0, 2 * Math.PI);

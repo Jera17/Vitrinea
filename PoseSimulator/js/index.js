@@ -25,18 +25,43 @@ function onResultsPose(results) {
     var Clothe3 = new Image();
     Clothe3.src = 'assets/LongDress.png';
 
-    //timer---------------
-    console.log('uwu')
-    if(cooldown){
-      if (idArrays <= 1) {
-        idArrays++
-      }else{
-        idArrays = 0
+    //gesture
+    const Gx0 = (results.poseLandmarks[15].x * video5.videoWidth)
+    const Gy0 = (results.poseLandmarks[15].y * video5.videoHeight)
+    const Gx1 = (results.poseLandmarks[16].x * video5.videoWidth)
+    const Gy1 = (results.poseLandmarks[16].y * video5.videoHeight)
+    const Gx2 = (results.poseLandmarks[12].x * video5.videoWidth)-(results.poseLandmarks[12].x * video5.videoWidth * 0.5)
+    const Gy2 = (results.poseLandmarks[12].y * video5.videoHeight)
+    drawNodes(Gx0, Gy0, 'purple')
+    drawNodes(Gx1, Gy1, 'cyan')
+    drawNodes(Gx2, Gy2, 'black')
+    if (Gy0<Gy2) {
+      console.log('+')
+      console.log(idArrays)
+      if(cooldown){
+        if (idArrays <= 1) {
+          idArrays++
+        }else{
+          idArrays = 0
+        }
+        cooldown = false
+        setTimeout(() => { cooldown = true; }, 1000);
       }
-      cooldown = false
-      console.log("Id Arrays " + idArrays + " Cooldown: " + cooldown)
-      setTimeout(() => { cooldown = true; }, 5000);
-    }
+    }else if(Gy1<Gy2){
+      console.log('-')
+      console.log(idArrays)
+      if(cooldown){
+        if (idArrays > 0) {
+          idArrays--
+        }else{
+          idArrays = 2
+        }
+        cooldown = false
+        setTimeout(() => { cooldown = true; }, 3000);
+      }}
+
+
+    //timer---------------
 
     // idArrays = 1
     const NodesArray = [
@@ -56,8 +81,6 @@ function onResultsPose(results) {
     // else{
     //   ctx.drawImage(clotheId, polygon.x1-(polygon.tangX/2.5), polygon.y0-(polygon.tangX/5), polygon.tangX+(polygon.tangX/1.25), polygon.tangY+(polygon.tangY/2.5))
     // }
-    drawNodes(polygon.x0, polygon.y0, 'blue')
-    drawNodes(polygon.x1, polygon.y1, 'blue')
     drawNodes(polygon.x0-(polygon.tangX/2.5), polygon.y0-(polygon.tangX/4), 'green')
     drawNodes(polygon.x1+(polygon.tangX/2.5), polygon.y0-(polygon.tangX/4), 'green')
 
