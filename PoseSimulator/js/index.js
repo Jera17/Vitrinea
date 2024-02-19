@@ -8,12 +8,6 @@ var cooldown = true
 
 function onResultsPose(results) {
   ctx.clearRect(0, 0, video5.videoWidth, video5.videoHeight)
-
-    for (let i = 0; i <= 32; i++) {
-      var x = results.poseLandmarks[i].x * video5.videoWidth
-      var y = results.poseLandmarks[i].y * video5.videoHeight
-      drawNodes(x, y, 'red')
-    }
     
     canvas.width = video5.videoWidth;
     canvas.height = video5.videoHeight;
@@ -35,39 +29,25 @@ function onResultsPose(results) {
     drawNodes(Gx0, Gy0, 'purple')
     drawNodes(Gx1, Gy1, 'cyan')
     drawNodes(Gx2, Gy2, 'black')
+
     if (Gy0<Gy2) {
-      console.log('+')
-      console.log(idArrays)
       if(cooldown){
-        if (idArrays <= 1) {
-          idArrays++
-        }else{
-          idArrays = 0
-        }
+        updateCounter('+'); // Increment by 1
         cooldown = false
         setTimeout(() => { cooldown = true; }, 1000);
       }
     }else if(Gy1<Gy2){
-      console.log('-')
-      console.log(idArrays)
       if(cooldown){
-        if (idArrays > 0) {
-          idArrays--
-        }else{
-          idArrays = 2
-        }
+        updateCounter('-'); // Decrement by 1
         cooldown = false
-        setTimeout(() => { cooldown = true; }, 3000);
+        setTimeout(() => { cooldown = true; }, 1000);
       }}
-
-
-    //timer---------------
 
     // idArrays = 1
     const NodesArray = [
       [12, 11, 23], //Tshirt
       [12, 11, 25], //Dress
-      [12, 11, 27] //Long Dress
+      [12, 11, 27]  //Long Dress
     ]
     const clotheArray = [Clothe1, Clothe2, Clothe3]
     const polygon = getCoords(NodesArray[idArrays])
@@ -75,12 +55,6 @@ function onResultsPose(results) {
     
     ctx.drawImage(clotheId, polygon.x0-(polygon.tangX/2.5), polygon.y0-(polygon.tangX/4), polygon.tangX+(polygon.tangX/1.25), polygon.tangY+(polygon.tangX/4))
     
-    // if (12 > 11) {
-    //   ctx.drawImage(clotheId, polygon.x0-(polygon.tangX/2.5), polygon.y0-(polygon.tangX/5), polygon.tangX+(polygon.tangX/1.25), polygon.tangY+(polygon.tangY/2.5))
-    // }
-    // else{
-    //   ctx.drawImage(clotheId, polygon.x1-(polygon.tangX/2.5), polygon.y0-(polygon.tangX/5), polygon.tangX+(polygon.tangX/1.25), polygon.tangY+(polygon.tangY/2.5))
-    // }
     drawNodes(polygon.x0-(polygon.tangX/2.5), polygon.y0-(polygon.tangX/4), 'green')
     drawNodes(polygon.x1+(polygon.tangX/2.5), polygon.y0-(polygon.tangX/4), 'green')
 
@@ -106,13 +80,19 @@ function getCoords(polygonIdNodes){
     magY: magY
   }
 }
-
 function drawNodes(x, y, color) {
   ctx.beginPath();
   ctx.arc(x, y, 3, 0, 2 * Math.PI);
   ctx.fillStyle = color;
   ctx.fill();
   ctx.closePath()
+}
+function updateCounter(operator) {
+  if (operator === '+') {
+    idArrays = (idArrays + 1) % 3;
+  } else if (operator === '-') {
+    idArrays = (idArrays - 1 + 3) % 3;
+  }
 }
 }
 
