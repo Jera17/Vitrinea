@@ -11,12 +11,10 @@ EarringPearl.src = './assets/Earring_Pearl.png';
 function onResultsFaceMesh(results) {
   document.body.classList.add('loaded');
 
-
   canvasCtx.save();
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   canvasCtx.clearRect(0, 0, out2.width, out2.height);
-  canvasCtx.drawImage(
-      results.image, 0, 0, out2.width, out2.height);
+  canvasCtx.drawImage(results.image, 0, 0, out2.width, out2.height);
   if (results.multiFaceLandmarks) {
     for (const landmarks of results.multiFaceLandmarks) {
 
