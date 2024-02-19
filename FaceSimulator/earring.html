@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    #input_video2 {
+      transform: scaleX(-1);
+    }
+    .layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      /* width: 100%;
+      height: 100%; */
+      width: 510px; 
+      height: 382px;
+    }
+    .output2 {
+      position: absolute;
+      top: 382px;
+      left: 0;
+      /* width: 100%;
+      height: 100%; */
+      width: 510px; 
+      height: 382px;
+    }
+  </style>
+  <meta charset="utf-8">
+  <script src="./public/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="./public/control_utils.js" crossorigin="anonymous"></script>
+  <script src="./public/drawing_utils.js" crossorigin="anonymous"></script>
+  <script src="./public/face_mesh.js"  crossorigin="anonymous"></script>
+</head>
+<body>
+  <div class="panel-block">
+    <div class="layer">
+      <video id="input_video2" class="input_video2"></video>
+    </div><div class="layer">
+      <canvas id="pose-canvas" width="510px" height="382px"></canvas>
+    </div>
+    <canvas class="output2" width="510px" height="382px"></canvas>
+  </div>
+  <div class="loading">
+    <div class="spinner"></div>
+  </div>
+  <div style="visibility: show;" class="control2"> </div>
+  <script type="text/javascript" src="./js/earring.js"></script>
+</body>
+</html>

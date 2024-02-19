@@ -1,7 +1,5 @@
 const video2 = document.getElementsByClassName('input_video2')[0];
-const out2 = document.getElementsByClassName('output2')[0];
 const controlsElement2 = document.getElementsByClassName('control2')[0];
-const canvasCtx = out2.getContext('2d');
 const canvas = document.querySelector("#pose-canvas")
 const ctx = canvas.getContext("2d")
 
@@ -11,10 +9,7 @@ EarringPearl.src = './assets/Earring_Pearl.png';
 function onResultsFaceMesh(results) {
   document.body.classList.add('loaded');
 
-  canvasCtx.save();
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  canvasCtx.clearRect(0, 0, out2.width, out2.height);
-  canvasCtx.drawImage(results.image, 0, 0, out2.width, out2.height);
   if (results.multiFaceLandmarks) {
     for (const landmarks of results.multiFaceLandmarks) {
 
@@ -37,36 +32,9 @@ function onResultsFaceMesh(results) {
         ctx.drawImage(EarringPearl, xEarring-(imageX/2), yEarring, imageX, imageY)
         }
       }
-      
-      drawConnectors(
-          canvasCtx, landmarks, FACEMESH_TESSELATION,
-          {color: '#C0C0C070', lineWidth: 0.5});
-      drawConnectors(
-          canvasCtx, landmarks, FACEMESH_RIGHT_EYE,
-          {color: '#FF3030'});
-      drawConnectors(
-          canvasCtx, landmarks, FACEMESH_RIGHT_EYEBROW,
-          {color: '#FF3030'});
-      drawConnectors(
-          canvasCtx, landmarks, FACEMESH_LEFT_EYE,
-          {color: '#30FF30'});
-      drawConnectors(
-          canvasCtx, landmarks, FACEMESH_LEFT_EYEBROW,
-          {color: '#30FF30'});
-      drawConnectors(
-          canvasCtx, landmarks, FACEMESH_FACE_OVAL,
-          {color: '#E0E0E0'});
-      drawConnectors(
-          canvasCtx, landmarks, FACEMESH_LIPS,
-          {color: '#E0E0E0'});
+      console.log(landmarks)
     }
-    canvasCtx.beginPath();
-    canvasCtx.arc(40, 40, 10, 0, 2 * Math.PI);
-    canvasCtx.fillStyle = 'green';
-    canvasCtx.fill();
-    canvasCtx.closePath();
   }
-  canvasCtx.restore();
 
 function drawNodes(x, y, r, color) {
   ctx.beginPath();
