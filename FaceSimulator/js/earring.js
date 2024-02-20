@@ -29,7 +29,7 @@ function onResultsFaceMesh(results) {
         const imageY = (imageY1 - imageY0)
         const imageX = imageY*0.75
         console.log("   " + xEarring, yEarring, imageY, imageX)
-        ctx.drawImage(EarringPearl, xEarring-(imageX/2), yEarring, imageX, imageY)
+        ctx.drawImage(EarringPearl, xEarring-(imageX/2), yEarring*0.99, imageX, imageY)
         }
       }
       console.log(landmarks)
