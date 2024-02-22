@@ -7,7 +7,6 @@ const config = {  video: { width: 640, height: 480, fps: 30 } }
 var idModel;
 if (!idModel) {
   var idModel = 0
-  var fingerIndex = 2 //0 = Thumb, 1 = Index, 2 = Middel, 3 = Ring, 4 = Pinky
   var condicional = true
 }
 //Identify gesture 
@@ -91,7 +90,6 @@ async function initCamera(width, height, fps) {
     video.onloadedmetadata = () => { resolve(video) }
   })
 }
-
 function updateModel(resultLayer, newId) {
   condicional = false;
   idModel = idModel + newId;

@@ -48,6 +48,7 @@ async function main() {
     })
 
     for (const hand of hands) {
+      console.log(hand)
       drawImage(ctx, hand, fingerIndex)
       const keypoints3D = hand.keypoints3D.map(keypoint => [keypoint.x, keypoint.y, keypoint.z])
       const predictions = GE.estimate(keypoints3D, 9)

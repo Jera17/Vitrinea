@@ -80,6 +80,13 @@ function getCoords(polygonIdNodes){
     magY: magY
   }
 }
+// console.log(results.poseLandmarks)
+// for (let i = 0; i < results.poseLandmarks.length; i++) {
+//   const x = (results.poseLandmarks[i].x * video5.videoWidth)
+//   const y = (results.poseLandmarks[i].y * video5.videoHeight)
+//   console.log(i, x, y)
+//   drawNodes(x, y, "purple")
+// }
 function drawNodes(x, y, color) {
   ctx.beginPath();
   ctx.arc(x, y, 3, 0, 2 * Math.PI);
