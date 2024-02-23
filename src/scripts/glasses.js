@@ -1,7 +1,9 @@
-const video2 = document.getElementsByClassName('input_video2')[0];
-const controlsElement2 = document.getElementsByClassName('control2')[0];
+const video2 = document.getElementsByClassName('input_video')[0];
 const canvas = document.querySelector("#pose-canvas")
 const ctx = canvas.getContext("2d")
+
+canvas.width = 800
+canvas.height = 600
 
 import { models } from "./glasses_models.js"
 var idModel = 0
@@ -14,16 +16,6 @@ function onResultsFaceMesh(results) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   if (results.multiFaceLandmarks) {
     const listaNodos = [127, 356, 168];
-      for (let i = 0; i < listaNodos.length; i++) {
-        const x = results.multiFaceLandmarks[0][listaNodos[i]].x * video2.videoWidth
-        const y = results.multiFaceLandmarks[0][listaNodos[i]].y * video2.videoHeight
-        console.log(
-          i,
-          results.multiFaceLandmarks[0][listaNodos[i]].x,
-          results.multiFaceLandmarks[0][listaNodos[i]].y,
-          results.multiFaceLandmarks[0][listaNodos[i]].z)
-        //drawPoint(x, y, 2, "red")
-      }
     ctx.save()
     const x0 = results.multiFaceLandmarks[0][listaNodos[0]].x * video2.videoWidth
     const y0 = results.multiFaceLandmarks[0][listaNodos[0]].y * video2.videoHeight
@@ -43,13 +35,6 @@ function onResultsFaceMesh(results) {
   }
 }
 
-function drawPoint(x, y, r, c){
-  ctx.beginPath()
-  ctx.arc(x, y, r, 0, 2 * Math.PI);
-  ctx.fillStyle = c;
-  ctx.fill();
-  ctx.closePath()
-}
 
 const faceMesh = new FaceMesh({
   locateFile: (file) => {
@@ -62,16 +47,8 @@ const camera = new Camera(video2, {
   onFrame: async () => {
     await faceMesh.send({ image: video2 });
   },
-  width: 510,
-  height: 382
+  width: canvas.width,
+  height: canvas.height
 });
 
 camera.start();
-
-new ControlPanel(controlsElement2, {
-  selfieMode: true
-})
-  .on(options => {
-    video2.classList.toggle('selfie', options.selfieMode);
-    faceMesh.setOptions(options);
-  });

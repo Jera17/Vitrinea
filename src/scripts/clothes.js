@@ -1,20 +1,19 @@
-const video5 = document.getElementsByClassName('input_video5')[0];
-const controlsElement5 = document.getElementsByClassName('control5')[0];
+const video = document.getElementsByClassName('input_video')[0];
 const canvas = document.querySelector("#pose-canvas")
 const ctx = canvas.getContext("2d")
-
 import { models } from "./clothes_models.js"
+
+canvas.width = 800
+canvas.height = 600
 
 var idArrays = 0
 var cooldown = true
 
-
-
 function onResultsPose(results) {
-  ctx.clearRect(0, 0, video5.videoWidth, video5.videoHeight)
+  ctx.clearRect(0, 0, video.videoWidth, video.videoHeight)
     
-    canvas.width = video5.videoWidth;
-    canvas.height = video5.videoHeight;
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
 
     var Clothe1 = new Image();
     Clothe1.src = '../src/assets/images/clothes/Tshirt.png';
@@ -24,12 +23,12 @@ function onResultsPose(results) {
     Clothe3.src = '../src/assets/images/clothes/LongDress.png';
 
     //gesture
-    const Gx0 = (results.poseLandmarks[15].x * video5.videoWidth)
-    const Gy0 = (results.poseLandmarks[15].y * video5.videoHeight)
-    const Gx1 = (results.poseLandmarks[16].x * video5.videoWidth)
-    const Gy1 = (results.poseLandmarks[16].y * video5.videoHeight)
-    const Gx2 = (results.poseLandmarks[12].x * video5.videoWidth)-(results.poseLandmarks[12].x * video5.videoWidth * 0.5)
-    const Gy2 = (results.poseLandmarks[12].y * video5.videoHeight)
+    const Gx0 = (results.poseLandmarks[15].x * video.videoWidth)
+    const Gy0 = (results.poseLandmarks[15].y * video.videoHeight)
+    const Gx1 = (results.poseLandmarks[16].x * video.videoWidth)
+    const Gy1 = (results.poseLandmarks[16].y * video.videoHeight)
+    const Gx2 = (results.poseLandmarks[12].x * video.videoWidth)-(results.poseLandmarks[12].x * video.videoWidth * 0.5)
+    const Gy2 = (results.poseLandmarks[12].y * video.videoHeight)
     drawNodes(Gx0, Gy0, 'purple')
     drawNodes(Gx1, Gy1, 'cyan')
     drawNodes(Gx2, Gy2, 'black')
@@ -60,12 +59,12 @@ function onResultsPose(results) {
     drawNodes(polygon.x1+(polygon.tangX/2.5), polygon.y0-(polygon.tangX/4), 'green')
 
 function getCoords(polygonIdNodes){
-  const x0 = (results.poseLandmarks[polygonIdNodes[0]].x * video5.videoWidth)
-  const y0 = (results.poseLandmarks[polygonIdNodes[0]].y * video5.videoHeight)
-  const x1 = (results.poseLandmarks[polygonIdNodes[1]].x * video5.videoWidth)
-  const y1 = (results.poseLandmarks[polygonIdNodes[1]].y * video5.videoHeight)
-  const x2 = (results.poseLandmarks[polygonIdNodes[2]].x * video5.videoWidth)
-  const y2 = (results.poseLandmarks[polygonIdNodes[2]].y * video5.videoHeight)
+  const x0 = (results.poseLandmarks[polygonIdNodes[0]].x * video.videoWidth)
+  const y0 = (results.poseLandmarks[polygonIdNodes[0]].y * video.videoHeight)
+  const x1 = (results.poseLandmarks[polygonIdNodes[1]].x * video.videoWidth)
+  const y1 = (results.poseLandmarks[polygonIdNodes[1]].y * video.videoHeight)
+  const x2 = (results.poseLandmarks[polygonIdNodes[2]].x * video.videoWidth)
+  const y2 = (results.poseLandmarks[polygonIdNodes[2]].y * video.videoHeight)
   const tangX =  Math.sqrt(Math.pow((x1 - x0), 2) + Math.pow((y1 - y0), 2)) 
   const tangY =  Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2)) 
   const magX = x1-x0
@@ -83,8 +82,8 @@ function getCoords(polygonIdNodes){
 }
 // console.log(results.poseLandmarks)
 // for (let i = 0; i < results.poseLandmarks.length; i++) {
-//   const x = (results.poseLandmarks[i].x * video5.videoWidth)
-//   const y = (results.poseLandmarks[i].y * video5.videoHeight)
+//   const x = (results.poseLandmarks[i].x * video.videoWidth)
+//   const y = (results.poseLandmarks[i].y * video.videoHeight)
 //   console.log(i, x, y)
 //   drawNodes(x, y, "purple")
 // }
@@ -110,19 +109,11 @@ const pose = new Pose({locateFile: (file) => {
 }});
 pose.onResults(onResultsPose);
 
-const camera = new Camera(video5, {
+const camera = new Camera(video, {
   onFrame: async () => {
-    await pose.send({image: video5});
+    await pose.send({image: video});
   },
   width: 800,
   height: 600
 });
 camera.start();
-
-new ControlPanel(controlsElement5, {
-      selfieMode: true
-    })
-    .on(options => {
-      video5.classList.toggle('selfie', options.selfieMode);
-      pose.setOptions(options);
-    });

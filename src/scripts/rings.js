@@ -31,8 +31,8 @@ async function createDetector() {
 }
 
 async function main() {
-  const video = document.querySelector("#pose-video")
-  const canvas = document.querySelector("#pose-canvas")
+  const video = document.getElementsByClassName('input_video')[0];
+  var canvas = document.querySelector("#pose-canvas")
   const ctx = canvas.getContext("2d")
   const resultLayer = document.querySelector("#pose-results")
   const knownGestures = [...gestures]
@@ -45,7 +45,7 @@ async function main() {
     ctx.clearRect(0, 0, config.video.width, config.video.height)
     // get hand landmarks from video
     const hands = await detector.estimateHands(video, {
-      flipHorizontal: true
+      flipHorizontal: false
     })
 
     for (const hand of hands) {
@@ -84,7 +84,7 @@ async function initCamera(width, height, fps) {
     }
   }
 
-  const video = document.querySelector("#pose-video")
+  const video = document.getElementsByClassName('input_video')[0]
   video.width = width
   video.height = height
   // get video stream
