@@ -1,8 +1,9 @@
 // Import Objects from other .Js
 import { gestures } from "./rings_gestures.js"
 import { models } from "./rings_models.js"
+//Cam Config
 
-const canvas = document.querySelector("#pose-canvas")
+const config = {  video: { width: 640, height: 480, fps: 30 } }
 //Initialize variables just ONE time when code start
 var idModel;
 if (!idModel) {
@@ -31,6 +32,7 @@ async function createDetector() {
 
 async function main() {
   const video = document.getElementsByClassName('input_video')[0];
+  var canvas = document.querySelector("#pose-canvas")
   const ctx = canvas.getContext("2d")
   const resultLayer = document.querySelector("#pose-results")
   const knownGestures = [...gestures]
@@ -40,18 +42,18 @@ async function main() {
   // main estimation loop
   const estimateHands = async () => {
     // clear canvas overlay
-    ctx.clearRect(0, 0, canvas.width,  canvas.height)
+    ctx.clearRect(0, 0, config.video.width, config.video.height)
     // get hand landmarks from video
     const hands = await detector.estimateHands(video, {
       flipHorizontal: false
     })
 
     for (const hand of hands) {
-      console.log(canvas.width,canvas.height)
+      console.log(hand)
       drawImage(ctx, hand, fingerIndex)
       const keypoints3D = hand.keypoints3D.map(keypoint => [keypoint.x, keypoint.y, keypoint.z])
       const predictions = GE.estimate(keypoints3D, 9)
-      
+
       if (predictions.gestures.length > 0) {
         const result = predictions.gestures.reduce((p, c) => (p.score > c.score) ? p : c)
         const found = gestureStrings[result.name]
@@ -66,7 +68,7 @@ async function main() {
         }
       }
     }
-    setTimeout(() => { estimateHands() }, 10, )
+    setTimeout(() => { estimateHands() }, 1000 / config.video.fps, )
   }
   estimateHands()
 }
@@ -81,7 +83,7 @@ async function initCamera(width, height, fps) {
       frameRate: { max: fps }
     }
   }
-  
+
   const video = document.getElementsByClassName('input_video')[0]
   video.width = width
   video.height = height
@@ -158,11 +160,14 @@ function drawImage(ctx, hand, fingerIndex) {
 
 window.addEventListener("DOMContentLoaded", () => {
   initCamera(
-    canvas.width, canvas.height, 30
+    config.video.width, config.video.height, config.video.fps
   ).then(video => {
     video.play()
     video.addEventListener("loadeddata", event => {
       main()
 })
   })
+  const canvas = document.querySelector("#pose-canvas")
+  canvas.width = config.video.width
+  canvas.height = config.video.height
 })
