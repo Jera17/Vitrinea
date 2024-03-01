@@ -2,8 +2,8 @@ const video2 = document.getElementsByClassName('input_video')[0];
 const canvas = document.querySelector("#pose-canvas")
 const ctx = canvas.getContext("2d")
 
-canvas.width = 800
-canvas.height = 600
+canvas.width = 640
+canvas.height = 480
 
 import { models } from "./glasses_models.js"
 var idModel = 0
@@ -15,6 +15,16 @@ function onResultsFaceMesh(results) {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   if (results.multiFaceLandmarks) {
+    // for (let index = 0; index < results.multiFaceLandmarks[0].length; index++) {
+    //   const x = results.multiFaceLandmarks[0][index].x * video2.videoWidth
+    //   const y = results.multiFaceLandmarks[0][index].y * video2.videoHeight
+    //   ctx.beginPath();
+    //   ctx.arc(x, y, 3, 0, 2 * Math.PI);
+    //   ctx.fillStyle = 'blue';
+    //   ctx.fill();
+    //   ctx.stroke();
+      
+    // }
     const listaNodos = [127, 356, 168];
     ctx.save()
     const x0 = results.multiFaceLandmarks[0][listaNodos[0]].x * video2.videoWidth
