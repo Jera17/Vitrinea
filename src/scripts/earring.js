@@ -4,8 +4,8 @@ const ctx = canvas.getContext("2d")
 
 console.log(window.getComputedStyle(video).getPropertyValue("width"))
 
-canvas.width = 800
-canvas.height = 600
+canvas.width = 640
+canvas.height = 480
 
 import { models } from "./earring_models.js"
 var idModel = 0

@@ -3,8 +3,8 @@ const canvas = document.querySelector("#pose-canvas")
 const ctx = canvas.getContext("2d")
 import { models } from "./clothes_models.js"
 
-canvas.width = 800
-canvas.height = 600
+canvas.width = 640
+canvas.height = 480
 
 var idArrays = 0
 var cooldown = true
@@ -113,7 +113,7 @@ const camera = new Camera(video, {
   onFrame: async () => {
     await pose.send({image: video});
   },
-  width: 800,
-  height: 600
+  width: canvas.width,
+  height: canvas.height
 });
 camera.start();
