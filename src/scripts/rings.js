@@ -2,8 +2,10 @@
 import { gestures } from "./rings_gestures.js"
 import { models } from "./rings_models.js"
 //Cam Config
-
-const config = {  video: { width: 640, height: 480, fps: 30 } }
+const x = 400
+const y = x/(16/9)
+console.log(x)
+const config = { video: { width: x, height: y, fps: 30 } }
 //Initialize variables just ONE time when code start
 var idModel;
 if (!idModel) {
@@ -34,6 +36,7 @@ async function main() {
   const video = document.getElementsByClassName('input_video')[0];
   var canvas = document.querySelector("#pose-canvas")
   const ctx = canvas.getContext("2d")
+  console.log(video.width, canvas.height)
   const resultLayer = document.querySelector("#pose-results")
   const knownGestures = [...gestures]
   const GE = new fp.GestureEstimator(knownGestures)
@@ -49,7 +52,7 @@ async function main() {
     })
 
     for (const hand of hands) {
-      console.log(hand)
+      // console.log(hand)
       drawImage(ctx, hand, fingerIndex)
       const keypoints3D = hand.keypoints3D.map(keypoint => [keypoint.x, keypoint.y, keypoint.z])
       const predictions = GE.estimate(keypoints3D, 9)
@@ -68,7 +71,7 @@ async function main() {
         }
       }
     }
-    setTimeout(() => { estimateHands() }, 1000 / config.video.fps, )
+    setTimeout(() => { estimateHands() }, 1000 / config.video.fps,)
   }
   estimateHands()
 }
@@ -104,20 +107,20 @@ function updateModel(resultLayer, newId) {
 }
 
 function cambiarDedo() {
-  condicional = false 
+  condicional = false
   if (fingerIndex < 3) {
     fingerIndex++
-  }else{
+  } else {
     fingerIndex = 0
   }
-  setTimeout(() => {  condicional = true; }, 1000);
+  setTimeout(() => { condicional = true; }, 1000);
 }
 
 function drawImage(ctx, hand, fingerIndex) {
   //Set sources Images
   var imgFront = new Image();
   imgFront.src = models[idModel].front;
-    
+
   var imgBack = new Image();
   imgBack.src = models[idModel].back;
   //Chose finger
@@ -125,34 +128,34 @@ function drawImage(ctx, hand, fingerIndex) {
   const x1 = hand.keypoints[fingerIdNodes[fingerIndex]].x
   const y1 = hand.keypoints[fingerIdNodes[fingerIndex]].y
   const x2 = hand.keypoints[fingerIdNodes[fingerIndex] + 1].x
-  const y2 =  hand.keypoints[fingerIdNodes[fingerIndex] + 1].y
+  const y2 = hand.keypoints[fingerIdNodes[fingerIndex] + 1].y
 
   ctx.beginPath()
   ctx.save()
   //set the position center of the canva and from hand
-  const pstx = ((x1+x2)/2)
-  const psty = ((y1+y2)/2)
-  ctx.translate(pstx,psty)
+  const pstx = ((x1 + x2) / 2)
+  const psty = ((y1 + y2) / 2)
+  ctx.translate(pstx, psty)
 
   //set angle of the image
   var componenteX = 1
-  if((x1-x2) > 0 ){
+  if ((x1 - x2) > 0) {
     componenteX = -1
   }
   const pendiente = ((y2 - y1) / (x2 - x1))
   const angleHand = Math.atan(pendiente)
-  ctx.rotate(angleHand+((Math.PI/2)*componenteX))
+  ctx.rotate(angleHand + ((Math.PI / 2) * componenteX))
 
   //Scale
-  var FingerLenght = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2)) 
+  var FingerLenght = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2))
 
   //Flip
   var HandRotationZ = 0
-  HandRotationZ = ((hand.keypoints3D[5].z + hand.keypoints3D[10].z + hand.keypoints3D[17].z + (hand.keypoints3D[0].z/10))/4)
-  
+  HandRotationZ = ((hand.keypoints3D[5].z + hand.keypoints3D[10].z + hand.keypoints3D[17].z + (hand.keypoints3D[0].z / 10)) / 4)
+
   const isLeftHand = hand.handedness === 'Left';
   const selectedImage = (isLeftHand && HandRotationZ > 0) || (!isLeftHand && HandRotationZ > 0) ? imgFront : imgBack
-  ctx.drawImage(selectedImage, (0 - FingerLenght / 4), (0 - FingerLenght/2) / 1.25, FingerLenght / 2, FingerLenght / 2 )
+  ctx.drawImage(selectedImage, (0 - FingerLenght / 4), (0 - FingerLenght / 2) / 1.25, FingerLenght / 2, FingerLenght / 2)
 
   ctx.restore()
   ctx.closePath()
@@ -165,9 +168,6 @@ window.addEventListener("DOMContentLoaded", () => {
     video.play()
     video.addEventListener("loadeddata", event => {
       main()
-})
+    })
   })
-  const canvas = document.querySelector("#pose-canvas")
-  canvas.width = config.video.width
-  canvas.height = config.video.height
 })

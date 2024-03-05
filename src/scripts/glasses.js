@@ -2,7 +2,6 @@ const video = document.getElementsByClassName('input_video')[0];
 const canvas = document.querySelector("#pose-canvas")
 const ctx = canvas.getContext("2d")
 
-
 import { models } from "./glasses_models.js"
 var idModel = 0
 var glasses = new Image();

@@ -2,12 +2,15 @@
 #pose-canvas {
   transform: scaleX(-1);
   position: absolute;
-  align-items: center;
-  width: 90vw;
-  height: width / 1.3333;
+  width: 95vw;
+  height: width / 2;
+  /* height: width / 1.5; */
+  /* height: width / 1.333; */
+  /* height: 90vh; */
 }
 .pose-result {
   width: 100vw;
+  /* height: width / 2; */
   height: width / 1.3333;
   position: absolute;
   font-size: 40px;
