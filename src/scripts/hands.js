@@ -15,8 +15,7 @@ function onResultsHands(results) {
 
   if (results.multiHandLandmarks) {
     for (let index = 0; index < results.multiHandLandmarks[0].length; index++) {
-      const isRight = results.multiHandedness[0].label === 'Right';
-      
+      const isRight = (results.multiHandedness[0].label === 'Left') ? 1 : -1;
       drawImage(results.multiHandLandmarks[0], isRight);
     }
   }
@@ -87,19 +86,15 @@ const point2A = [rslt[10].x, rslt[10].y, 0];
 const point1B = [rslt[9].x, rslt[9].y, 0];
 const point2B = [rslt[13].x, rslt[13].y, 0];
 
-
-
 const result = crossProductFromPoints(point1A, point2A, point1B, point2B);
 
-
 //ARREGLAR QUE RECONOZCA QUE MANO ES CUAL Y SEGUN ESO ES POSITIVO O NEGATIVO
-var valor = (isRight === 'Right') ? 1 : -1;
-console.log(result[2], valor)
+// console.log(result[2], isRight)
 
-if ((result[2]*valor) < 0) {
-  console.log('Atras');
+if ((result[2]*isRight) < 0) {
+  console.log('palma');
 } else {
-  console.log('Adelante');
+  console.log('dorso');
 }
 
 
