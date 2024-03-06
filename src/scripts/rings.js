@@ -78,9 +78,6 @@ function drawImage(rslt, isRight) {
   ctx.closePath()
 }
 
-
-
-
 const hands = new Hands({
   locateFile: (file) => {
     return `https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.1/${file}`;
