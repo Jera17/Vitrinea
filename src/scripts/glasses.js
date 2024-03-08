@@ -3,6 +3,7 @@ const conteiner = document.getElementsByClassName('conteiner');
 const canvas = document.querySelector("#pose-canvas");
 const ctx = canvas.getContext("2d");
 const buttons = document.querySelectorAll(".my-button");
+const canvaDrawable = document.getElementsByClassName('camera')[0];
 
 import { models } from "./glasses_models.js"
 var idModel = 0
@@ -17,9 +18,10 @@ var zoomInAndOut = 0
 var newScale = 0
 
 function onResultsFaceMesh(results) {
-  conteiner.height = video.videoHeight;
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
+  console.log(video.clientHeight)
+  console.log(canvaDrawable.height)
 
   ctx.clearRect(0, 0, video.videoWidth, video.videoHeight)
 
