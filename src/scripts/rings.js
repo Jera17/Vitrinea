@@ -3,6 +3,7 @@ const canvas = document.querySelector("#pose-canvas")
 const ctx = canvas.getContext("2d")
 import { models } from "./rings_models.js"
 var idModel = 0
+console.log(document.getElementsByClassName('input_video')[0])
 
 function onResultsHands(results) {
   //set Canva
@@ -84,10 +85,17 @@ const hands = new Hands({
   }
 });
 hands.onResults(onResultsHands);
-
+//720p
 const camera = new Camera(video, {
   onFrame: async () => { await hands.send({ image: video }); },
-  width: canvas.width,
-  height: canvas.height
+  width: 1280,
+  height: 720
 });
 camera.start();
+//480p
+// const camera = new Camera(video, {
+//   onFrame: async () => { await hands.send({ image: video }); },
+//   width: 854 ,
+//   height: 480
+// });
+// camera.start();

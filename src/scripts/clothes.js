@@ -7,6 +7,8 @@ var idArrays = 0
 var cooldown = true
 
 function onResultsPose(results) {
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
 
   ctx.clearRect(0, 0, video.videoWidth, video.videoHeight)
 
@@ -111,7 +113,7 @@ const camera = new Camera(video, {
   onFrame: async () => {
     await pose.send({ image: video });
   },
-  width: canvas.width,
-  height: canvas.height
+  width: 1280,
+  height: 720
 });
 camera.start();

@@ -7,9 +7,9 @@
     <link rel="stylesheet" href="../src/styles/Navbar.css">
     <link rel="stylesheet" href="../src/styles/cameraCanva.css">
     <title>Vitrinea Ar</title>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.1/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils@0.1/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@0.1/face_mesh.js" crossorigin="anonymous"></script>
 </head>
 
@@ -32,8 +32,8 @@
             <button class="dropbtn">Hand</button>
             <div class="dropdown-content">
                 <a href="./rings.html">Ring</a>
-                <a href="./hands.html">hands</a>
-                <a href="./hands2.html">hands2</a>
+                <a href="#item2">hands</a>
+                <a href="#item3">hands2</a>
             </div>
         </div>
         <div class="dropdown">
@@ -46,13 +46,23 @@
         </div>
     </nav>
 
-    <section>
-      <div>
-        <video class="input_video"></video>
-        <canvas id="pose-canvas"></canvas>
-        <script src="../src/scripts/glasses.js" type="module"></script>
-      </div>
-    </section>
+    <div class="container">
+        <div class="camera">
+            <video class="input_video"></video>
+            <canvas id="pose-canvas"></canvas>
+        </div>
+        <div class="buttons">
+            <button id="Up" class="my-button">↑</button>
+            <button id="Down" class="my-button">↓</button>
+            <button id="Left" class="my-button">←</button>
+            <button id="Right" class="my-button">→</button>
+            <button id="ZoomIn" class="my-button">+</button>
+            <button id="ZoomOut" class="my-button">-</button>
+            <button id="ChangeLeft" class="my-button">↩︎</button>
+            <button id="ChangeRight" class="my-button">↪︎</button>
+        </div>
+    </div>
+    <script src="../src/scripts/glasses.js" type="module"></script>
 </body>
 
 </html>

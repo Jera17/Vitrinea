@@ -1,21 +1,38 @@
+canvas{
+  aspect-ratio: auto;
+}
 .input_video,
-#pose-canvas {
+#pose-canvas{
   transform: scaleX(-1);
   position: absolute;
-  width: 95vw;
-  height: width / 2;
-  /* height: width / 1.5; */
-  /* height: width / 1.333; */
-  /* height: 90vh; */
-}
-.pose-result {
   width: 100vw;
-  /* height: width / 2; */
-  height: width / 1.3333;
-  position: absolute;
-  font-size: 40px;
-  text-align: left;
-  padding: 0 0 0 4px;
-  color: white;
-  text-shadow: -1px -1px 1px black, 1px -1px 1px black, -1px 1px 1px black, 1px 1px 1px black;
+}
+.camera {
+  width: 100vw;
+  /* height: 80vh; */
+  height: calc(100vw / 1.7778);
+  display: inline-block;
+}
+.container {
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+}
+.buttons {
+  z-index: 3;
+  flex: 1;
+  display: flex;
+  background-color: #333;
+  justify-content: space-between;
+  padding: 8px;
+}
+
+.buttons button {
+  width: 80px; /* Set a fixed width */
+  height: 40px; /* Set a fixed height */
+  color: #fff;
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
 }
