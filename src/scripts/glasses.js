@@ -9,6 +9,7 @@ import { models } from "./glasses_models.js"
 var idModel = 0
 var glasses = new Image();
 glasses.src = models[idModel].img
+
 const manualAjust = 5
 var upAndDown = 0
 var newYposition = 0
@@ -24,9 +25,7 @@ function onResultsFaceMesh(results) {
   console.log(canvaDrawable.height)
 
   ctx.clearRect(0, 0, video.videoWidth, video.videoHeight)
-
   if (results.multiFaceLandmarks) {
-
     imageDraw(results.multiFaceLandmarks[0])
   }
 }
@@ -89,7 +88,6 @@ function updateCounter(operator) {
     idModel = (idModel - 1 + 3) % 3;
   }
   glasses.src = models[idModel].img
-  console.log(idModel, glasses)
 }
 function imageDraw(rsl) {
   const nodes = [127, 356, 168];
