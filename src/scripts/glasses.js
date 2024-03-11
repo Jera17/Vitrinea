@@ -1,30 +1,27 @@
 const video = document.getElementsByClassName('input_video')[0];
-const conteiner = document.getElementsByClassName('conteiner');
 const canvas = document.querySelector("#pose-canvas");
 const ctx = canvas.getContext("2d");
 const buttons = document.querySelectorAll(".my-button");
-const canvaDrawable = document.getElementsByClassName('camera')[0];
 
 import { models } from "./glasses_models.js"
 var idModel = 0
 var glasses = new Image();
 glasses.src = models[idModel].img
 
-const manualAjust = 5
+const manualAjust = 10
+var translationDistance = 5
 var upAndDown = 0
 var newYposition = 0
 var leftAndRight = 0
 var newXposition = 0
 var zoomInAndOut = 0
-var newScale = 0
+var newScale = 1
 
 function onResultsFaceMesh(results) {
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
-  console.log(video.clientHeight)
-  console.log(canvaDrawable.height)
-
   ctx.clearRect(0, 0, video.videoWidth, video.videoHeight)
+
   if (results.multiFaceLandmarks) {
     imageDraw(results.multiFaceLandmarks[0])
   }
@@ -34,46 +31,20 @@ buttons.forEach(function (button) {
   button.addEventListener("click", function () {
     switch (button.id) {
       case "Up":
-        if (upAndDown < manualAjust) {
-          upAndDown++
-          newYposition = upAndDown * canvas.height/100
-        }
-        break;
       case "Down":
-        if (upAndDown > -manualAjust) {
-          upAndDown--
-          newYposition = upAndDown * canvas.height/100
-        }
+        updateY(button.id);
         break;
       case "Left":
-        if (leftAndRight < manualAjust) {
-          leftAndRight++
-          newXposition = leftAndRight * canvas.width/100
-        }
-        break;
       case "Right":
-        if (leftAndRight > -manualAjust) {
-          leftAndRight--
-          newXposition = leftAndRight * canvas.width/100
-        }
+        updateX(button.id);
         break;
       case "ZoomIn":
-        if (zoomInAndOut < manualAjust) {
-          zoomInAndOut++
-          newScale = zoomInAndOut * canvas.width/100
-        }
-        break;
       case "ZoomOut":
-        if (zoomInAndOut > -manualAjust) {
-          zoomInAndOut--
-          newScale = zoomInAndOut * canvas.width/100
-        }
+        updateZoom(button.id);
         break;
       case "ChangeLeft":
-        updateCounter('-');
-        break;
       case "ChangeRight":
-        updateCounter('+');
+        updateCounter(button.id);
         break;
       default:
         console.log("Unknown button clicked");
@@ -81,14 +52,39 @@ buttons.forEach(function (button) {
   });
 });
 
-function updateCounter(operator) {
-  if (operator === '+') {
-    idModel = (idModel + 1) % 3;
-  } else if (operator === '-') {
-    idModel = (idModel - 1 + 3) % 3;
+function updateY(buttonId) {
+  if (buttonId === "Up" && upAndDown < manualAjust) {
+    upAndDown++;
+  } else if (buttonId === "Down" && upAndDown > -manualAjust) {
+    upAndDown--;
   }
-  glasses.src = models[idModel].img
+  newYposition = upAndDown * translationDistance;
 }
+
+function updateX(buttonId) {
+  if (buttonId === "Left" && leftAndRight < manualAjust) {
+    leftAndRight++;
+  } else if (buttonId === "Right" && leftAndRight > -manualAjust) {
+    leftAndRight--;
+  }
+  newXposition = leftAndRight * translationDistance;
+}
+
+function updateZoom(direction) {
+  const delta = (direction === "ZoomIn") ? 1 : -1;
+  if (zoomInAndOut + delta >= -manualAjust && zoomInAndOut + delta <= manualAjust) {
+    zoomInAndOut += delta;
+    newScale = 1 + (zoomInAndOut * 0.05);
+  }
+}
+
+function updateCounter(operator) {
+  idModel = (operator === 'ChangeRight') ? (idModel + 1) % models.length : (idModel - 1 + 3) % models.length;
+  console.log(idModel, (idModel + 1) % models.length, (idModel - 1 + models.length) % models.length)
+  glasses.src = models[idModel].img;
+}
+
+
 function imageDraw(rsl) {
   const nodes = [127, 356, 168];
   ctx.save()
@@ -96,16 +92,14 @@ function imageDraw(rsl) {
   const y0 = rsl[nodes[0]].y * video.videoHeight
   const x1 = rsl[nodes[1]].x * video.videoWidth
   const y1 = rsl[nodes[1]].y * video.videoHeight
-  const xGlasses = Math.sqrt(Math.pow((x1 - x0), 2) + Math.pow((y1 - y0), 2)) + newScale
-  const yGlasses = (xGlasses * glasses.height) / glasses.width
-  const imageX0 = (rsl[nodes[2]].x * video.videoWidth)
-  const imageY0 = rsl[nodes[2]].y * video.videoHeight
-
-  ctx.translate(imageX0, imageY0)
-  const pendiente = ((y1 - y0) / (x1 - x0))
-  const angleHead = Math.atan(pendiente)
+  const sizeX = Math.sqrt(Math.pow((x1 - x0), 2) + Math.pow((y1 - y0), 2)) * newScale
+  const sizeY = (sizeX * glasses.height) / glasses.width
+  const originX = (rsl[nodes[2]].x * video.videoWidth)
+  const originY = rsl[nodes[2]].y * video.videoHeight
+  ctx.translate(originX, originY)
+  const angleHead = Math.atan((y1 - y0) / (x1 - x0))
   ctx.rotate(angleHead)
-  ctx.drawImage(glasses, 0 - (xGlasses / 2) + newXposition, 0 - (yGlasses / 3) - newYposition, xGlasses, yGlasses)
+  ctx.drawImage(glasses, 0 - (sizeX / 2) + newXposition, 0 - (sizeY / 3) - newYposition, sizeX, sizeY)
   ctx.restore()
 }
 

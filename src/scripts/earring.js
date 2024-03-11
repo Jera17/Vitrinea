@@ -1,52 +1,104 @@
 const video = document.getElementsByClassName('input_video')[0];
 const canvas = document.querySelector("#pose-canvas")
 const ctx = canvas.getContext("2d")
-
-console.log(window.getComputedStyle(video).getPropertyValue("width"))
+const buttons = document.querySelectorAll(".my-button");
 
 import { models } from "./earring_models.js"
 var idModel = 0
 var EarringModel = new Image();
 EarringModel.src = models[idModel].img
 
+const manualAjust = 10
+var translationDistance = 2
+var upAndDown = 0
+var newYposition = 0
+var leftAndRight = 0
+var newXposition = 0
+var zoomInAndOut = 0
+var newScale = 1
+
 function onResultsFaceMesh(results) {
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
-  document.body.classList.add('loaded');
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   if (results.multiFaceLandmarks) {
-    for (let index = 0; index < results.multiFaceLandmarks[0].length; index++) {
-      drawNodes(results.multiFaceLandmarks[0][index].x * canvas.width, results.multiFaceLandmarks[0][index].y * canvas.height, 2, "green")
-    }
-    drawSimulation(356, 323, 401, 1)
-    drawSimulation(127, 93, 177, -1)
+    imageDraw(results.multiFaceLandmarks[0], 356, 323, 401, 1)
+    imageDraw(results.multiFaceLandmarks[0], 127, 93, 177, -1)
   }
+}
 
-
-  function drawSimulation(Node1, Node2, Node3, Orientation) {
-    drawNodes(results.multiFaceLandmarks[0][Node1].x * canvas.width, results.multiFaceLandmarks[0][Node1].y * canvas.height, 3, "yellow")
-    drawNodes(results.multiFaceLandmarks[0][Node2].x * canvas.width, results.multiFaceLandmarks[0][Node2].y * canvas.height, 3, "blue")
-    drawNodes(results.multiFaceLandmarks[0][Node3].x * canvas.width, results.multiFaceLandmarks[0][Node3].y * canvas.height, 3, "red")
-    const x0 = results.multiFaceLandmarks[0][Node2].x * canvas.width
-    const y0 = results.multiFaceLandmarks[0][Node2].y * canvas.height
-    const x1 = results.multiFaceLandmarks[0][Node3].x * canvas.width
-    const xEarring = ((x0 + x1) / 2) + ((x0 - x1) * 0.75)
-    if (x0 * Orientation > x1 * Orientation) {
-      const imageY0 = results.multiFaceLandmarks[0][Node1].y * canvas.height
-      const imageY1 = results.multiFaceLandmarks[0][Node2].y * canvas.height
-      const imageY = (imageY1 - imageY0)
-      const imageX = imageY * 0.75
-      ctx.drawImage(EarringModel, xEarring - (imageX / 2), y0, imageX, imageY)
+buttons.forEach(function (button) {
+  button.addEventListener("click", function () {
+    switch (button.id) {
+      case "Up":
+      case "Down":
+        updateY(button.id);
+        break;
+      case "Left":
+      case "Right":
+        updateX(button.id);
+        break;
+      case "ZoomIn":
+      case "ZoomOut":
+        updateZoom(button.id);
+        break;
+      case "ChangeLeft":
+      case "ChangeRight":
+        updateCounter(button.id);
+        break;
+      default:
+        console.log("Unknown button clicked");
     }
-  }
+  });
+});
 
-  function drawNodes(x, y, r, color) {
-    ctx.beginPath();
-    ctx.arc(x, y, r, 0, 2 * Math.PI);
-    ctx.fillStyle = color;
-    ctx.fill();
-    ctx.closePath()
+function updateY(buttonId) {
+  if (buttonId === "Up" && upAndDown < manualAjust) {
+    upAndDown++;
+  } else if (buttonId === "Down" && upAndDown > -manualAjust) {
+    upAndDown--;
+  }
+  newYposition = upAndDown * translationDistance;
+}
+
+function updateX(buttonId) {
+  if (buttonId === "Left" && leftAndRight < manualAjust) {
+    leftAndRight++;
+  } else if (buttonId === "Right" && leftAndRight > -manualAjust) {
+    leftAndRight--;
+  }
+  newXposition = leftAndRight * translationDistance;
+}
+
+function updateZoom(direction) {
+  const delta = (direction === "ZoomIn") ? 1 : -1;
+  if (zoomInAndOut + delta >= -manualAjust && zoomInAndOut + delta <= manualAjust) {
+    zoomInAndOut += delta;
+    newScale = 1 + (zoomInAndOut * 0.05);
+    console.log(newScale)
+  }
+}
+
+function updateCounter(operator) {
+  idModel = (operator === 'ChangeRight') ? (idModel + 1) % models.length : (idModel - 1 + models.length) % models.length;
+  console.log(idModel, (idModel + 1) % models.length, (idModel - 1 + 3) % models.length)
+  glasses.src = models[idModel].img;
+}
+
+function imageDraw(rsl, Node1, Node2, Node3, Orientation) {
+  const x0 = rsl[Node2].x * canvas.width
+  const y0 = rsl[Node2].y * canvas.height
+  const x1 = rsl[Node3].x * canvas.width
+  const y1 = rsl[Node3].y * canvas.height
+  // (x0 + x1) / 2) get the point  ((x0 - x1) * 0.75)
+  const xEarring = ((x0 + x1) / 2) + ((x0 - x1) * 0.75)
+  if (x0 * Orientation > x1 * Orientation) {
+    const imageY0 = rsl[Node1].y * canvas.height
+    const imageY1 = rsl[Node2].y * canvas.height
+    const imageY = (imageY1 - imageY0) * newScale
+    const imageX = (imageY * EarringModel.width)/EarringModel.height
+    ctx.drawImage(EarringModel, xEarring - (imageX / 2) + newXposition, (y0 + y1) / 2 - newYposition, imageX, imageY)
   }
 }
 

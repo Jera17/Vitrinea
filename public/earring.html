@@ -12,48 +12,24 @@
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@0.1/face_mesh.js" crossorigin="anonymous"></script>
 </head>
-
 <body>
-  <header>
-    <h1>Vitrinea Ar</h1>
-  </header>
-
-  <nav>
-    <a href="/index.html">Home</a>
-    <div class="dropdown">
-      <button class="dropbtn">Face</button>
-      <div class="dropdown-content">
-        <a href="./glasses.html">Glases</a>
-        <a href="./earring.html">Earring</a>
-        <a href="#item3">Item 3</a>
-      </div>
+    <div class="container">
+        <div class="camera">
+            <video class="input_video"></video>
+            <canvas id="pose-canvas"></canvas>
+        </div>
+        <div class="buttons">
+            <button id="Up" class="my-button">▲</button>
+            <button id="Down" class="my-button">▼</button>
+            <button id="Left" class="my-button">◄</button>
+            <button id="Right" class="my-button">►</button>
+            <button id="ZoomIn" class="my-button">+</button>
+            <button id="ZoomOut" class="my-button">-</button>
+            <button id="ChangeLeft" class="my-button">↩︎</button>
+            <button id="ChangeRight" class="my-button">↪︎</button>
+        </div>
     </div>
-    <div class="dropdown">
-      <button class="dropbtn">Hand</button>
-      <div class="dropdown-content">
-        <a href="./rings.html">Ring</a>
-        <a href="#item2">Item 2</a>
-        <a href="#item3">Item 3</a>
-      </div>
-    </div>
-    <div class="dropdown">
-      <button class="dropbtn">Body</button>
-      <div class="dropdown-content">
-        <a href="./clothes.html">Clothes</a>
-        <a href="#item2">Item 2</a>
-        <a href="#item3">Item 3</a>
-      </div>
-    </div>
-  </nav>
-
-  <section>
-    <div>
-
-      <video class="input_video"></video>
-      <canvas id="pose-canvas"></canvas>
-      <script src="..\src\scripts\earring.js" type="module"></script>
-    </div>
-  </section>
+    <script src="../src/scripts/earring.js" type="module"></script>
 </body>
 
 </html>

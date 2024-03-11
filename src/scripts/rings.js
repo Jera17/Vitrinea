@@ -1,33 +1,98 @@
 const video = document.getElementsByClassName('input_video')[0];
 const canvas = document.querySelector("#pose-canvas")
 const ctx = canvas.getContext("2d")
+const buttons = document.querySelectorAll(".my-button");
+
 import { models } from "./rings_models.js"
 var idModel = 0
-console.log(document.getElementsByClassName('input_video')[0])
+var imgFront = new Image();
+imgFront.src = models[idModel].front;
+
+var imgBack = new Image();
+imgBack.src = models[idModel].back;
+
+const manualAjust = 10
+var translationDistance = 5
+var upAndDown = 0
+var newYposition = 0
+var leftAndRight = 0
+var newXposition = 0
+var zoomInAndOut = 0
+var newScale = 1
 
 function onResultsHands(results) {
-  //set Canva
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
-  ctx.save();
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   if (results.multiHandLandmarks) {
-    for (let index = 0; index < results.multiHandLandmarks[0].length; index++) {
-      const isRight = (results.multiHandedness[0].label === 'Left') ? 1 : -1;
-      drawImage(results.multiHandLandmarks[0], isRight);
-    }
+    const isRight = (results.multiHandedness[0].label === 'Left') ? 1 : -1;
+    drawImage(results.multiHandLandmarks[0], isRight);
   }
 }
-ctx.restore();
+
+buttons.forEach(function (button) {
+  button.addEventListener("click", function () {
+    switch (button.id) {
+      case "Up":
+      case "Down":
+        updateY(button.id);
+        break;
+      case "Left":
+      case "Right":
+        updateX(button.id);
+        break;
+      case "ZoomIn":
+      case "ZoomOut":
+        updateZoom(button.id);
+        break;
+      case "ChangeLeft":
+      case "ChangeRight":
+        updateCounter(button.id);
+        break;
+      default:
+        console.log("Unknown button clicked");
+    }
+  });
+});
+
+function updateY(buttonId) {
+  if (buttonId === "Up" && upAndDown < manualAjust) {
+    upAndDown++;
+  } else if (buttonId === "Down" && upAndDown > -manualAjust) {
+    upAndDown--;
+  }
+  newYposition = upAndDown * translationDistance;
+}
+
+function updateX(buttonId) {
+  if (buttonId === "Left" && leftAndRight < manualAjust) {
+    leftAndRight++;
+  } else if (buttonId === "Right" && leftAndRight > -manualAjust) {
+    leftAndRight--;
+  }
+  newXposition = leftAndRight * translationDistance;
+}
+
+function updateZoom(direction) {
+  const delta = (direction === "ZoomIn") ? 1 : -1;
+  if (zoomInAndOut + delta >= -manualAjust && zoomInAndOut + delta <= manualAjust) {
+    zoomInAndOut += delta;
+    newScale = 1 + (zoomInAndOut * 0.05);
+  }
+}
+
+function updateCounter(operator) {
+  idModel = (operator === 'ChangeRight') ? (idModel + 1) % models.length : (idModel - 1 + 3) % models.length;
+  console.log(idModel, (idModel + 1) % models.length, (idModel - 1 + models.length) % models.length)
+
+  
+imgFront.src = models[idModel].front;
+imgBack.src = models[idModel].back;
+}
 
 function drawImage(rslt, isRight) {
-  var imgFront = new Image();
-  imgFront.src = models[idModel].front;
-
-  var imgBack = new Image();
-  imgBack.src = models[idModel].back;
-
+  ctx.save();
   const x1 = rslt[9].x * video.videoWidth
   const y1 = rslt[9].y * video.videoHeight
   const x2 = rslt[10].x * video.videoWidth
@@ -50,7 +115,7 @@ function drawImage(rslt, isRight) {
   ctx.rotate(angleHand + ((Math.PI / 2) * componenteX))
 
   //Scale
-  var FingerLenght = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2))
+  var FingerLenght = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2))  * newScale
 
   //Flip (Usando producto punto)
   function crossProductFromPoints(point1A, point2A, point1B, point2B) {
@@ -73,7 +138,7 @@ function drawImage(rslt, isRight) {
   const result = crossProductFromPoints(point1A, point2A, point1B, point2B);
 
   const selectedImage = ((result[2] * isRight) > 0) ? imgFront : imgBack
-  ctx.drawImage(selectedImage, (0 - FingerLenght / 4), (0 - FingerLenght / 2) / 1.25, FingerLenght / 2, FingerLenght / 2)
+  ctx.drawImage(selectedImage, (0 - FingerLenght / 4) + newXposition, ((0 - FingerLenght / 2) / 1.25) - newYposition, FingerLenght / 2, FingerLenght / 2)
 
   ctx.restore()
   ctx.closePath()
