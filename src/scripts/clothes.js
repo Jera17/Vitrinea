@@ -12,13 +12,6 @@ function onResultsPose(results) {
 
   ctx.clearRect(0, 0, video.videoWidth, video.videoHeight)
 
-  var Clothe1 = new Image();
-  Clothe1.src = '../src/assets/images/clothes/Tshirt.png';
-  var Clothe2 = new Image();
-  Clothe2.src = '../src/assets/images/clothes/ShortDress.png';
-  var Clothe3 = new Image();
-  Clothe3.src = '../src/assets/images/clothes/LongDress.png';
-
   //gesture
   const Gx0 = (results.poseLandmarks[15].x * video.videoWidth)
   const Gy0 = (results.poseLandmarks[15].y * video.videoHeight)
@@ -45,13 +38,10 @@ function onResultsPose(results) {
   }
 
   const polygon = getCoords(models[idArrays].nodes)
-  var EarringModel = new Image();
-  EarringModel.src = models[idArrays].img
-  console.log(idArrays)
-  console.log(EarringModel)
+  var clotheModel = new Image();
+  clotheModel.src = models[idArrays].img
 
-
-  ctx.drawImage(EarringModel, polygon.x0 - (polygon.tangX / 2.5), polygon.y0 - (polygon.tangX / 4), polygon.tangX + (polygon.tangX / 1.25), polygon.tangY + (polygon.tangX / 4))
+  ctx.drawImage(clotheModel, polygon.x0 - (polygon.tangX / 2.5), polygon.y0 - (polygon.tangX / 4), polygon.tangX + (polygon.tangX / 1.25), polygon.tangY + (polygon.tangX / 4))
 
   drawNodes(polygon.x0 - (polygon.tangX / 2.5), polygon.y0 - (polygon.tangX / 4), 'green')
   drawNodes(polygon.x1 + (polygon.tangX / 2.5), polygon.y0 - (polygon.tangX / 4), 'green')

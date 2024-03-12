@@ -19,6 +19,7 @@ var leftAndRight = 0
 var newXposition = 0
 var zoomInAndOut = 0
 var newScale = 1
+var fingerId = 1
 
 function onResultsHands(results) {
   canvas.width = video.videoWidth;
@@ -49,6 +50,10 @@ buttons.forEach(function (button) {
       case "ChangeLeft":
       case "ChangeRight":
         updateCounter(button.id);
+        break;
+      case "ChangeFingerLeft":
+      case "ChangeFingerRight":
+        updateFinger(button.id);
         break;
       default:
         console.log("Unknown button clicked");
@@ -84,19 +89,21 @@ function updateZoom(direction) {
 
 function updateCounter(operator) {
   idModel = (operator === 'ChangeRight') ? (idModel + 1) % models.length : (idModel - 1 + 3) % models.length;
-  console.log(idModel, (idModel + 1) % models.length, (idModel - 1 + models.length) % models.length)
+  imgFront.src = models[idModel].front;
+  imgBack.src = models[idModel].back;
+}
 
-  
-imgFront.src = models[idModel].front;
-imgBack.src = models[idModel].back;
+function updateFinger(operator) {
+  fingerId = (operator === 'ChangeFingerRight') ? (fingerId + 1) % 4 : (fingerId - 1 + 4) % 4;
 }
 
 function drawImage(rslt, isRight) {
   ctx.save();
-  const x1 = rslt[9].x * video.videoWidth
-  const y1 = rslt[9].y * video.videoHeight
-  const x2 = rslt[10].x * video.videoWidth
-  const y2 = rslt[10].y * video.videoHeight
+  const fingerIdNodes = [5, 9, 13, 17]
+  const x1 = rslt[fingerIdNodes[fingerId]].x * video.videoWidth
+  const y1 = rslt[fingerIdNodes[fingerId]].y * video.videoHeight
+  const x2 = rslt[fingerIdNodes[fingerId] + 1].x * video.videoWidth
+  const y2 = rslt[fingerIdNodes[fingerId] + 1].y * video.videoHeight
 
   ctx.beginPath()
   ctx.save()
@@ -115,7 +122,7 @@ function drawImage(rslt, isRight) {
   ctx.rotate(angleHand + ((Math.PI / 2) * componenteX))
 
   //Scale
-  var FingerLenght = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2))  * newScale
+  var FingerLenght = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2)) * newScale
 
   //Flip (Usando producto punto)
   function crossProductFromPoints(point1A, point2A, point1B, point2B) {
