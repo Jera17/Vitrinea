@@ -1,26 +1,29 @@
-const video5 = document.getElementsByClassName('input_video5')[0];
-const controlsElement5 = document.getElementsByClassName('control5')[0];
+const video = document.getElementsByClassName('input_video')[0];
 const canvas = document.querySelector("#pose-canvas")
 const ctx = canvas.getContext("2d")
+const buttons = document.querySelectorAll(".my-button");
 
-var idArrays = 0
-var cooldown = true
+import { models } from "./bracelets_models.js"
+var idModel = 0
+var imgFront = new Image();
+imgFront.src = models[idModel].front;
+var imgBack = new Image();
+imgBack.src = models[idModel].back;
+var forearm = ""
 
 function onResultsPose(results) {
-  ctx.clearRect(0, 0, video5.videoWidth, video5.videoHeight)
-  canvas.width = video5.videoWidth;
-  canvas.height = video5.videoHeight;
+  ctx.clearRect(0, 0, video.videoWidth, video.videoHeight)
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
 
-  var Clothe1 = new Image();
-  Clothe1.src = 'assets/Tshirt.png';
   //gesture
   const NodesForearm = [13, 14]
 
   for (let i = 0; i < NodesForearm.length; i++) {
-    const x1 = results.poseLandmarks[NodesForearm[i]].x * video5.videoWidth
-    const y1 = results.poseLandmarks[NodesForearm[i]].y * video5.videoHeight
-    const x2 = results.poseLandmarks[NodesForearm[i]+2].x * video5.videoWidth
-    const y2 = results.poseLandmarks[NodesForearm[i]+2].y * video5.videoHeight
+    const x1 = results.poseLandmarks[NodesForearm[i]].x * video.videoWidth
+    const y1 = results.poseLandmarks[NodesForearm[i]].y * video.videoHeight
+    const x2 = results.poseLandmarks[NodesForearm[i]+2].x * video.videoWidth
+    const y2 = results.poseLandmarks[NodesForearm[i]+2].y * video.videoHeight
     if(i==0){
       forearm = 'derecha'
     }else if(i==1){
@@ -50,9 +53,9 @@ function drawLines(x1, y1, x2, y2, color) {
 }
 function updateCounter(operator) {
   if (operator === '+') {
-    idArrays = (idArrays + 1) % 3;
+    idModel = (idModel + 1) % 3;
   } else if (operator === '-') {
-    idArrays = (idArrays - 1 + 3) % 3;
+    idModel = (idModel - 1 + 3) % 3;
   }
 }
 }
@@ -62,19 +65,10 @@ const pose = new Pose({locateFile: (file) => {
 }});
 pose.onResults(onResultsPose);
 
-const camera = new Camera(video5, {
+const camera = new Camera(video, {
   onFrame: async () => {
-    await pose.send({image: video5});
-  },
-  width: 800,
-  height: 600
+    await pose.send({image: video}); },
+  width: 1280,
+  height: 720
 });
 camera.start();
-
-new ControlPanel(controlsElement5, {
-      selfieMode: true
-    })
-    .on(options => {
-      video5.classList.toggle('selfie', options.selfieMode);
-      pose.setOptions(options);
-    });

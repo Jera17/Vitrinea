@@ -3,11 +3,11 @@ const canvas = document.querySelector("#pose-canvas")
 const ctx = canvas.getContext("2d")
 const buttons = document.querySelectorAll(".my-button");
 
+
 import { models } from "./rings_models.js"
 var idModel = 0
 var imgFront = new Image();
 imgFront.src = models[idModel].front;
-
 var imgBack = new Image();
 imgBack.src = models[idModel].back;
 
@@ -29,6 +29,7 @@ function onResultsHands(results) {
   if (results.multiHandLandmarks) {
     const isRight = (results.multiHandedness[0].label === 'Left') ? 1 : -1;
     drawImage(results.multiHandLandmarks[0], isRight);
+    console.log(results)
   }
 }
 
@@ -157,17 +158,11 @@ const hands = new Hands({
   }
 });
 hands.onResults(onResultsHands);
-//720p
+
 const camera = new Camera(video, {
-  onFrame: async () => { await hands.send({ image: video }); },
+  onFrame: async () => { 
+    await hands.send({ image: video }); },
   width: 1280,
   height: 720
 });
 camera.start();
-//480p
-// const camera = new Camera(video, {
-//   onFrame: async () => { await hands.send({ image: video }); },
-//   width: 854 ,
-//   height: 480
-// });
-// camera.start();
