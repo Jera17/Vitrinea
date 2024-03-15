@@ -3,11 +3,10 @@ const canvas = document.querySelector("#pose-canvas")
 const ctx = canvas.getContext("2d")
 const buttons = document.querySelectorAll(".my-button");
 
-import { models } from "./clothes_models.js"
+import { models } from "./necklaces_models.js"
 var idModel = 0
 var clotheModel = new Image();
 clotheModel.src = models[idModel].img
-var nodes = [12, 11, 23] //Hombros-Cintura: [12, 11, 23], Hombros-Rodilla: [12, 11, 25], Hombros-Tobillo: [12, 11, 27]
 
 const manualAjust = 10
 var translationDistance = 5
@@ -20,15 +19,54 @@ function onResultsPose(results) {
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
   ctx.clearRect(0, 0, video.videoWidth, video.videoHeight)
+  if (results.poseLandmarks) {
+    drawImage(results.poseLandmarks)
 
-  if(results.poseLandmarks){
-    const coords = getCoords(results.poseLandmarks, nodes)
-    ctx.drawImage(clotheModel, 
-      coords.x0 - (coords.SW / 2.5) + newXposition, 
-      coords.y0 - (coords.SW / 4) - newYposition, 
-      coords.SW + (coords.SW / 1.25), 
-      coords.TH + (coords.SW / 4))
+
+
+    // for (let i = 0; i < results.poseLandmarks.length; i++) {
+    //   console.log(i, results.poseLandmarks[i].x, results.poseLandmarks[i].y)
+    //   drawPoints(results.poseLandmarks[i].x * video.videoWidth, results.poseLandmarks[i].y * video.videoHeight, 4, "red")
+    // }
+
+
+
+    // const coords = getCoords(results.poseLandmarks, nodes)
+    // ctx.drawImage(clotheModel, 
+    //   coords.x0 - (coords.SW / 2.5) + newXposition, 
+    //   coords.y0 - (coords.SW / 4) - newYposition, 
+    //   coords.SW + (coords.SW / 1.25), 
+    //   coords.TH + (coords.SW / 4))
   }
+}
+
+
+function drawImage(rst) {
+  ctx.beginPath();
+  
+  const x1 = rst[11].x * video.videoWidth
+  const y1 = rst[11].y * video.videoHeight
+  const x2 = rst[12].x * video.videoWidth
+  const y2 = rst[12].y * video.videoHeight
+  const x3 = rst[0].x * video.videoWidth
+  const y3 = rst[0].y * video.videoHeight
+  drawPoints(x1, y1, 3, "blue")
+  drawPoints(x2, y2, 3, "blue")
+  drawPoints(x3, y3, 3, "blue")
+  const tanx = (x1 + x2)/2
+  const tany = (((y1 + y2)/2) + (y3*1.2))/2
+
+  drawPoints(tanx, tany, 3, "green")
+
+  ctx.closePath();
+}
+
+function drawPoints(x, y, r, c) {
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, 2 * Math.PI); // Using arc() method to draw a circle representing the point
+  ctx.fillStyle = c;
+  ctx.fill();
+  ctx.closePath();
 }
 
 buttons.forEach(function (button) {
