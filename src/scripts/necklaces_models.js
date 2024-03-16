@@ -1,7 +1,7 @@
 const models = [
-  { id: 3, nombre: "Camisa" , img: "../src/assets/images/clothes/Tshirt.png"},
-  { id: 2, nombre: "Vestido corto" , img: "../src/assets/images/clothes/ShortDress.png"},
-  { id: 1, nombre: "Vestido largo" , img: "../src/assets/images/clothes/LongDress.png"}
+  { id: 1, nombre: "Collar cadena triple" , img: "../src/assets/images/necklaces/necklace_triple_chain.png"},
+  { id: 2, nombre: "Collar Corazon" , img: "../src/assets/images/necklaces/necklace_heart.png"},
+  { id: 3, nombre: "Collar Flor" , img: "../src/assets/images/necklaces/necklace_flower.png"}
   ];
   
   export {models}

@@ -3,7 +3,7 @@ const canvas = document.querySelector("#pose-canvas")
 const ctx = canvas.getContext("2d")
 const buttons = document.querySelectorAll(".my-button");
 
-import { models } from "./earring_models.js"
+import { models } from "./earrings_models.js"
 var idModel = 0
 var EarringModel = new Image();
 EarringModel.src = models[idModel].img
