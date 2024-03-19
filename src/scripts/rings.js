@@ -3,7 +3,6 @@ const canvas = document.querySelector("#pose-canvas")
 const ctx = canvas.getContext("2d")
 const buttons = document.querySelectorAll(".my-button");
 
-
 import { models } from "./rings_models.js"
 var idModel = 0
 var imgFront = new Image();
@@ -20,6 +19,8 @@ var newXposition = 0
 var zoomInAndOut = 0
 var newScale = 1
 var fingerId = 1
+// let facingMode = 'user';
+let facingMode = 'environment';
 
 function onResultsHands(results) {
   canvas.width = video.videoWidth;
@@ -29,7 +30,7 @@ function onResultsHands(results) {
   if (results.multiHandLandmarks) {
     const isRight = (results.multiHandedness[0].label === 'Left') ? 1 : -1;
     drawImage(results.multiHandLandmarks[0], isRight);
-    console.log(results)
+    // console.log(results)
   }
 }
 
@@ -55,6 +56,14 @@ buttons.forEach(function (button) {
       case "ChangeFingerLeft":
       case "ChangeFingerRight":
         updateFinger(button.id);
+        break;
+      case "ToggleCamera":
+        console.log("uwu de camara")
+        if (facingMode === 'environment') {
+          facingMode = 'user';
+        } else if (facingMode === 'user') {
+          facingMode = 'environment';
+        }
         break;
       default:
         console.log("Unknown button clicked");
@@ -160,9 +169,11 @@ const hands = new Hands({
 hands.onResults(onResultsHands);
 
 const camera = new Camera(video, {
-  onFrame: async () => { 
-    await hands.send({ image: video }); },
+  onFrame: async () => {
+    await hands.send({ image: video });
+  },
   width: 1280,
-  height: 720
+  height: 720,
+  facingMode: facingMode 
 });
 camera.start();

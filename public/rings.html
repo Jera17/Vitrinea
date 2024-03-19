@@ -15,20 +15,21 @@
 <body>
     <div class="container">
         <div class="camera">
-            <video class="input_video"></video>
-            <canvas id="pose-canvas"></canvas>
+            <video class="input_video" style="transform: scaleX(1);"></video>
+            <canvas id="pose-canvas" style="transform: scaleX(1);"></canvas>
         </div>
         <div class="buttons">
-            <button id="Up" class="my-button">▲</button>
+            <!-- <button id="Up" class="my-button">▲</button>
             <button id="Down" class="my-button">▼</button>
             <button id="Left" class="my-button">◄</button>
             <button id="Right" class="my-button">►</button>
             <button id="ZoomIn" class="my-button">+</button>
-            <button id="ZoomOut" class="my-button">-</button>
+            <button id="ZoomOut" class="my-button">-</button> -->
             <button id="ChangeLeft" class="my-button">↩︎</button>
             <button id="ChangeRight" class="my-button">↪︎</button>
             <button id="ChangeFingerLeft" class="my-button">↶</button>
             <button id="ChangeFingerRight" class="my-button">↷</button>
+            <!-- <button id="ToggleCamera" class="my-button">📷</button> -->
         </div>
     </div>
     <script src="../src/scripts/rings.js" type="module"></script>

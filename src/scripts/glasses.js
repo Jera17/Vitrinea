@@ -46,6 +46,35 @@ buttons.forEach(function (button) {
       case "ChangeRight":
         updateCounter(button.id);
         break;
+      case "ScreenShot":
+        const combinedCanvas = document.createElement('canvas');
+        const combinedCtx = combinedCanvas.getContext('2d');
+
+        // Set the dimensions of the combined canvas
+        combinedCanvas.width = video.videoWidth;
+        combinedCanvas.height = video.videoHeight;
+
+        // Draw the video frame onto the combined canvas
+        // Draw the contents of the canvas onto the combined canvas (overlay)
+        combinedCtx.drawImage(video, 0, 0, combinedCanvas.width, combinedCanvas.height);
+        combinedCtx.drawImage(canvas, 0, 0, combinedCanvas.width, combinedCanvas.height);
+
+
+        let image_data_url = combinedCanvas.toDataURL('image/jpeg');
+        // data url of the image
+        // Create a link element
+        const downloadLink = document.createElement('a');
+        downloadLink.href = image_data_url;
+
+        // Set the filename for the downloaded image
+        downloadLink.download = 'webcam_snapshot.jpg';
+
+        // Simulate a click event to trigger the download
+        downloadLink.click();
+
+
+
+        break;
       default:
         console.log("Unknown button clicked");
     }

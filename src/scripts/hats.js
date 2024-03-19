@@ -25,9 +25,10 @@ function onResultsFaceMesh(results) {
   if (results.multiFaceLandmarks) {
     imageDraw(results.multiFaceLandmarks[0])
     for (let i = 0; i < results.multiFaceLandmarks[0].length; i++) {
-      drawPoints(results.multiFaceLandmarks[0][10].x * canvas.width, results.multiFaceLandmarks[0][10].y * canvas.height, 3, "red")
       drawPoints(results.multiFaceLandmarks[0][162].x * canvas.width, results.multiFaceLandmarks[0][162].y * canvas.height, 3, "blue")
-      drawPoints(results.multiFaceLandmarks[0][389].x * canvas.width, results.multiFaceLandmarks[0][389].y * canvas.height, 3, "yellow")
+      drawPoints(results.multiFaceLandmarks[0][389].x * canvas.width, results.multiFaceLandmarks[0][389].y * canvas.height, 3, "red")
+      drawPoints(results.multiFaceLandmarks[0][10].x * canvas.width, results.multiFaceLandmarks[0][10].y * canvas.height, 3, "yellow")
+      drawPoints(results.multiFaceLandmarks[0][4].x * canvas.width, results.multiFaceLandmarks[0][4].y * canvas.height, 3, "purple")
     }
   }
 }
@@ -100,7 +101,7 @@ function updateCounter(operator) {
 
 
 function imageDraw(rsl) {
-  const nodes = [162, 389, 10];  //Right, left, center
+  const nodes = [162, 389, 10, 4];  //Right, left, center
   ctx.save()
   const x0 = rsl[nodes[0]].x * video.videoWidth
   const y0 = rsl[nodes[0]].y * video.videoHeight
@@ -108,10 +109,22 @@ function imageDraw(rsl) {
   const y1 = rsl[nodes[1]].y * video.videoHeight
   const x2 = rsl[nodes[2]].x * video.videoWidth
   const y2 = rsl[nodes[2]].y * video.videoHeight
+  const x3 = rsl[nodes[3]].x * video.videoWidth 
+  // Si  x3 < x0 y x3 > x1  todo  bienn, sino  x3 > x0  -> originX + (x3 - x0), sino  x3 < x1  -> originX + (x1 - x3)
+  if (x3 > x0 && x3 < x1) {
+    console.log("uwu")
+  // }else if(x3 < x0){
+  //   console.log("derecha")
+  // }else if(x3 > x1){
+  //   console.log("izquierda")
+  }else if(x3 < x0 || x3 > x1){
+    console.log("uwun't")
+  }
   const sizeX = Math.sqrt(Math.pow((x1 - x0), 2) + Math.pow((y1 - y0), 2)) * newScale * 1.5
   const sizeY = (sizeX * glasses.height) / glasses.width
-  const originX = (rsl[nodes[2]].x * video.videoWidth)
-  const originY = rsl[nodes[2]].y * video.videoHeight
+  // const originX = x2
+  const originX = (x1 + x0)/2
+  const originY = y2
   ctx.translate(originX, originY)
   const angleHead = Math.atan((y1 - y0) / (x1 - x0))
   ctx.rotate(angleHead)
