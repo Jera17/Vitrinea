@@ -16,6 +16,7 @@ var leftAndRight = 0
 var newXposition = 0
 var zoomInAndOut = 0
 var newScale = 1
+let isFrontCamera = true;
 
 function onResultsFaceMesh(results) {
   canvas.width = video.videoWidth;
@@ -30,50 +31,27 @@ function onResultsFaceMesh(results) {
 buttons.forEach(function (button) {
   button.addEventListener("click", function () {
     switch (button.id) {
-      case "Up":
-      case "Down":
-        updateY(button.id);
-        break;
-      case "Left":
-      case "Right":
-        updateX(button.id);
-        break;
-      case "ZoomIn":
-      case "ZoomOut":
-        updateZoom(button.id);
-        break;
+      // case "Up":
+      // case "Down":
+      //   updateY(button.id);
+      //   break;
+      // case "Left":
+      // case "Right":
+      //   updateX(button.id);
+      //   break;
+      // case "ZoomIn":
+      // case "ZoomOut":
+      //   updateZoom(button.id);
+      //   break;
       case "ChangeLeft":
       case "ChangeRight":
         updateCounter(button.id);
         break;
+      case "FlipCamera":
+        flipCamera()
+        break;
       case "ScreenShot":
-        const combinedCanvas = document.createElement('canvas');
-        const combinedCtx = combinedCanvas.getContext('2d');
-
-        // Set the dimensions of the combined canvas
-        combinedCanvas.width = video.videoWidth;
-        combinedCanvas.height = video.videoHeight;
-
-        // Draw the video frame onto the combined canvas
-        // Draw the contents of the canvas onto the combined canvas (overlay)
-        combinedCtx.drawImage(video, 0, 0, combinedCanvas.width, combinedCanvas.height);
-        combinedCtx.drawImage(canvas, 0, 0, combinedCanvas.width, combinedCanvas.height);
-
-
-        let image_data_url = combinedCanvas.toDataURL('image/jpeg');
-        // data url of the image
-        // Create a link element
-        const downloadLink = document.createElement('a');
-        downloadLink.href = image_data_url;
-
-        // Set the filename for the downloaded image
-        downloadLink.download = 'webcam_snapshot.jpg';
-
-        // Simulate a click event to trigger the download
-        downloadLink.click();
-
-
-
+        screenShot()
         break;
       default:
         console.log("Unknown button clicked");
@@ -113,6 +91,29 @@ function updateCounter(operator) {
   glasses.src = models[idModel].img;
 }
 
+function flipCamera() {
+  isFrontCamera = !isFrontCamera;
+  camera.h.facingMode = isFrontCamera ? "user" : "environment";
+  video.style.transform = canvas.style.transform = isFrontCamera ? "scaleX(-1)" : "scaleX(1)";
+  camera.stop();
+  camera.start();
+}
+
+function screenShot() {
+  const combinedCanvas = document.createElement('canvas');
+  const combinedCtx = combinedCanvas.getContext('2d');
+
+  combinedCanvas.width = video.videoWidth;
+  combinedCanvas.height = video.videoHeight;
+  combinedCtx.drawImage(video, 0, 0, combinedCanvas.width, combinedCanvas.height);
+  combinedCtx.drawImage(canvas, 0, 0, combinedCanvas.width, combinedCanvas.height);
+
+  let image_data_url = combinedCanvas.toDataURL('image/jpeg');
+  const downloadLink = document.createElement('a');
+  downloadLink.href = image_data_url;
+  downloadLink.download = 'webcam_snapshot.jpg';
+  downloadLink.click();
+}
 
 function imageDraw(rsl) {
   const nodes = [127, 356, 168];
@@ -143,7 +144,7 @@ const camera = new Camera(video, {
   onFrame: async () => {
     await faceMesh.send({ image: video });
   },
-  width: 1280,
-  height: 720
+  width: { ideal: 1280 },
+  height: { ideal: 720 }
 });
 camera.start();
