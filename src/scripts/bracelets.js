@@ -18,14 +18,14 @@ var leftAndRight = 0
 var newXposition = 0
 var zoomInAndOut = 0
 var newScale = 1
+let isFrontCamera = true;
 
 function onResultsHands(results) {
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  if (results.multiHandLandmarks) {
-    const isRight = (results.multiHandedness[0].label === 'Left') ? 1 : -1;
-    drawImage(results.multiHandLandmarks[0], isRight);
+  if (results.multiHandLandmarks[0]) {
+    drawImage(results);
   }
 }
 
@@ -52,6 +52,12 @@ buttons.forEach(function (button) {
       case "ChangeFingerRight":
         updateFinger(button.id);
         break;
+        case "FlipCamera":
+          flipCamera()
+          break;
+        case "ScreenShot":
+          screenShot()
+          break;
       default:
         console.log("Unknown button clicked");
     }
@@ -90,7 +96,37 @@ function updateCounter(operator) {
   imgBack.src = models[idModel].back;
 }
 
-function drawImage(rslt, isRight) {
+function flipCamera() {
+  isFrontCamera = !isFrontCamera;
+  camera.h.facingMode = isFrontCamera ? "user" : "environment";
+  video.style.transform = canvas.style.transform = isFrontCamera ? "scaleX(-1)" : "scaleX(1)";
+  camera.stop();
+  camera.start();
+}
+
+function screenShot() {
+  const combinedCanvas = document.createElement('canvas');
+  const combinedCtx = combinedCanvas.getContext('2d');
+
+  combinedCanvas.width = video.videoWidth;
+  combinedCanvas.height = video.videoHeight;
+  combinedCtx.drawImage(video, 0, 0, combinedCanvas.width, combinedCanvas.height);
+  combinedCtx.drawImage(canvas, 0, 0, combinedCanvas.width, combinedCanvas.height);
+
+  let image_data_url = combinedCanvas.toDataURL('image/jpeg');
+  const downloadLink = document.createElement('a');
+  downloadLink.href = image_data_url;
+  downloadLink.download = 'webcam_snapshot.jpg';
+  downloadLink.click();
+}
+
+
+function drawImage(hand) {
+  const rslt = hand.multiHandLandmarks[0]
+  const rslt3D = hand.multiHandWorldLandmarks[0]
+  console.log(rslt3D[0].x, rslt3D[0].y, rslt3D[0].z)
+  const handeness = hand.multiHandedness[0].label === "Left" ? -1 : 1;
+
   ctx.save();
   const x1 = rslt[0].x * video.videoWidth
   const y1 = rslt[0].y * video.videoHeight
@@ -104,7 +140,6 @@ function drawImage(rslt, isRight) {
   const tany = (y1 - y2)
   const pstx = x1 + tanx
   const psty = y1 + tany
-  console.log(tanx, tany)
   ctx.translate(pstx, psty)
 
   //set angle of the image
@@ -140,17 +175,21 @@ function drawImage(rslt, isRight) {
 
   const result = crossProductFromPoints(point1A, point2A, point1B, point2B);
 
-  const selectedImage = ((result[2] * isRight) > 0) ? imgFront : imgBack
+  const selectedImage = ((result[2] * handeness) < 0) ? imgFront : imgBack
   ctx.drawImage(selectedImage, (0 - FingerLenght / 4) + newXposition, ((0 - FingerLenght / 2) / 1.25) - newYposition, FingerLenght / 2, FingerLenght / 2)
 
   ctx.restore()
   ctx.closePath()
 }
 
-const hands = new Hands({
-  locateFile: (file) => {
-    return `https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.1/${file}`;
-  }
+const hands = new Hands({locateFile: (file) => {
+  return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+}});
+hands.setOptions({
+  maxNumHands: 1,
+  modelComplexity: 1,
+  minDetectionConfidence: 0.5,
+  minTrackingConfidence: 0.5
 });
 hands.onResults(onResultsHands);
 
