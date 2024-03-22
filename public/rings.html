@@ -7,16 +7,16 @@
     <link rel="stylesheet" href="../src/styles/Navbar.css">
     <link rel="stylesheet" href="../src/styles/cameraCanva.css">
     <title>Vitrinea Ar</title>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.1/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils@0.1/drawing_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.1/hands.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
 </head>
 <body>
     <div class="container">
         <div class="camera">
-            <video class="input_video" style="transform: scaleX(1);"></video>
-            <canvas id="pose-canvas" style="transform: scaleX(1);"></canvas>
+            <video class="input_video"></video>
+            <canvas id="pose-canvas"></canvas>
         </div>
         <div class="buttons">
             <!-- <button id="Up" class="my-button">▲</button>
@@ -29,7 +29,8 @@
             <button id="ChangeRight" class="my-button">↪︎</button>
             <button id="ChangeFingerLeft" class="my-button">↶</button>
             <button id="ChangeFingerRight" class="my-button">↷</button>
-            <!-- <button id="ToggleCamera" class="my-button">📷</button> -->
+            <button id="ScreenShot" class="my-button">o</button>
+            <button id="FlipCamera" class="my-button">↺</button>
         </div>
     </div>
     <script src="../src/scripts/rings.js" type="module"></script>

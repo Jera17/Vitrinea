@@ -19,36 +19,44 @@ var newXposition = 0
 var zoomInAndOut = 0
 var newScale = 1
 var fingerId = 1
-// let facingMode = 'user';
-let facingMode = 'environment';
+
+let isFrontCamera = true;
 
 function onResultsHands(results) {
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  if (results.multiHandLandmarks) {
-    const isRight = (results.multiHandedness[0].label === 'Left') ? 1 : -1;
-    drawImage(results.multiHandLandmarks[0], isRight);
-    // console.log(results)
+  if (results.multiHandLandmarks[0]) {
+    drawImage(results);
+    // for (let index = 0; index < results.multiHandLandmarks[0].length; index++) {
+    //   drawPoints(results.multiHandLandmarks[0][index].x*canvas.width, results.multiHandLandmarks[0][index].y*canvas.height, 3, "red")
+    // }
   }
+}
+
+function drawPoints(x, y, r, c) {
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, 2 * Math.PI); // Using arc() method to draw a circle representing the point
+  ctx.fillStyle = c;
+  ctx.fill();
+  ctx.closePath();
 }
 
 buttons.forEach(function (button) {
   button.addEventListener("click", function () {
     switch (button.id) {
-      case "Up":
-      case "Down":
-        updateY(button.id);
-        break;
-      case "Left":
-      case "Right":
-        updateX(button.id);
-        break;
-      case "ZoomIn":
-      case "ZoomOut":
-        updateZoom(button.id);
-        break;
+      // case "Up":
+      // case "Down":
+      //   updateY(button.id);
+      //   break;
+      // case "Left":
+      // case "Right":
+      //   updateX(button.id);
+      //   break;
+      // case "ZoomIn":
+      // case "ZoomOut":
+      //   updateZoom(button.id);
+      //   break;
       case "ChangeLeft":
       case "ChangeRight":
         updateCounter(button.id);
@@ -57,13 +65,11 @@ buttons.forEach(function (button) {
       case "ChangeFingerRight":
         updateFinger(button.id);
         break;
-      case "ToggleCamera":
-        console.log("uwu de camara")
-        if (facingMode === 'environment') {
-          facingMode = 'user';
-        } else if (facingMode === 'user') {
-          facingMode = 'environment';
-        }
+      case "FlipCamera":
+        flipCamera()
+        break;
+      case "ScreenShot":
+        screenShot()
         break;
       default:
         console.log("Unknown button clicked");
@@ -71,31 +77,31 @@ buttons.forEach(function (button) {
   });
 });
 
-function updateY(buttonId) {
-  if (buttonId === "Up" && upAndDown < manualAjust) {
-    upAndDown++;
-  } else if (buttonId === "Down" && upAndDown > -manualAjust) {
-    upAndDown--;
-  }
-  newYposition = upAndDown * translationDistance;
-}
+// function updateY(buttonId) {
+//   if (buttonId === "Up" && upAndDown < manualAjust) {
+//     upAndDown++;
+//   } else if (buttonId === "Down" && upAndDown > -manualAjust) {
+//     upAndDown--;
+//   }
+//   newYposition = upAndDown * translationDistance;
+// }
 
-function updateX(buttonId) {
-  if (buttonId === "Left" && leftAndRight < manualAjust) {
-    leftAndRight++;
-  } else if (buttonId === "Right" && leftAndRight > -manualAjust) {
-    leftAndRight--;
-  }
-  newXposition = leftAndRight * translationDistance;
-}
+// function updateX(buttonId) {
+//   if (buttonId === "Left" && leftAndRight < manualAjust) {
+//     leftAndRight++;
+//   } else if (buttonId === "Right" && leftAndRight > -manualAjust) {
+//     leftAndRight--;
+//   }
+//   newXposition = leftAndRight * translationDistance;
+// }
 
-function updateZoom(direction) {
-  const delta = (direction === "ZoomIn") ? 1 : -1;
-  if (zoomInAndOut + delta >= -manualAjust && zoomInAndOut + delta <= manualAjust) {
-    zoomInAndOut += delta;
-    newScale = 1 + (zoomInAndOut * 0.05);
-  }
-}
+// function updateZoom(direction) {
+//   const delta = (direction === "ZoomIn") ? 1 : -1;
+//   if (zoomInAndOut + delta >= -manualAjust && zoomInAndOut + delta <= manualAjust) {
+//     zoomInAndOut += delta;
+//     newScale = 1 + (zoomInAndOut * 0.05);
+//   }
+// }
 
 function updateCounter(operator) {
   idModel = (operator === 'ChangeRight') ? (idModel + 1) % models.length : (idModel - 1 + 3) % models.length;
@@ -107,7 +113,35 @@ function updateFinger(operator) {
   fingerId = (operator === 'ChangeFingerRight') ? (fingerId + 1) % 4 : (fingerId - 1 + 4) % 4;
 }
 
-function drawImage(rslt, isRight) {
+function flipCamera() {
+  isFrontCamera = !isFrontCamera;
+  camera.h.facingMode = isFrontCamera ? "user" : "environment";
+  video.style.transform = canvas.style.transform = isFrontCamera ? "scaleX(-1)" : "scaleX(1)";
+  camera.stop();
+  camera.start();
+}
+
+function screenShot() {
+  const combinedCanvas = document.createElement('canvas');
+  const combinedCtx = combinedCanvas.getContext('2d');
+
+  combinedCanvas.width = video.videoWidth;
+  combinedCanvas.height = video.videoHeight;
+  combinedCtx.drawImage(video, 0, 0, combinedCanvas.width, combinedCanvas.height);
+  combinedCtx.drawImage(canvas, 0, 0, combinedCanvas.width, combinedCanvas.height);
+
+  let image_data_url = combinedCanvas.toDataURL('image/jpeg');
+  const downloadLink = document.createElement('a');
+  downloadLink.href = image_data_url;
+  downloadLink.download = 'webcam_snapshot.jpg';
+  downloadLink.click();
+}
+
+function drawImage(hand) {
+  const rslt = hand.multiHandLandmarks[0]
+  const rslt3D = hand.multiHandWorldLandmarks[0]
+  const handeness = hand.multiHandedness[0].label === "Left" ? -1 : 1;
+
   ctx.save();
   const fingerIdNodes = [5, 9, 13, 17]
   const x1 = rslt[fingerIdNodes[fingerId]].x * video.videoWidth
@@ -135,6 +169,7 @@ function drawImage(rslt, isRight) {
   var FingerLenght = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2)) * newScale
 
   //Flip (Usando producto punto)
+  // console.log(results.multiHandedness[0].label, isRight)
   function crossProductFromPoints(point1A, point2A, point1B, point2B) {
     const vectorA = [point2A[0] - point1A[0], point2A[1] - point1A[1], point2A[2] - point1A[2]];
     const vectorB = [point2B[0] - point1B[0], point2B[1] - point1B[1], point2B[2] - point1B[2]];
@@ -154,26 +189,29 @@ function drawImage(rslt, isRight) {
 
   const result = crossProductFromPoints(point1A, point2A, point1B, point2B);
 
-  const selectedImage = ((result[2] * isRight) > 0) ? imgFront : imgBack
+  const selectedImage = ((result[2] * handeness) < 0) ? imgFront : imgBack
   ctx.drawImage(selectedImage, (0 - FingerLenght / 4) + newXposition, ((0 - FingerLenght / 2) / 1.25) - newYposition, FingerLenght / 2, FingerLenght / 2)
 
   ctx.restore()
   ctx.closePath()
 }
 
-const hands = new Hands({
-  locateFile: (file) => {
-    return `https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.1/${file}`;
-  }
+const hands = new Hands({locateFile: (file) => {
+  return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+}});
+hands.setOptions({
+  maxNumHands: 1,
+  modelComplexity: 1,
+  minDetectionConfidence: 0.5,
+  minTrackingConfidence: 0.5
 });
 hands.onResults(onResultsHands);
 
 const camera = new Camera(video, {
   onFrame: async () => {
-    await hands.send({ image: video });
+    await hands.send({image: video});
   },
   width: 1280,
-  height: 720,
-  facingMode: facingMode 
+  height: 720
 });
 camera.start();

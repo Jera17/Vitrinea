@@ -23,7 +23,7 @@ function onResultsFaceMesh(results) {
   canvas.height = video.videoHeight;
   ctx.clearRect(0, 0, video.videoWidth, video.videoHeight)
 
-  if (results.multiFaceLandmarks) {
+  if (results.multiFaceLandmarks[0]) {
     imageDraw(results.multiFaceLandmarks[0])
   }
 }
@@ -59,31 +59,31 @@ buttons.forEach(function (button) {
   });
 });
 
-function updateY(buttonId) {
-  if (buttonId === "Up" && upAndDown < manualAjust) {
-    upAndDown++;
-  } else if (buttonId === "Down" && upAndDown > -manualAjust) {
-    upAndDown--;
-  }
-  newYposition = upAndDown * translationDistance;
-}
+// function updateY(buttonId) {
+//   if (buttonId === "Up" && upAndDown < manualAjust) {
+//     upAndDown++;
+//   } else if (buttonId === "Down" && upAndDown > -manualAjust) {
+//     upAndDown--;
+//   }
+//   newYposition = upAndDown * translationDistance;
+// }
 
-function updateX(buttonId) {
-  if (buttonId === "Left" && leftAndRight < manualAjust) {
-    leftAndRight++;
-  } else if (buttonId === "Right" && leftAndRight > -manualAjust) {
-    leftAndRight--;
-  }
-  newXposition = leftAndRight * translationDistance;
-}
+// function updateX(buttonId) {
+//   if (buttonId === "Left" && leftAndRight < manualAjust) {
+//     leftAndRight++;
+//   } else if (buttonId === "Right" && leftAndRight > -manualAjust) {
+//     leftAndRight--;
+//   }
+//   newXposition = leftAndRight * translationDistance;
+// }
 
-function updateZoom(direction) {
-  const delta = (direction === "ZoomIn") ? 1 : -1;
-  if (zoomInAndOut + delta >= -manualAjust && zoomInAndOut + delta <= manualAjust) {
-    zoomInAndOut += delta;
-    newScale = 1 + (zoomInAndOut * 0.05);
-  }
-}
+// function updateZoom(direction) {
+//   const delta = (direction === "ZoomIn") ? 1 : -1;
+//   if (zoomInAndOut + delta >= -manualAjust && zoomInAndOut + delta <= manualAjust) {
+//     zoomInAndOut += delta;
+//     newScale = 1 + (zoomInAndOut * 0.05);
+//   }
+// }
 
 function updateCounter(operator) {
   idModel = (operator === 'ChangeRight') ? (idModel + 1) % models.length : (idModel - 1 + 3) % models.length;
@@ -135,7 +135,7 @@ function imageDraw(rsl) {
 
 const faceMesh = new FaceMesh({
   locateFile: (file) => {
-    return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@0.1/${file}`;
+    return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`;
   }
 });
 faceMesh.onResults(onResultsFaceMesh);
