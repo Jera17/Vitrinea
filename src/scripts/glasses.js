@@ -1,15 +1,51 @@
+//Firebase Config
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDJ-M3HOY63LuwIgNPLaf1G3WBk9gUf6WI",
+  authDomain: "vitrinea-4433b.firebaseapp.com",
+  projectId: "vitrinea-4433b",
+  storageBucket: "vitrinea-4433b.appspot.com",
+  messagingSenderId: "297078940338",
+  appId: "1:297078940338:web:1e3f94ec67a5e8cb2d5fab",
+  measurementId: "G-CD1X17RQTG"
+};
+
+initializeApp(firebaseConfig);
+const db = getFirestore()
+const docRefKey = "VDuMzy56lyB5zpK0Dxga"
+
+const docRef = doc(db, 'products', docRefKey)
+
+async function fetchArModel() {
+  try {
+    const doc = await getDoc(docRef);
+    const arModel = doc.data().arModel;
+    //return arModel;
+    return arModel;
+  } catch (err) {
+    console.log(err.message);
+    throw err;
+  }
+}
+
+const fetched = await fetchArModel()
+
+console.log("fetched")
+console.log(fetched)
+console.log(fetched.frontAR)
+
+//Simulation
+
 const video = document.getElementsByClassName('input_video')[0];
 const canvas = document.querySelector("#pose-canvas");
 const ctx = canvas.getContext("2d");
 const buttons = document.querySelectorAll(".my-button");
 
-import { models } from "./glasses_models.js"
 var idModel = 0
 var glasses = new Image();
-glasses.src = models[idModel].img
-
-
-console.log(models)
+glasses.src = fetched.frontAR[idModel]
 
 const manualAjust = 10
 var translationDistance = 5
@@ -89,9 +125,9 @@ buttons.forEach(function (button) {
 // }
 
 function updateCounter(operator) {
-  idModel = (operator === 'ChangeRight') ? (idModel + 1) % models.length : (idModel - 1 + 3) % models.length;
-  console.log(idModel, (idModel + 1) % models.length, (idModel - 1 + models.length) % models.length)
-  glasses.src = models[idModel].img;
+  idModel = (operator === 'ChangeRight') ? (idModel + 1) % fetched.frontAR.length : (idModel - 1 + 3) % fetched.frontAR.length;
+  console.log(idModel, (idModel + 1) % fetched.frontAR.length, (idModel - 1 + fetched.frontAR.length) % fetched.frontAR.length)
+  glasses.src = fetched.frontAR[idModel]
 }
 
 function flipCamera() {
