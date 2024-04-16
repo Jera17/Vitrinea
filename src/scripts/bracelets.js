@@ -1,3 +1,6 @@
+import { fetched } from "./models.js"
+
+//Simulation
 const video = document.getElementsByClassName('input_video')[0];
 const canvas = document.querySelector("#pose-canvas")
 const ctx = canvas.getContext("2d")
@@ -6,9 +9,9 @@ const buttons = document.querySelectorAll(".my-button");
 import { models } from "./bracelets_models.js"
 var idModel = 0
 var imgFront = new Image();
-imgFront.src = models[idModel].front;
+imgFront.src = fetched.frontAR[idModel];
 var imgBack = new Image();
-imgBack.src = models[idModel].back;
+imgBack.src = fetched.backAR[idModel];
 
 const manualAjust = 10
 var translationDistance = 5

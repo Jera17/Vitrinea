@@ -1,12 +1,13 @@
+import { fetched } from "./models.js"
+
 const video = document.getElementsByClassName('input_video')[0];
 const canvas = document.querySelector("#pose-canvas")
 const ctx = canvas.getContext("2d")
 const buttons = document.querySelectorAll(".my-button");
 
-import { models } from "./earrings_models.js"
 var idModel = 0
-var EarringModel = new Image();
-EarringModel.src = models[idModel].img
+var image = new Image();
+image.src = fetched.frontAR[idModel]
 
 const manualAjust = 10
 var translationDistance = 2
@@ -88,9 +89,9 @@ function updateZoom(direction) {
 }
 
 function updateCounter(operator) {
-  idModel = (operator === 'ChangeRight') ? (idModel + 1) % models.length : (idModel - 1 + models.length) % models.length;
-  console.log(idModel, (idModel + 1) % models.length, (idModel - 1 + 3) % models.length)
-  EarringModel.src = models[idModel].img;
+  idModel = (operator === 'ChangeRight') ? (idModel + 1) % fetched.frontAR.length : (idModel - 1 + fetched.frontAR.length) % fetched.frontAR.length;
+  console.log(idModel, (idModel + 1) % fetched.frontAR.length, (idModel - 1 + 3) % fetched.frontAR.length)
+  image.src = fetched.frontAR[idModel]
 }
 
 function flipCamera() {
@@ -129,8 +130,8 @@ function imageDraw(rsl, Node1, Node2, Node3, Orientation) {
     const imageY0 = rsl[Node1].y * canvas.height
     const imageY1 = rsl[Node2].y * canvas.height
     const imageY = (imageY1 - imageY0) * newScale
-    const imageX = (imageY * EarringModel.width) / EarringModel.height
-    ctx.drawImage(EarringModel, xEarring - (imageX / 2) + (newXposition * Orientation), (y0 + y1) / 2 - newYposition, imageX, imageY)
+    const imageX = (imageY * image.width) / image.height
+    ctx.drawImage(image, xEarring - (imageX / 2) + (newXposition * Orientation), (y0 + y1) / 2 - newYposition, imageX, imageY)
   }
 }
 

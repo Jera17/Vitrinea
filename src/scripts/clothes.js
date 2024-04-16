@@ -1,3 +1,5 @@
+import { fetched } from "./models.js"
+
 const video = document.getElementsByClassName('input_video')[0];
 const canvas = document.querySelector("#pose-canvas")
 const ctx = canvas.getContext("2d")
@@ -5,9 +7,17 @@ const buttons = document.querySelectorAll(".my-button");
 
 import { models } from "./clothes_models.js"
 var idModel = 0
-var clotheModel = new Image();
-clotheModel.src = models[idModel].img
-var nodes = [12, 11, 25] //Hombros-Cintura: [12, 11, 23], Hombros-Rodilla: [12, 11, 25], Hombros-Tobillo: [12, 11, 27]
+var image = new Image();
+image.src = models[idModel].img
+var imgFront = new Image();
+imgFront.src = fetched.frontAR[idModel];
+var imgBack = new Image();
+imgBack.src = fetched.backAR[idModel];
+console.log(fetched.frontAR[idModel])
+console.log(fetched.name)
+console.log(fetched.type)
+
+var nodes = [12, 11, 23, 24] //Hombros-Cintura: [12, 11, 23], Hombros-Rodilla: [12, 11, 25], Hombros-Tobillo: [12, 11, 27]
 
 const manualAjust = 10
 var translationDistance = 5
@@ -22,13 +32,12 @@ function onResultsPose(results) {
   canvas.height = video.videoHeight;
   ctx.clearRect(0, 0, video.videoWidth, video.videoHeight)
 
-  if(results.poseLandmarks){
-    const coords = getCoords(results.poseLandmarks, nodes)
-    ctx.drawImage(clotheModel, 
-      coords.x0 - (coords.SW / 2.5) + newXposition, 
-      coords.y0 - (coords.SW / 4) - newYposition, 
-      coords.SW + (coords.SW / 1.25), 
-      coords.TH + (coords.SW / 4))
+  if (results.poseLandmarks) {
+    results.poseLandmarks.forEach(poseLandmarks => {
+      poseLandmarks.x *= video.videoWidth
+      poseLandmarks.y *= video.videoHeight
+    });
+    getCoords(results.poseLandmarks, nodes)
   }
 }
 
@@ -47,12 +56,12 @@ buttons.forEach(function (button) {
       case "ChangeRight":
         updateCounter(button.id);
         break;
-        case "FlipCamera":
-          flipCamera()
-          break;
-        case "ScreenShot":
-          screenShot()
-          break;
+      case "FlipCamera":
+        flipCamera()
+        break;
+      case "ScreenShot":
+        screenShot()
+        break;
       default:
         console.log("Unknown button clicked");
     }
@@ -78,9 +87,9 @@ function updateX(buttonId) {
 }
 
 function updateCounter(operator) {
-  idModel = (operator === 'ChangeRight') ? (idModel + 1) % models.length : (idModel - 1 + 3) % models.length;
-  console.log(idModel, (idModel + 1) % models.length, (idModel - 1 + models.length) % models.length)
-  clotheModel.src = models[idModel].img;
+  idModel = (operator === 'ChangeRight') ? (idModel + 1) % fetched.frontAR.length : (idModel - 1 + fetched.frontAR.length) % fetched.frontAR.length;
+  imgFront.src = fetched.frontAR[idModel];
+  imgBack.src = fetched.backAR[idModel];
 }
 
 function flipCamera() {
@@ -108,37 +117,55 @@ function screenShot() {
 }
 
 function getCoords(rsl, nodes) {
-  const x0 = (rsl[nodes[0]].x * video.videoWidth) //hombro izquierdo
-  const y0 = (rsl[nodes[0]].y * video.videoHeight)
-  const x1 = (rsl[nodes[1]].x * video.videoWidth) //hombro derecho
-  const y1 = (rsl[nodes[1]].y * video.videoHeight)
-  const x2 = (rsl[nodes[2]].x * video.videoWidth) //cadera derecha
-  const y2 = (rsl[nodes[2]].y * video.videoHeight)
+  const x0 = (rsl[nodes[0]].x) //hombro izquierdo
+  const y0 = (rsl[nodes[0]].y)
+  const x1 = (rsl[nodes[1]].x) //hombro derecho
+  const y1 = (rsl[nodes[1]].y)
+  const x2 = (rsl[nodes[2]].x) //cadera derecha
+  const y2 = (rsl[nodes[2]].y)
   const shoulderWidth = Math.sqrt(Math.pow((x1 - x0), 2) + Math.pow((y1 - y0), 2)) //ancho entre hombros
   const torsosHeight = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2)) //largo del hombro a la cadera
   const magX = x1 - x0
   const magY = y1 - y0
-  return {
-    x0: x0,
-    y0: y0,
-    x1: x1,
-    y1: y1,
-    SW: shoulderWidth,
-    TH: torsosHeight,
-    magX: magX,
-    magY: magY
+
+
+  function crossProductFromPoints(point1A, point2A, point1B, point2B) {
+    const vectorA = [point2A[0] - point1A[0], point2A[1] - point1A[1], point2A[2] - point1A[2]];
+    const vectorB = [point2B[0] - point1B[0], point2B[1] - point1B[1], point2B[2] - point1B[2]];
+    const result = [
+      vectorA[1] * vectorB[2] - vectorA[2] * vectorB[1],
+      vectorA[2] * vectorB[0] - vectorA[0] * vectorB[2],
+      vectorA[0] * vectorB[1] - vectorA[1] * vectorB[0]
+    ];
+    return result;
   }
+
+  // Ejemplo de uso:
+  const point1A = [x0, y0, 0];
+  const point2A = [x1, y1, 0];
+  const point1B = [x0, y0, 0];
+  const point2B = [x2, y2, 0];
+
+  const result = crossProductFromPoints(point1A, point2A, point1B, point2B);
+  console.log(result[2]>0)
+  const selectedImage = ((result[2]) < 0) ? imgFront : imgBack
+
+  ctx.drawImage(image,
+    x0 - (shoulderWidth / 2.5) + newXposition,
+    y0 - (shoulderWidth / 4) - newYposition,
+    shoulderWidth + (shoulderWidth / 1.25),
+    torsosHeight + (shoulderWidth / 4))
 }
+
 
 const pose = new Pose({
   locateFile: (file) => {
-  return `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`;
-}});
+    return `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`;
+  }
+});
 pose.setOptions({
   modelComplexity: 1,
   smoothLandmarks: true,
-  // enableSegmentation: true,
-  // smoothSegmentation: true,
   minDetectionConfidence: 0.5,
   minTrackingConfidence: 0.5
 });

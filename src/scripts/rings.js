@@ -1,14 +1,18 @@
+import { fetched } from "./models.js"
+
 const video = document.getElementsByClassName('input_video')[0];
 const canvas = document.querySelector("#pose-canvas")
 const ctx = canvas.getContext("2d")
 const buttons = document.querySelectorAll(".my-button");
 
-import { models } from "./rings_models.js"
 var idModel = 0
 var imgFront = new Image();
-imgFront.src = models[idModel].front;
+imgFront.src = fetched.frontAR[idModel];
 var imgBack = new Image();
-imgBack.src = models[idModel].back;
+imgBack.src = fetched.backAR[idModel];
+console.log(fetched.frontAR[idModel])
+console.log(fetched.name)
+console.log(fetched.type)
 
 const manualAjust = 10
 var translationDistance = 5
@@ -104,9 +108,9 @@ buttons.forEach(function (button) {
 // }
 
 function updateCounter(operator) {
-  idModel = (operator === 'ChangeRight') ? (idModel + 1) % models.length : (idModel - 1 + 3) % models.length;
-  imgFront.src = models[idModel].front;
-  imgBack.src = models[idModel].back;
+  idModel = (operator === 'ChangeRight') ? (idModel + 1) % fetched.frontAR.length : (idModel - 1 + fetched.frontAR.length) % fetched.frontAR.length;
+  imgFront.src = fetched.frontAR[idModel];
+  imgBack.src = fetched.backAR[idModel];
 }
 
 function updateFinger(operator) {

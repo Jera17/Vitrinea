@@ -1,51 +1,15 @@
-//Firebase Config
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDJ-M3HOY63LuwIgNPLaf1G3WBk9gUf6WI",
-  authDomain: "vitrinea-4433b.firebaseapp.com",
-  projectId: "vitrinea-4433b",
-  storageBucket: "vitrinea-4433b.appspot.com",
-  messagingSenderId: "297078940338",
-  appId: "1:297078940338:web:1e3f94ec67a5e8cb2d5fab",
-  measurementId: "G-CD1X17RQTG"
-};
-
-initializeApp(firebaseConfig);
-const db = getFirestore()
-const docRefKey = "VDuMzy56lyB5zpK0Dxga"
-
-const docRef = doc(db, 'products', docRefKey)
-
-async function fetchArModel() {
-  try {
-    const doc = await getDoc(docRef);
-    const arModel = doc.data().arModel;
-    //return arModel;
-    return arModel;
-  } catch (err) {
-    console.log(err.message);
-    throw err;
-  }
-}
-
-const fetched = await fetchArModel()
-
-console.log("fetched")
-console.log(fetched)
-console.log(fetched.frontAR)
+import { fetched } from "./models.js"
 
 //Simulation
-
 const video = document.getElementsByClassName('input_video')[0];
 const canvas = document.querySelector("#pose-canvas");
 const ctx = canvas.getContext("2d");
 const buttons = document.querySelectorAll(".my-button");
 
 var idModel = 0
-var glasses = new Image();
-glasses.src = fetched.frontAR[idModel]
+var image = new Image();
+image.src = fetched.frontAR[idModel]
+// image.crossOrigin = 'Anonymous';
 
 const manualAjust = 10
 var translationDistance = 5
@@ -89,9 +53,9 @@ buttons.forEach(function (button) {
       case "FlipCamera":
         flipCamera()
         break;
-      case "ScreenShot":
-        screenShot()
-        break;
+      // case "ScreenShot":
+      //   screenShot()
+      //   break;
       default:
         console.log("Unknown button clicked");
     }
@@ -127,7 +91,7 @@ buttons.forEach(function (button) {
 function updateCounter(operator) {
   idModel = (operator === 'ChangeRight') ? (idModel + 1) % fetched.frontAR.length : (idModel - 1 + 3) % fetched.frontAR.length;
   console.log(idModel, (idModel + 1) % fetched.frontAR.length, (idModel - 1 + fetched.frontAR.length) % fetched.frontAR.length)
-  glasses.src = fetched.frontAR[idModel]
+  image.src = fetched.frontAR[idModel]
 }
 
 function flipCamera() {
@@ -148,6 +112,7 @@ function screenShot() {
   combinedCtx.drawImage(canvas, 0, 0, combinedCanvas.width, combinedCanvas.height);
 
   let image_data_url = combinedCanvas.toDataURL('image/jpeg');
+  console.log(image_data_url)
   const downloadLink = document.createElement('a');
   downloadLink.href = image_data_url;
   downloadLink.download = 'webcam_snapshot.jpg';
@@ -162,13 +127,13 @@ function imageDraw(rsl) {
   const x1 = rsl[nodes[1]].x * video.videoWidth
   const y1 = rsl[nodes[1]].y * video.videoHeight
   const sizeX = Math.sqrt(Math.pow((x1 - x0), 2) + Math.pow((y1 - y0), 2)) * newScale
-  const sizeY = (sizeX * glasses.height) / glasses.width
+  const sizeY = (sizeX * image.height) / image.width
   const originX = (rsl[nodes[2]].x * video.videoWidth)
   const originY = rsl[nodes[2]].y * video.videoHeight
   ctx.translate(originX, originY)
   const angleHead = Math.atan((y1 - y0) / (x1 - x0))
   ctx.rotate(angleHead)
-  ctx.drawImage(glasses, 0 - (sizeX / 2) + newXposition, 0 - (sizeY / 3) - newYposition, sizeX, sizeY)
+  ctx.drawImage(image, 0 - (sizeX / 2) + newXposition, 0 - (sizeY / 3) - newYposition, sizeX, sizeY)
   ctx.restore()
 }
 
