@@ -153,7 +153,7 @@ function getCoords(rsl, nodes) {
     ];
     return result;
   }
-  // Prueba
+
   // Ejemplo de uso:
   const point1A = [x0, y0, 0];
   const point2A = [x1, y1, 0];
