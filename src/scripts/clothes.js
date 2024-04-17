@@ -11,7 +11,7 @@ var imgBack = new Image();
 updateModel(idModel)
 
 
-var nodes = [12, 11, 23, 24] //Hombros-Cintura: [12, 11, 23], Hombros-Rodilla: [12, 11, 25], Hombros-Tobillo: [12, 11, 27]
+var nodes = [11, 23] //Hombros-Cintura: [12, 11, 23], Hombros-Rodilla: [12, 11, 25], Hombros-Tobillo: [12, 11, 27]
 
 const manualAjust = 10
 var translationDistance = 5
@@ -19,7 +19,6 @@ var upAndDown = 0
 var newYposition = 0
 var leftAndRight = 0
 var newXposition = 0
-let isFrontCamera = true;
 let isFrontCamera = true;
 
 function onResultsPose(results) {
@@ -50,6 +49,12 @@ buttons.forEach(function (button) {
       case "ChangeLeft":
       case "ChangeRight":
         updateCounter(button.id);
+        break;
+      case "FlipCamera":
+        flipCamera()
+        break;
+      case "ScreenShot":
+        screenShot()
         break;
       default:
         console.log("Unknown button clicked");
@@ -104,41 +109,27 @@ function screenShot() {
   downloadLink.click();
 }
 
-function flipCamera() {
-  isFrontCamera = !isFrontCamera;
-  camera.h.facingMode = isFrontCamera ? "user" : "environment";
-  video.style.transform = canvas.style.transform = isFrontCamera ? "scaleX(-1)" : "scaleX(1)";
-  camera.stop();
-  camera.start();
-}
-
-function screenShot() {
-  const combinedCanvas = document.createElement('canvas');
-  const combinedCtx = combinedCanvas.getContext('2d');
-
-  combinedCanvas.width = video.videoWidth;
-  combinedCanvas.height = video.videoHeight;
-  combinedCtx.drawImage(video, 0, 0, combinedCanvas.width, combinedCanvas.height);
-  combinedCtx.drawImage(canvas, 0, 0, combinedCanvas.width, combinedCanvas.height);
-
-  let image_data_url = combinedCanvas.toDataURL('image/jpeg');
-  const downloadLink = document.createElement('a');
-  downloadLink.href = image_data_url;
-  downloadLink.download = 'webcam_snapshot.jpg';
-  downloadLink.click();
-}
-
 function getCoords(rsl, nodes) {
   const x0 = (rsl[nodes[0]].x) //hombro izquierdo
   const y0 = (rsl[nodes[0]].y)
-  const x1 = (rsl[nodes[1]].x) //hombro derecho
-  const y1 = (rsl[nodes[1]].y)
-  const x2 = (rsl[nodes[2]].x) //cadera izquierdo
-  const y2 = (rsl[nodes[2]].y)
-  const x3 = (rsl[nodes[3]].x) //cadera derecha
-  const y3 = (rsl[nodes[3]].y)
-  const shoulderWidth = Math.sqrt(Math.pow((x1 - x0), 2) + Math.pow((y1 - y0), 2)) //ancho entre hombros
-  const torsosHeight = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2)) //largo del hombro a la cadera
+  const x1 = (rsl[nodes[0]+1].x) //hombro derecho
+  const y1 = (rsl[nodes[0]+1].y)
+  const x2 = (rsl[nodes[1]].x) //cadera izquierdo
+  const y2 = (rsl[nodes[1]].y)
+  const x3 = (rsl[nodes[1]+1].x) //cadera derecha
+  const y3 = (rsl[nodes[1]+1].y)
+  const Xcenter = (x0 + x1 + x2 + x3)/4 
+  const Ycenter = (y0 + y1 + y2 + y3)/4
+  
+  
+  ctx.beginPath();
+  ctx.arc(Xcenter, Ycenter, 3, 0, 2 * Math.PI);
+  ctx.fillStyle = "red";
+  ctx.fill();
+  ctx.closePath();
+
+  const shoulderWidth = Math.sqrt(Math.pow((x1 - x0), 2) + Math.pow((y1 - y0), 2)) * 1.7 //ancho entre hombros
+  const torsosHeight = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2)) * 1.2 //largo del hombro a la cadera
   const magX = x1 - x0
   const magY = y1 - y0
 
@@ -161,13 +152,13 @@ function getCoords(rsl, nodes) {
   const point2B = [x2, y2, 0];
 
   const result = crossProductFromPoints(point1A, point2A, point1B, point2B);
-  const selectedImage = result[2]>0 ? imgFront : imgBack
+  const selectedImage = result[2]<0 ? imgFront : imgBack
 
-  ctx.drawImage(selectedImage,
-    x0 - (shoulderWidth / 2.5) + newXposition,
-    y0 - (shoulderWidth / 4) - newYposition,
-    shoulderWidth + (shoulderWidth / 1.25),
-    torsosHeight + (shoulderWidth / 4))
+  ctx.drawImage(selectedImage, 
+    Xcenter - (shoulderWidth/2) + newXposition, 
+    Ycenter - (torsosHeight/2) - newYposition,
+    shoulderWidth,
+    torsosHeight)
 }
 
 function updateModel(newIdModel) {
@@ -177,8 +168,14 @@ function updateModel(newIdModel) {
 
 const pose = new Pose({
   locateFile: (file) => {
-    return `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.2/${file}`;
+    return `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`;
   }
+});
+pose.setOptions({
+  modelComplexity: 1,
+  smoothLandmarks: true,
+  minDetectionConfidence: 0.5,
+  minTrackingConfidence: 0.5
 });
 pose.onResults(onResultsPose);
 
