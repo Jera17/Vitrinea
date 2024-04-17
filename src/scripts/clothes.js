@@ -20,6 +20,7 @@ var newYposition = 0
 var leftAndRight = 0
 var newXposition = 0
 let isFrontCamera = true;
+let isFrontCamera = true;
 
 function onResultsPose(results) {
   canvas.width = video.videoWidth;
@@ -50,12 +51,6 @@ buttons.forEach(function (button) {
       case "ChangeRight":
         updateCounter(button.id);
         break;
-      case "FlipCamera":
-        flipCamera()
-        break;
-      case "ScreenShot":
-        screenShot()
-        break;
       default:
         console.log("Unknown button clicked");
     }
@@ -83,6 +78,30 @@ function updateX(buttonId) {
 function updateCounter(operator) {
   idModel = (operator === 'ChangeRight') ? (idModel + 1) % fetched.frontAR.length : (idModel - 1 + fetched.frontAR.length) % fetched.frontAR.length;
   updateModel(idModel)
+}
+
+function flipCamera() {
+  isFrontCamera = !isFrontCamera;
+  camera.h.facingMode = isFrontCamera ? "user" : "environment";
+  video.style.transform = canvas.style.transform = isFrontCamera ? "scaleX(-1)" : "scaleX(1)";
+  camera.stop();
+  camera.start();
+}
+
+function screenShot() {
+  const combinedCanvas = document.createElement('canvas');
+  const combinedCtx = combinedCanvas.getContext('2d');
+
+  combinedCanvas.width = video.videoWidth;
+  combinedCanvas.height = video.videoHeight;
+  combinedCtx.drawImage(video, 0, 0, combinedCanvas.width, combinedCanvas.height);
+  combinedCtx.drawImage(canvas, 0, 0, combinedCanvas.width, combinedCanvas.height);
+
+  let image_data_url = combinedCanvas.toDataURL('image/jpeg');
+  const downloadLink = document.createElement('a');
+  downloadLink.href = image_data_url;
+  downloadLink.download = 'webcam_snapshot.jpg';
+  downloadLink.click();
 }
 
 function flipCamera() {
@@ -158,14 +177,8 @@ function updateModel(newIdModel) {
 
 const pose = new Pose({
   locateFile: (file) => {
-    return `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`;
+    return `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.2/${file}`;
   }
-});
-pose.setOptions({
-  modelComplexity: 1,
-  smoothLandmarks: true,
-  minDetectionConfidence: 0.5,
-  minTrackingConfidence: 0.5
 });
 pose.onResults(onResultsPose);
 

@@ -89,9 +89,15 @@ function updateZoom(direction) {
 }
 
 function updateCounter(operator) {
+<<<<<<< HEAD
   idModel = (operator === 'ChangeRight') ? (idModel + 1) % fetched.frontAR.length : (idModel - 1 + fetched.frontAR.length) % fetched.frontAR.length;
   console.log(idModel, (idModel + 1) % fetched.frontAR.length, (idModel - 1 + 3) % fetched.frontAR.length)
   image.src = fetched.frontAR[idModel]
+=======
+  idModel = (operator === 'ChangeRight') ? (idModel + 1) % models.length : (idModel - 1 + models.length) % models.length;
+  console.log(idModel, (idModel + 1) % models.length, (idModel - 1 + 3) % models.length)
+  EarringModel.src = models[idModel].img;
+>>>>>>> 2c82e242327933fc3d823cc5563e7593c0d7e09f
 }
 
 function flipCamera() {
@@ -130,8 +136,13 @@ function imageDraw(rsl, Node1, Node2, Node3, Orientation) {
     const imageY0 = rsl[Node1].y * canvas.height
     const imageY1 = rsl[Node2].y * canvas.height
     const imageY = (imageY1 - imageY0) * newScale
+<<<<<<< HEAD
     const imageX = (imageY * image.width) / image.height
     ctx.drawImage(image, xEarring - (imageX / 2) + (newXposition * Orientation), (y0 + y1) / 2 - newYposition, imageX, imageY)
+=======
+    const imageX = (imageY * EarringModel.width) / EarringModel.height
+    ctx.drawImage(EarringModel, xEarring - (imageX / 2) + (newXposition * Orientation), (y0 + y1) / 2 - newYposition, imageX, imageY)
+>>>>>>> 2c82e242327933fc3d823cc5563e7593c0d7e09f
   }
 }
 
