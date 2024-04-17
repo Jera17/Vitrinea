@@ -5,17 +5,11 @@ const canvas = document.querySelector("#pose-canvas")
 const ctx = canvas.getContext("2d")
 const buttons = document.querySelectorAll(".my-button");
 
-import { models } from "./clothes_models.js"
 var idModel = 0
-var image = new Image();
-image.src = models[idModel].img
 var imgFront = new Image();
-imgFront.src = fetched.frontAR[idModel];
 var imgBack = new Image();
-imgBack.src = fetched.backAR[idModel];
-console.log(fetched.frontAR[idModel])
-console.log(fetched.name)
-console.log(fetched.type)
+updateModel(idModel)
+
 
 var nodes = [12, 11, 23, 24] //Hombros-Cintura: [12, 11, 23], Hombros-Rodilla: [12, 11, 25], Hombros-Tobillo: [12, 11, 27]
 
@@ -88,8 +82,7 @@ function updateX(buttonId) {
 
 function updateCounter(operator) {
   idModel = (operator === 'ChangeRight') ? (idModel + 1) % fetched.frontAR.length : (idModel - 1 + fetched.frontAR.length) % fetched.frontAR.length;
-  imgFront.src = fetched.frontAR[idModel];
-  imgBack.src = fetched.backAR[idModel];
+  updateModel(idModel)
 }
 
 function flipCamera() {
@@ -121,8 +114,10 @@ function getCoords(rsl, nodes) {
   const y0 = (rsl[nodes[0]].y)
   const x1 = (rsl[nodes[1]].x) //hombro derecho
   const y1 = (rsl[nodes[1]].y)
-  const x2 = (rsl[nodes[2]].x) //cadera derecha
+  const x2 = (rsl[nodes[2]].x) //cadera izquierdo
   const y2 = (rsl[nodes[2]].y)
+  const x3 = (rsl[nodes[3]].x) //cadera derecha
+  const y3 = (rsl[nodes[3]].y)
   const shoulderWidth = Math.sqrt(Math.pow((x1 - x0), 2) + Math.pow((y1 - y0), 2)) //ancho entre hombros
   const torsosHeight = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2)) //largo del hombro a la cadera
   const magX = x1 - x0
@@ -147,16 +142,19 @@ function getCoords(rsl, nodes) {
   const point2B = [x2, y2, 0];
 
   const result = crossProductFromPoints(point1A, point2A, point1B, point2B);
-  console.log(result[2]>0)
-  const selectedImage = ((result[2]) < 0) ? imgFront : imgBack
+  const selectedImage = result[2]>0 ? imgFront : imgBack
 
-  ctx.drawImage(image,
+  ctx.drawImage(selectedImage,
     x0 - (shoulderWidth / 2.5) + newXposition,
     y0 - (shoulderWidth / 4) - newYposition,
     shoulderWidth + (shoulderWidth / 1.25),
     torsosHeight + (shoulderWidth / 4))
 }
 
+function updateModel(newIdModel) {
+  imgFront.src = fetched.frontAR[newIdModel];
+  imgBack.src = fetched.backAR[newIdModel] ? fetched.backAR[newIdModel] : fetched.frontAR[newIdModel];
+}
 
 const pose = new Pose({
   locateFile: (file) => {
