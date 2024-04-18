@@ -27,6 +27,10 @@ function onResultsFaceMesh(results) {
   ctx.clearRect(0, 0, video.videoWidth, video.videoHeight)
 
   if (results.multiFaceLandmarks[0]) {
+    results.multiFaceLandmarks[0].forEach(multiFaceLandmarks => {
+      multiFaceLandmarks.x *= video.videoWidth
+      multiFaceLandmarks.y *= video.videoHeight
+    });
     imageDraw(results.multiFaceLandmarks[0])
   }
 }
@@ -122,14 +126,14 @@ function screenShot() {
 function imageDraw(rsl) {
   const nodes = [127, 356, 168];
   ctx.save()
-  const x0 = rsl[nodes[0]].x * video.videoWidth
-  const y0 = rsl[nodes[0]].y * video.videoHeight
-  const x1 = rsl[nodes[1]].x * video.videoWidth
-  const y1 = rsl[nodes[1]].y * video.videoHeight
+  const x0 = rsl[nodes[0]].x
+  const y0 = rsl[nodes[0]].y
+  const x1 = rsl[nodes[1]].x
+  const y1 = rsl[nodes[1]].y
   const sizeX = Math.sqrt(Math.pow((x1 - x0), 2) + Math.pow((y1 - y0), 2)) * newScale
   const sizeY = (sizeX * image.height) / image.width
-  const originX = (rsl[nodes[2]].x * video.videoWidth)
-  const originY = rsl[nodes[2]].y * video.videoHeight
+  const originX = rsl[nodes[2]].x
+  const originY = rsl[nodes[2]].y
   ctx.translate(originX, originY)
   const angleHead = Math.atan((y1 - y0) / (x1 - x0))
   ctx.rotate(angleHead)

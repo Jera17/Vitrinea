@@ -7,12 +7,8 @@ const buttons = document.querySelectorAll(".my-button");
 
 var idModel = 0
 var imgFront = new Image();
-imgFront.src = fetched.frontAR[idModel];
 var imgBack = new Image();
-imgBack.src = fetched.backAR[idModel];
-console.log(fetched.frontAR[idModel])
-console.log(fetched.name)
-console.log(fetched.type)
+updateModel(idModel)
 
 const manualAjust = 10
 var translationDistance = 5
@@ -31,10 +27,11 @@ function onResultsHands(results) {
   canvas.height = video.videoHeight;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   if (results.multiHandLandmarks[0]) {
+    results.multiHandLandmarks[0].forEach(multiHandLandmarks => {
+      multiHandLandmarks.x *= video.videoWidth
+      multiHandLandmarks.y *= video.videoHeight
+    });
     drawImage(results);
-    // for (let index = 0; index < results.multiHandLandmarks[0].length; index++) {
-    //   drawPoints(results.multiHandLandmarks[0][index].x*canvas.width, results.multiHandLandmarks[0][index].y*canvas.height, 3, "red")
-    // }
   }
 }
 
@@ -109,8 +106,7 @@ buttons.forEach(function (button) {
 
 function updateCounter(operator) {
   idModel = (operator === 'ChangeRight') ? (idModel + 1) % fetched.frontAR.length : (idModel - 1 + fetched.frontAR.length) % fetched.frontAR.length;
-  imgFront.src = fetched.frontAR[idModel];
-  imgBack.src = fetched.backAR[idModel];
+  updateModel(idModel)
 }
 
 function updateFinger(operator) {
@@ -148,10 +144,10 @@ function drawImage(hand) {
 
   ctx.save();
   const fingerIdNodes = [5, 9, 13, 17]
-  const x1 = rslt[fingerIdNodes[fingerId]].x * video.videoWidth
-  const y1 = rslt[fingerIdNodes[fingerId]].y * video.videoHeight
-  const x2 = rslt[fingerIdNodes[fingerId] + 1].x * video.videoWidth
-  const y2 = rslt[fingerIdNodes[fingerId] + 1].y * video.videoHeight
+  const x1 = rslt[fingerIdNodes[fingerId]].x
+  const y1 = rslt[fingerIdNodes[fingerId]].y
+  const x2 = rslt[fingerIdNodes[fingerId] + 1].x
+  const y2 = rslt[fingerIdNodes[fingerId] + 1].y
 
   ctx.beginPath()
   ctx.save()
@@ -198,6 +194,11 @@ function drawImage(hand) {
 
   ctx.restore()
   ctx.closePath()
+}
+
+function updateModel(newIdModel) {
+  imgFront.src = fetched.frontAR[newIdModel];
+  imgBack.src = fetched.backAR[newIdModel] ? fetched.backAR[newIdModel] : fetched.frontAR[newIdModel];
 }
 
 const hands = new Hands({locateFile: (file) => {

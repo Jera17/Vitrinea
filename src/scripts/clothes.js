@@ -121,13 +121,6 @@ function getCoords(rsl, nodes) {
   const Xcenter = (x0 + x1 + x2 + x3)/4 
   const Ycenter = (y0 + y1 + y2 + y3)/4
   
-  
-  ctx.beginPath();
-  ctx.arc(Xcenter, Ycenter, 3, 0, 2 * Math.PI);
-  ctx.fillStyle = "red";
-  ctx.fill();
-  ctx.closePath();
-
   const shoulderWidth = Math.sqrt(Math.pow((x1 - x0), 2) + Math.pow((y1 - y0), 2)) * 1.7 //ancho entre hombros
   const torsosHeight = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2)) * 1.2 //largo del hombro a la cadera
   const magX = x1 - x0
@@ -153,12 +146,7 @@ function getCoords(rsl, nodes) {
 
   const result = crossProductFromPoints(point1A, point2A, point1B, point2B);
   const selectedImage = result[2]<0 ? imgFront : imgBack
-
-  ctx.drawImage(selectedImage, 
-    Xcenter - (shoulderWidth/2) + newXposition, 
-    Ycenter - (torsosHeight/2) - newYposition,
-    shoulderWidth,
-    torsosHeight)
+  ctx.drawImage(selectedImage, Xcenter - (shoulderWidth/2) + newXposition, Ycenter - (torsosHeight/2) - newYposition, shoulderWidth, torsosHeight)
 }
 
 function updateModel(newIdModel) {

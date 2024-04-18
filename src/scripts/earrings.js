@@ -25,9 +25,29 @@ function onResultsFaceMesh(results) {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   if (results.multiFaceLandmarks[0]) {
-    imageDraw(results.multiFaceLandmarks[0], 356, 323, 401, 1)
-    imageDraw(results.multiFaceLandmarks[0], 127, 93, 177, -1)
+    results.multiFaceLandmarks[0].forEach(multiFaceLandmarks => {
+      multiFaceLandmarks.x *= video.videoWidth
+      multiFaceLandmarks.y *= video.videoHeight
+    });
+    imageDraw(results.multiFaceLandmarks[0], 323, 361, 401, 1)
+    imageDraw(results.multiFaceLandmarks[0], 93, 132, 177, -1)
+
+    drawPoints(results.multiFaceLandmarks[0], 93, 3, "yellow")
+    drawPoints(results.multiFaceLandmarks[0], 132, 3, "blue")
+    drawPoints(results.multiFaceLandmarks[0], 177, 3, "red")
+
+    for (let index = 0; index < results.multiFaceLandmarks[0].length; index++) {
+      drawPoints(results.multiFaceLandmarks[0], [index], 2, "green")
+    }
   }
+}
+
+function drawPoints(f, a, r, c) {
+  ctx.beginPath();
+  ctx.arc(f[a].x, f[a].y, 0, 0, 2 * Math.PI);
+  ctx.fillStyle = c;
+  ctx.fill();
+  ctx.closePath();
 }
 
 buttons.forEach(function (button) {
@@ -120,21 +140,23 @@ function screenShot() {
 
 
 function imageDraw(rsl, Node1, Node2, Node3, Orientation) {
-  const x0 = rsl[Node2].x * canvas.width
-  const y0 = rsl[Node2].y * canvas.height
-  const x1 = rsl[Node3].x * canvas.width
-  const y1 = rsl[Node3].y * canvas.height
-  // (x0 + x1) / 2) get the point  ((x0 - x1) * 0.75)
+  const x0 = rsl[Node1].x
+  const y0 = rsl[Node1].y
+  const x1 = rsl[Node2].x
+  const y1 = rsl[Node2].y
+  const x2 = rsl[Node3].x
+  const y2 = rsl[Node3].y
+  const AuxOrigenX = ((x0 - x2) + (x0 + x2) / 2)
+  const AuxOrigenY = (y0 + y1) / 2
+
   const xEarring = ((x0 + x1) / 2) + ((x0 - x1) * 0.75)
-  if (x0 * Orientation > x1 * Orientation) {
-    const imageY0 = rsl[Node1].y * canvas.height
-    const imageY1 = rsl[Node2].y * canvas.height
-    const imageY = (imageY1 - imageY0) * newScale
-    const imageX = (imageY * image.width) / image.height
-    ctx.drawImage(image, xEarring - (imageX / 2) + (newXposition * Orientation), (y0 + y1) / 2 - newYposition, imageX, imageY)
+  if (x0 * Orientation > x2 * Orientation) {
+    const imageWidth = Math.sqrt(Math.pow((x1 - x0), 2) + Math.pow((y1 - y0), 2)) * newScale
+    const imageHeight = (image.height * imageWidth) / image.width
+
+    ctx.drawImage(image, AuxOrigenX - (imageWidth / 2) + (newXposition * Orientation), AuxOrigenY - (imageWidth / 2) - newYposition, imageWidth, imageHeight)
   }
 }
-
 const faceMesh = new FaceMesh({
   locateFile: (file) => {
     return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`;
