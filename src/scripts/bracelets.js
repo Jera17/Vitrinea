@@ -6,11 +6,11 @@ const canvas = document.querySelector("#pose-canvas")
 const ctx = canvas.getContext("2d")
 const buttons = document.querySelectorAll(".my-button");
 
-import { models } from "./bracelets_models.js"
 var idModel = 0
 var imgFront = new Image();
-imgFront.src = fetched.frontAR[idModel];
 var imgBack = new Image();
+updateModel(idModel)
+imgFront.src = fetched.frontAR[idModel];
 imgBack.src = fetched.backAR[idModel];
 
 const manualAjust = 10
@@ -28,6 +28,10 @@ function onResultsHands(results) {
   canvas.height = video.videoHeight;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   if (results.multiHandLandmarks[0]) {
+    results.multiHandLandmarks[0].forEach(multiHandLandmarks => {
+      multiHandLandmarks.x *= video.videoWidth
+      multiHandLandmarks.y *= video.videoHeight
+    });
     drawImage(results);
   }
 }
@@ -94,9 +98,9 @@ function updateZoom(direction) {
 }
 
 function updateCounter(operator) {
-  idModel = (operator === 'ChangeRight') ? (idModel + 1) % models.length : (idModel - 1 + 3) % models.length;
-  imgFront.src = models[idModel].front;
-  imgBack.src = models[idModel].back;
+  idModel = (operator === 'ChangeRight') ? (idModel + 1) % fetched.frontAR.length : (idModel - 1 + fetched.frontAR.length) % fetched.frontAR.length;
+  updateModel(idModel)
+  console.log(idModel)
 }
 
 function flipCamera() {
@@ -127,14 +131,14 @@ function screenShot() {
 function drawImage(hand) {
   const rslt = hand.multiHandLandmarks[0]
   const rslt3D = hand.multiHandWorldLandmarks[0]
-  console.log(rslt3D[0].x, rslt3D[0].y, rslt3D[0].z)
+  // console.log(rslt3D[0].x, rslt3D[0].y, rslt3D[0].z)
   const handeness = hand.multiHandedness[0].label === "Left" ? -1 : 1;
 
   ctx.save();
-  const x1 = rslt[0].x * video.videoWidth
-  const y1 = rslt[0].y * video.videoHeight
-  const x2 = rslt[9].x * video.videoWidth
-  const y2 = rslt[9].y * video.videoHeight
+  const x1 = rslt[0].x
+  const y1 = rslt[0].y
+  const x2 = rslt[9].x
+  const y2 = rslt[9].y
 
   ctx.beginPath()
   ctx.save()
@@ -183,6 +187,10 @@ function drawImage(hand) {
 
   ctx.restore()
   ctx.closePath()
+}
+function updateModel(newIdModel) {
+  imgFront.src = fetched.frontAR[newIdModel];
+  imgBack.src = fetched.backAR[newIdModel] ? fetched.backAR[newIdModel] : fetched.frontAR[newIdModel];
 }
 
 const hands = new Hands({locateFile: (file) => {
