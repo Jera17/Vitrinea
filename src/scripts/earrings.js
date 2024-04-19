@@ -146,8 +146,6 @@ function imageDraw(rsl, Node1, Node2, Node3, Orientation) {
   if (x0 * Orientation > x2 * Orientation) {
     const imageWidth = Math.sqrt(Math.pow((x1 - x0), 2) + Math.pow((y1 - y0), 2)) * newScale
     const imageHeight = (image.height * imageWidth) / image.width
-
-    //uwu
     ctx.drawImage(image, AuxOrigenX - (imageWidth / 2) + (newXposition * Orientation), AuxOrigenY - (imageWidth / 2) - newYposition, imageWidth, imageHeight)
   }
 }
