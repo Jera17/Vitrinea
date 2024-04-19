@@ -32,19 +32,12 @@ function onResultsFaceMesh(results) {
     imageDraw(results.multiFaceLandmarks[0], 323, 361, 401, 1)
     imageDraw(results.multiFaceLandmarks[0], 93, 132, 177, -1)
 
-    drawPoints(results.multiFaceLandmarks[0], 93, 3, "yellow")
-    drawPoints(results.multiFaceLandmarks[0], 132, 3, "blue")
-    drawPoints(results.multiFaceLandmarks[0], 177, 3, "red")
-
-    for (let index = 0; index < results.multiFaceLandmarks[0].length; index++) {
-      drawPoints(results.multiFaceLandmarks[0], [index], 2, "green")
-    }
   }
 }
 
 function drawPoints(f, a, r, c) {
   ctx.beginPath();
-  ctx.arc(f[a].x, f[a].y, 0, 0, 2 * Math.PI);
+  ctx.arc(f[a].x, f[a].y, r, 0, 2 * Math.PI);
   ctx.fillStyle = c;
   ctx.fill();
   ctx.closePath();

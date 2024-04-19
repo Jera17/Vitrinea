@@ -1,12 +1,13 @@
+import { fetched } from "./models.js"
+
 const video = document.getElementsByClassName('input_video')[0];
 const canvas = document.querySelector("#pose-canvas");
 const ctx = canvas.getContext("2d");
 const buttons = document.querySelectorAll(".my-button");
 
-import { models } from "./hats_models.js"
 var idModel = 0
-var glasses = new Image();
-glasses.src = models[idModel].img
+var image = new Image();
+image.src = fetched.frontAR[idModel]
 
 const manualAjust = 10
 var translationDistance = 5
@@ -24,13 +25,15 @@ function onResultsFaceMesh(results) {
   ctx.clearRect(0, 0, video.videoWidth, video.videoHeight)
 
   if (results.multiFaceLandmarks) {
+    results.multiFaceLandmarks[0].forEach(multiFaceLandmarks => {
+      multiFaceLandmarks.x *= video.videoWidth
+      multiFaceLandmarks.y *= video.videoHeight
+    });
     imageDraw(results.multiFaceLandmarks[0])
-    for (let i = 0; i < results.multiFaceLandmarks[0].length; i++) {
-      drawPoints(results.multiFaceLandmarks[0][162].x * canvas.width, results.multiFaceLandmarks[0][162].y * canvas.height, 3, "blue")
-      drawPoints(results.multiFaceLandmarks[0][389].x * canvas.width, results.multiFaceLandmarks[0][389].y * canvas.height, 3, "red")
-      drawPoints(results.multiFaceLandmarks[0][10].x * canvas.width, results.multiFaceLandmarks[0][10].y * canvas.height, 3, "yellow")
-      drawPoints(results.multiFaceLandmarks[0][4].x * canvas.width, results.multiFaceLandmarks[0][4].y * canvas.height, 3, "purple")
-    }
+    // drawPoints(results.multiFaceLandmarks[0][162].x, results.multiFaceLandmarks[0][162].y, 3, "yellow")
+    // drawPoints(results.multiFaceLandmarks[0][389].x, results.multiFaceLandmarks[0][389].y, 3, "blue")
+    // drawPoints(results.multiFaceLandmarks[0][10].x, results.multiFaceLandmarks[0][10].y, 3, "red")
+    // drawPoints(results.multiFaceLandmarks[0][0].x, results.multiFaceLandmarks[0][4].y, 3, "purple")
   }
 }
 
@@ -62,12 +65,12 @@ buttons.forEach(function (button) {
       case "ChangeRight":
         updateCounter(button.id);
         break;
-        case "FlipCamera":
-          flipCamera()
-          break;
-        case "ScreenShot":
-          screenShot()
-          break;
+      case "FlipCamera":
+        flipCamera()
+        break;
+      case "ScreenShot":
+        screenShot()
+        break;
       default:
         console.log("Unknown button clicked");
     }
@@ -101,9 +104,9 @@ function updateZoom(direction) {
 }
 
 function updateCounter(operator) {
-  idModel = (operator === 'ChangeRight') ? (idModel + 1) % models.length : (idModel - 1 + 3) % models.length;
-  console.log(idModel, (idModel + 1) % models.length, (idModel - 1 + models.length) % models.length)
-  glasses.src = models[idModel].img;
+  idModel = (operator === 'ChangeRight') ? (idModel + 1) % fetched.frontAR.length : (idModel - 1 + 3) % fetched.frontAR.length;
+  console.log(idModel, (idModel + 1) % fetched.frontAR.length, (idModel - 1 + fetched.frontAR.length) % fetched.frontAR.length)
+  image.src = fetched.frontAR[idModel]
 }
 function flipCamera() {
   isFrontCamera = !isFrontCamera;
@@ -132,34 +135,26 @@ function screenShot() {
 
 
 function imageDraw(rsl) {
-  const nodes = [162, 389, 10, 4];  //Right, left, center
+  const nodes = [162, 389, 10, 0];  //Right, left, center
   ctx.save()
-  const x0 = rsl[nodes[0]].x * video.videoWidth
-  const y0 = rsl[nodes[0]].y * video.videoHeight
-  const x1 = rsl[nodes[1]].x * video.videoWidth
-  const y1 = rsl[nodes[1]].y * video.videoHeight
-  const x2 = rsl[nodes[2]].x * video.videoWidth
-  const y2 = rsl[nodes[2]].y * video.videoHeight
-  const x3 = rsl[nodes[3]].x * video.videoWidth 
-  // Si  x3 < x0 y x3 > x1  todo  bienn, sino  x3 > x0  -> originX + (x3 - x0), sino  x3 < x1  -> originX + (x1 - x3)
-  if (x3 > x0 && x3 < x1) {
-    console.log("uwu")
-  // }else if(x3 < x0){
-  //   console.log("derecha")
-  // }else if(x3 > x1){
-  //   console.log("izquierda")
-  }else if(x3 < x0 || x3 > x1){
-    console.log("uwun't")
-  }
-  const sizeX = Math.sqrt(Math.pow((x1 - x0), 2) + Math.pow((y1 - y0), 2)) * newScale * 1.5
-  const sizeY = (sizeX * glasses.height) / glasses.width
+  const x0 = rsl[nodes[0]].x
+  const y0 = rsl[nodes[0]].y
+  const x1 = rsl[nodes[1]].x
+  const y1 = rsl[nodes[1]].y
+  const x2 = rsl[nodes[2]].x
+  const y2 = rsl[nodes[2]].y
+  const x3 = rsl[nodes[3]].x
+  const y3 = rsl[nodes[3]].y
+
+  const sizeY = Math.sqrt(Math.pow((x3 - x2), 2) + Math.pow((y3 - y2), 2)) * newScale
+  const sizeX = (sizeY * image.width) / image.height
   // const originX = x2
-  const originX = (x1 + x0)/2
+  const originX = (x1 + x0) / 2
   const originY = y2
   ctx.translate(originX, originY)
   const angleHead = Math.atan((y1 - y0) / (x1 - x0))
   ctx.rotate(angleHead)
-  ctx.drawImage(glasses, 0 - (sizeX / 2) + newXposition, 0 - (sizeY/1.3) - newYposition, sizeX, sizeY)
+  ctx.drawImage(image, 0 - (sizeX / 2) + newXposition, 0 - (sizeY / 1.3) - newYposition, sizeX, sizeY)
   ctx.restore()
 }
 

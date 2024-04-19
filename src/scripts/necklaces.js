@@ -1,12 +1,13 @@
+import { fetched } from "./models.js"
+
 const video = document.getElementsByClassName('input_video')[0];
 const canvas = document.querySelector("#pose-canvas")
 const ctx = canvas.getContext("2d")
 const buttons = document.querySelectorAll(".my-button");
 
-import { models } from "./necklaces_models.js"
-var idModel = 2
-var necklacesModel = new Image();
-necklacesModel.src = models[idModel].img
+var idModel = 0
+var imgFront = new Image();
+imgFront.src = fetched.frontAR[idModel]
 
 const manualAjust = 10
 var translationDistance = 2
@@ -23,6 +24,10 @@ function onResultsPose(results) {
   canvas.height = video.videoHeight;
   ctx.clearRect(0, 0, video.videoWidth, video.videoHeight)
   if (results.poseLandmarks) {
+    results.poseLandmarks.forEach(poseLandmarks => {
+      poseLandmarks.x *= video.videoWidth
+      poseLandmarks.y *= video.videoHeight
+    });
     drawImage(results.poseLandmarks)
   }
 }
@@ -30,22 +35,22 @@ function onResultsPose(results) {
 
 function drawImage(rst) {
   ctx.beginPath();
-  const x1 = rst[11].x * video.videoWidth
-  const y1 = rst[11].y * video.videoHeight
-  const x2 = rst[12].x * video.videoWidth
-  const y2 = rst[12].y * video.videoHeight
-  const x3 = rst[0].x * video.videoWidth
-  const y3 = rst[0].y * video.videoHeight
-  drawPoints(x1, y1, 6, "red")
-  drawPoints(x2, y2, 6, "blue")
-  drawPoints(x3, y3, 6, "yellow")
+  const x1 = rst[11].x
+  const y1 = rst[11].y
+  const x2 = rst[12].x
+  const y2 = rst[12].y
+  const x3 = rst[0].x
+  const y3 = rst[0].y
   const tanX = (x1 + x2) / 2
   const tanY = (((y1 + y2) / 2) + (y3 * 1.2)) / 2
   const distX = (x1 - x2) / 2  * newScale
-  const distY = (distX * necklacesModel.height) / necklacesModel.width
-
-  drawPoints(tanX, tanY, 8, "green")
-  ctx.drawImage(necklacesModel, tanX - (distX / 2) + newXposition, tanY - newYposition, distX, distY)
+  const distY = (distX * imgFront.height) / imgFront.width
+  
+  // drawPoints(x1, y1, 6, "red")
+  // drawPoints(x2, y2, 6, "blue")
+  // drawPoints(x3, y3, 6, "yellow")
+  // drawPoints(tanX, tanY, 8, "green")
+  ctx.drawImage(imgFront, tanX - (distX / 2) + newXposition, tanY - newYposition, distX, distY)
   ctx.closePath();
 }
 
@@ -116,9 +121,9 @@ function updateZoom(direction) {
 }
 
 function updateCounter(operator) {
-  idModel = (operator === 'ChangeRight') ? (idModel + 1) % models.length : (idModel - 1 + 3) % models.length;
-  console.log(idModel, (idModel + 1) % models.length, (idModel - 1 + models.length) % models.length)
-  necklacesModel.src = models[idModel].img;
+  idModel = (operator === 'ChangeRight') ? (idModel + 1) % fetched.frontAR.length : (idModel - 1 + fetched.frontAR.length) % fetched.frontAR.length;
+  console.log(idModel, (idModel + 1) % fetched.frontAR.length, (idModel - 1 + fetched.frontAR.length) % fetched.frontAR.length)
+  imgFront.src = fetched.frontAR[idModel];
 }
 
 function flipCamera() {
