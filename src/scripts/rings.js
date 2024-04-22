@@ -51,10 +51,10 @@ function drawPoints(x, y, r, c) {
 buttons.forEach(function (button) {
   button.addEventListener("click", function () {
     switch (button.id) {
-      // case "Up":
-      // case "Down":
-      //   updateY(button.id);
-      //   break;
+      case "Up":
+      case "Down":
+        updateY(button.id);
+        break;
       // case "Left":
       // case "Right":
       //   updateX(button.id);
@@ -83,14 +83,14 @@ buttons.forEach(function (button) {
   });
 });
 
-// function updateY(buttonId) {
-//   if (buttonId === "Up" && upAndDown < manualAjust) {
-//     upAndDown++;
-//   } else if (buttonId === "Down" && upAndDown > -manualAjust) {
-//     upAndDown--;
-//   }
-//   newYposition = upAndDown * translationDistance;
-// }
+function updateY(buttonId) {
+  if (buttonId === "Up" && upAndDown < manualAjust) {
+    upAndDown++;
+  } else if (buttonId === "Down" && upAndDown > -manualAjust) {
+    upAndDown--;
+  }
+  newYposition = upAndDown * translationDistance;
+}
 
 // function updateX(buttonId) {
 //   if (buttonId === "Left" && leftAndRight < manualAjust) {

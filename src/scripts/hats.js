@@ -110,8 +110,7 @@ function updateZoom(direction) {
 }
 
 function updateCounter(operator) {
-  idModel = (operator === 'ChangeRight') ? (idModel + 1) % fetched.frontAR.length : (idModel - 1 + 3) % fetched.frontAR.length;
-  console.log(idModel, (idModel + 1) % fetched.frontAR.length, (idModel - 1 + fetched.frontAR.length) % fetched.frontAR.length)
+  idModel = (operator === 'ChangeRight') ? (idModel + 1) % fetched.frontAR.length : (idModel - 1 + fetched.frontAR.length) % fetched.frontAR.length;
   image.src = fetched.frontAR[idModel]
 }
 function flipCamera() {
@@ -152,7 +151,7 @@ function imageDraw(rsl) {
   const x3 = rsl[nodes[3]].x
   const y3 = rsl[nodes[3]].y
 
-  const sizeY = Math.sqrt(Math.pow((x3 - x2), 2) + Math.pow((y3 - y2), 2)) * newScale
+  const sizeY = Math.sqrt(Math.pow((x3 - x2), 2) + Math.pow((y3 - y2), 2)) * newScale * 1.25
   const sizeX = (sizeY * image.width) / image.height
   // const originX = x2
   const originX = (x1 + x0) / 2

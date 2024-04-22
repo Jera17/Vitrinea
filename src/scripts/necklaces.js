@@ -128,7 +128,6 @@ function updateZoom(direction) {
 
 function updateCounter(operator) {
   idModel = (operator === 'ChangeRight') ? (idModel + 1) % fetched.frontAR.length : (idModel - 1 + fetched.frontAR.length) % fetched.frontAR.length;
-  console.log(idModel, (idModel + 1) % fetched.frontAR.length, (idModel - 1 + fetched.frontAR.length) % fetched.frontAR.length)
   imgFront.src = fetched.frontAR[idModel];
 }
 
