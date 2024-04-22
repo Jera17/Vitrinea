@@ -1,6 +1,5 @@
 import { fetched } from "./models.js"
 
-//Simulation
 const video = document.getElementsByClassName('input_video')[0];
 const canvas = document.querySelector("#pose-canvas")
 const ctx = canvas.getContext("2d")
@@ -22,8 +21,14 @@ var newXposition = 0
 var zoomInAndOut = 0
 var newScale = 1
 let isFrontCamera = true;
+let meshLoaded = false;
 
 function onResultsHands(results) {
+  if (!meshLoaded) {
+      console.log("Mesh Loaded");
+      meshLoaded = true;
+      document.getElementById('loading').style.display = 'none';
+  }
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
   ctx.clearRect(0, 0, canvas.width, canvas.height);

@@ -1,6 +1,5 @@
 import { fetched } from "./models.js"
 
-//Simulation
 const video = document.getElementsByClassName('input_video')[0];
 const canvas = document.querySelector("#pose-canvas");
 const ctx = canvas.getContext("2d");
@@ -9,7 +8,6 @@ const buttons = document.querySelectorAll(".my-button");
 var idModel = 0
 var image = new Image();
 image.src = fetched.frontAR[idModel]
-// image.crossOrigin = 'Anonymous';
 
 const manualAjust = 10
 var translationDistance = 5
@@ -20,8 +18,14 @@ var newXposition = 0
 var zoomInAndOut = 0
 var newScale = 1
 let isFrontCamera = true;
+let meshLoaded = false;
 
 function onResultsFaceMesh(results) {
+  if (!meshLoaded) {
+      console.log("Mesh Loaded");
+      meshLoaded = true;
+      document.getElementById('loading').style.display = 'none';
+  }
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
   ctx.clearRect(0, 0, video.videoWidth, video.videoHeight)

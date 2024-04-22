@@ -19,10 +19,15 @@ var newXposition = 0
 var zoomInAndOut = 0
 var newScale = 1
 var fingerId = 1
-
 let isFrontCamera = true;
+let meshLoaded = false;
 
 function onResultsHands(results) {
+  if (!meshLoaded) {
+      console.log("Mesh Loaded");
+      meshLoaded = true;
+      document.getElementById('loading').style.display = 'none';
+  }
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
   ctx.clearRect(0, 0, canvas.width, canvas.height);

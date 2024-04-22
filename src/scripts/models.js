@@ -32,4 +32,5 @@ async function fetchArModel() {
 }
 
 const fetched = await fetchArModel()
+console.log("Data Fetched")
 export {fetched}

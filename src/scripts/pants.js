@@ -10,8 +10,7 @@ var imgFront = new Image();
 var imgBack = new Image();
 updateModel(idModel)
 
-
-var nodes = [23, 27] //Hombros-Cintura: [12, 11, 23], Hombros-Rodilla: [12, 11, 25], Hombros-Tobillo: [12, 11, 27]
+var nodes = [23, 27]
 
 const manualAjust = 10
 var translationDistance = 5
@@ -20,8 +19,14 @@ var newYposition = 0
 var leftAndRight = 0
 var newXposition = 0
 let isFrontCamera = true;
+let meshLoaded = false;
 
 function onResultsPose(results) {
+  if (!meshLoaded) {
+      console.log("Mesh Loaded");
+      meshLoaded = true;
+      document.getElementById('loading').style.display = 'none';
+  }
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
   ctx.clearRect(0, 0, video.videoWidth, video.videoHeight)
