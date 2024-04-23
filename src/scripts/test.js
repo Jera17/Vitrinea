@@ -105,19 +105,3 @@ function imageDraw(rsl) {
     ctx.drawImage(image, 0 - (sizeX / 2) + newXposition, 0 - (sizeY / 3) - newYposition, sizeX, sizeY)
     ctx.restore()
 }
-
-const faceMesh = new FaceMesh({
-    locateFile: (file) => {
-        return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`;
-    }
-});
-faceMesh.onResults(onResultsFaceMesh);
-
-const camera = new Camera(video, {
-    onFrame: async () => {
-        await faceMesh.send({ image: video });
-    },
-    width: { ideal: 1280 },
-    height: { ideal: 720 }
-});
-camera.start();

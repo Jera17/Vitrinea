@@ -1,0 +1,83 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: rgb(255, 238, 217);
+}
+
+.container {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 40%;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-rows: 1fr 1fr 1fr;
+  height: 100%;
+}
+
+.floatingButtons {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin: 0 120px;
+}
+.floatingButtons button{
+  width: 50px;
+  height: 50px;
+  background-color: #7f5cfe80;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+}
+
+.mainButtons {
+  background-color: #202020;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.mainButtons button{
+  width: 80px;
+  height: 80px;
+  background-color: #805CFE;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+}
+
+.carouselButtons {
+  padding-top: 8%;
+  background-color: #202020;
+  overflow: hidden;
+  white-space: nowrap;
+  text-align: center;
+  overflow-x: scroll;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+.carousel::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+/* Hacer que los botones no esten de borde a borde */
+.carouselButtons button{
+  width: 50px;
+  height: 50px;
+  margin: 0 5px;
+  background-color: #805CFE;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
