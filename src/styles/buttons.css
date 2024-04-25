@@ -2,14 +2,17 @@ body, html {
   margin: 0;
   padding: 0;
   height: 100%;
-  background-color: rgb(255, 238, 217);
+  /* background-image: url("./image.png"); */
+  background-size: cover; /* Ensures the image covers the entire body */
+  background-position: center; /* Centers the image */
+  /* background-color: rgb(255, 238, 217); */
 }
 
 .container {
   position: fixed;
   bottom: 0;
-  width: 100%;
-  height: 40%;
+  width: 100svw;
+  height: 28%;
 }
 
 .grid-container {
@@ -17,67 +20,98 @@ body, html {
   grid-template-rows: 1fr 1fr 1fr;
   height: 100%;
 }
-
+.floatingContainer{
+  display: inline-block;
+  background-color: #67676745;
+  align-content: center;
+  border-radius: 20px;
+  margin: 0 38vw;
+  height: 60%;
+}
 .floatingButtons {
   display: flex;
   justify-content: space-around;
-  align-items: center;
-  margin: 0 120px;
 }
 .floatingButtons button{
-  width: 50px;
-  height: 50px;
-  background-color: #7f5cfe80;
-  color: white;
+  width: 40px;
+  height: 40px;
+  background-color: #ffffff;
+  color: #805CFE;
   border: none;
   border-radius: 20px;
   cursor: pointer;
   justify-content: center;
   align-items: center;
 }
-
-.mainButtons {
-  background-color: #202020;
+.carouselContainer {
+  border-top-left-radius: 5%;
+  border-top-right-radius: 5%;
+  height: 10%;
+  position: relative;
+  padding: 4svh 0;
+  background-color: #d0d0d0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-align: center;
   display: flex;
   justify-content: space-around;
   align-items: center;
 }
-.mainButtons button{
-  width: 80px;
-  height: 80px;
-  background-color: #805CFE;
-  color: white;
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  justify-content: center;
-  align-items: center;
-}
-
 .carouselButtons {
-  padding-top: 8%;
-  background-color: #202020;
-  overflow: hidden;
+  width: 100%;
+  overflow-x: scroll;
   white-space: nowrap;
   text-align: center;
-  overflow-x: scroll;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none;
 }
-.carousel::-webkit-scrollbar {
-  display: none; /* Chrome, Safari, Opera */
-}
-/* Hacer que los botones no esten de borde a borde */
 .carouselButtons button{
-  width: 50px;
-  height: 50px;
+  position: relative;
+  display: inline-flex;
+  font-size: 100%;
+  padding: 2%;
+  width: auto;
+  height: auto;
   margin: 0 5px;
   background-color: #805CFE;
-  color: white;
+  color: #ffffff;
   border: none;
   border-radius: 20px;
   cursor: pointer;
-  display: inline-flex;
   justify-content: center;
   align-items: center;
+  z-index: 2;
+}
+.mainButtons {
+  /* padding-left: 32svw; */
+  padding-left: 33svw;
+  display: flex;
+  gap: 8svw;
+  height: 12svh;
+  background-color: #d0d0d0;
+  justify-content: space-around;
+  align-items: top;
+}
+.mainButtons .buttonCam{
+  margin-top: 2svh;
+  width: 4svh;
+  height: 4svh;
+  background-color: #ffffff;
+  color: #805CFE;
+  border: none;
+  border-radius: 8svh;
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+}
+.mainButtons .buttonPhoto{
+  width: 8svh;
+  height: 8svh;
+  background-color: #805CFE;
+  color: white;
+  border: none;
+  border-radius: 8svh;
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+  z-index: 4;
 }
