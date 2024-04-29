@@ -1,18 +1,36 @@
-body, html {
+body,
+html {
   margin: 0;
   padding: 0;
   height: 100%;
-  /* background-image: url("./image.png"); */
-  background-size: cover; /* Ensures the image covers the entire body */
-  background-position: center; /* Centers the image */
-  /* background-color: rgb(255, 238, 217); */
+  background-size: cover;
+  background-position: center;
+  background-color: bisque;
+}
+.input_video,
+#pose-canvas{
+  transform: scaleX(-1);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+#loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  display: block;
 }
 
-.container {
+.buttonsContainer {
   position: fixed;
   bottom: 0;
-  width: 100svw;
-  height: 28%;
+  width: 100%;
+  height: 260px;
 }
 
 .grid-container {
@@ -20,36 +38,43 @@ body, html {
   grid-template-rows: 1fr 1fr 1fr;
   height: 100%;
 }
-.floatingContainer{
+
+.floatingContainer {
+  display: flex;
   display: inline-block;
-  background-color: #67676745;
+  background-color: #9b9b9b45;
   align-content: center;
-  border-radius: 20px;
-  margin: 0 38vw;
-  height: 60%;
+  border-radius: 50px / 100%;
+  margin: 0 auto;
 }
+
 .floatingButtons {
+  padding: 4px;
   display: flex;
   justify-content: space-around;
 }
-.floatingButtons button{
+
+.floatingButtons .buttonFloating1,
+.floatingButtons .buttonFloating2 {
   width: 40px;
   height: 40px;
   background-color: #ffffff;
   color: #805CFE;
   border: none;
-  border-radius: 20px;
+  border-radius: 50%;
   cursor: pointer;
+  margin: 0 5px;
   justify-content: center;
   align-items: center;
 }
+
 .carouselContainer {
-  border-top-left-radius: 5%;
-  border-top-right-radius: 5%;
-  height: 10%;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  margin-top: 26px;
   position: relative;
-  padding: 4svh 0;
-  background-color: #d0d0d0;
+  padding: 40px 0 30px;
+  background-color: #d0d0d0cf;
   overflow: hidden;
   white-space: nowrap;
   text-align: center;
@@ -57,61 +82,80 @@ body, html {
   justify-content: space-around;
   align-items: center;
 }
+
 .carouselButtons {
   width: 100%;
+  height: auto;
   overflow-x: scroll;
   white-space: nowrap;
   text-align: center;
   scrollbar-width: none;
 }
-.carouselButtons button{
+
+.carouselButtons .buttonCarousel {
   position: relative;
   display: inline-flex;
   font-size: 100%;
-  padding: 2%;
+  padding: 8px;
   width: auto;
   height: auto;
-  margin: 0 5px;
-  background-color: #805CFE;
-  color: #ffffff;
+  margin: 0 8px;
+  background-color: none;
+  color: #202020;
   border: none;
-  border-radius: 20px;
+  border-radius: 25% / 50%;
   cursor: pointer;
   justify-content: center;
   align-items: center;
   z-index: 2;
 }
-.mainButtons {
-  /* padding-left: 32svw; */
-  padding-left: 33svw;
-  display: flex;
-  gap: 8svw;
-  height: 12svh;
-  background-color: #d0d0d0;
-  justify-content: space-around;
-  align-items: top;
+.carouselButtons .buttonCarousel.active {
+  background-color: green;
+  color: #ffffff;
 }
-.mainButtons .buttonCam{
-  margin-top: 2svh;
-  width: 4svh;
-  height: 4svh;
-  background-color: #ffffff;
+
+.mainContainer {
+  background-color: #d0d0d0cf;
+  justify-content: space-around;
+  padding-top: 4px;
+  align-content: center;
+}
+
+.mainButtons {
+  padding-left: 34%;
+  gap: 12%;
+  height: 100%;
+  
+  display: flex;
+  justify-content: space-around;
+  align-self: center;
+  padding-bottom: 50px;
+}
+
+.mainButtons .buttonCam {
+  top: 0;
+  width: 40px;
+  height: 40px;
+  background-color: #ffffff; 
   color: #805CFE;
   border: none;
-  border-radius: 8svh;
+  border-radius: 50%;
   cursor: pointer;
   justify-content: center;
+  align-self: center;
   align-items: center;
 }
-.mainButtons .buttonPhoto{
-  width: 8svh;
-  height: 8svh;
+
+.mainButtons .buttonPhoto {
+  width: 70px;
+  height: 70px;
   background-color: #805CFE;
   color: white;
   border: none;
-  border-radius: 8svh;
+  border-radius: 50%;
   cursor: pointer;
   justify-content: center;
   align-items: center;
+  align-self: center;
   z-index: 4;
 }

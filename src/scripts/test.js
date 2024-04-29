@@ -1,6 +1,5 @@
 import { fetched } from "./models.js"
 
-//Simulation
 const video = document.getElementsByClassName('input_video')[0];
 const canvas = document.querySelector("#pose-canvas");
 const ctx = canvas.getContext("2d");
@@ -9,7 +8,6 @@ const buttons = document.querySelectorAll(".my-button");
 var idModel = 0
 var image = new Image();
 image.src = fetched.frontAR[idModel]
-// image.crossOrigin = 'Anonymous';
 
 const manualAjust = 10
 var translationDistance = 5
@@ -44,6 +42,18 @@ function onResultsFaceMesh(results) {
 buttons.forEach(function (button) {
     button.addEventListener("click", function () {
         switch (button.id) {
+            // case "Up":
+            // case "Down":
+            //   updateY(button.id);
+            //   break;
+            // case "Left":
+            // case "Right":
+            //   updateX(button.id);
+            //   break;
+            // case "ZoomIn":
+            // case "ZoomOut":
+            //   updateZoom(button.id);
+            //   break;
             case "ChangeLeft":
             case "ChangeRight":
                 updateCounter(button.id);
@@ -51,15 +61,43 @@ buttons.forEach(function (button) {
             case "FlipCamera":
                 flipCamera()
                 break;
+            // case "ScreenShot":
+            //   screenShot()
+            //   break;
             default:
                 console.log("Unknown button clicked");
         }
     });
 });
 
+// function updateY(buttonId) {
+//   if (buttonId === "Up" && upAndDown < manualAjust) {
+//     upAndDown++;
+//   } else if (buttonId === "Down" && upAndDown > -manualAjust) {
+//     upAndDown--;
+//   }
+//   newYposition = upAndDown * translationDistance;
+// }
+
+// function updateX(buttonId) {
+//   if (buttonId === "Left" && leftAndRight < manualAjust) {
+//     leftAndRight++;
+//   } else if (buttonId === "Right" && leftAndRight > -manualAjust) {
+//     leftAndRight--;
+//   }
+//   newXposition = leftAndRight * translationDistance;
+// }
+
+// function updateZoom(direction) {
+//   const delta = (direction === "ZoomIn") ? 1 : -1;
+//   if (zoomInAndOut + delta >= -manualAjust && zoomInAndOut + delta <= manualAjust) {
+//     zoomInAndOut += delta;
+//     newScale = 1 + (zoomInAndOut * 0.05);
+//   }
+// }
+
 function updateCounter(operator) {
-    idModel = (operator === 'ChangeRight') ? (idModel + 1) % fetched.frontAR.length : (idModel - 1 + 3) % fetched.frontAR.length;
-    console.log(idModel, (idModel + 1) % fetched.frontAR.length, (idModel - 1 + fetched.frontAR.length) % fetched.frontAR.length)
+    idModel = (operator === 'ChangeRight') ? (idModel + 1) % fetched.frontAR.length : (idModel - 1 + fetched.frontAR.length) % fetched.frontAR.length;
     image.src = fetched.frontAR[idModel]
 }
 
@@ -105,3 +143,19 @@ function imageDraw(rsl) {
     ctx.drawImage(image, 0 - (sizeX / 2) + newXposition, 0 - (sizeY / 3) - newYposition, sizeX, sizeY)
     ctx.restore()
 }
+
+const faceMesh = new FaceMesh({
+    locateFile: (file) => {
+        return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`;
+    }
+});
+faceMesh.onResults(onResultsFaceMesh);
+
+const camera = new Camera(video, {
+    onFrame: async () => {
+        await faceMesh.send({ image: video });
+    },
+    width: { ideal: 1280 },
+    height: { ideal: 720 }
+});
+camera.start();

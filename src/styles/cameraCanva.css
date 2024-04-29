@@ -36,24 +36,3 @@ body {
   z-index: 9999;
   display: block;
 }
-.buttons {
-  height: 10svh;
-  z-index: 3;
-  bottom: 0;
-  background-color: #202020;
-  display: flex;
-  justify-content:space-evenly;
-  padding: 2vmin 0 2vmin 0;
-}
-
-.buttons button {
-  flex: 1;
-  margin: 0 5px;
-  font-size: 8vmin;
-  text-align: center;
-  color: #EDEDED;
-  background-color: #805CFE;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
