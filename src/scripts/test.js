@@ -3,7 +3,24 @@ import { fetched } from "./models.js"
 const video = document.getElementsByClassName('input_video')[0];
 const canvas = document.querySelector("#pose-canvas");
 const ctx = canvas.getContext("2d");
-const buttons = document.querySelectorAll(".my-button");
+
+const buttons = document.querySelectorAll('button');
+const buttonsCarousel = document.querySelectorAll('.buttonCarousel');
+
+const buttonFloating1 = document.querySelector('.buttonFloating1');
+const buttonFloating2 = document.querySelector('.buttonFloating2');
+
+var buttonFloatingImg1 = buttonFloating1.querySelector('img');
+var buttonFloatingImg2 = buttonFloating2.querySelector('img');
+
+buttonFloatingImg1.src = '../src/assets/icons/AjustarAcercar.svg';
+buttonFloatingImg2.src = '../src/assets/icons/AjustarAlejar.svg';
+buttonFloating1.id = 'Ajustar'
+buttonFloating2.id = 'Ajustar'
+
+
+
+
 
 var idModel = 0
 var image = new Image();
@@ -41,63 +58,110 @@ function onResultsFaceMesh(results) {
 
 buttons.forEach(function (button) {
     button.addEventListener("click", function () {
-        switch (button.id) {
-            // case "Up":
-            // case "Down":
-            //   updateY(button.id);
-            //   break;
-            // case "Left":
-            // case "Right":
-            //   updateX(button.id);
-            //   break;
-            // case "ZoomIn":
-            // case "ZoomOut":
-            //   updateZoom(button.id);
-            //   break;
-            case "ChangeLeft":
-            case "ChangeRight":
-                updateCounter(button.id);
+        switch (this.className) {
+            case "buttonCarousel":
+            case "buttonCarousel active":
+                carouselButtonsLogic(this)
                 break;
-            case "FlipCamera":
-                flipCamera()
+            case "buttonPhoto":
+                photoButtonsLogic()
                 break;
-            // case "ScreenShot":
-            //   screenShot()
-            //   break;
+            case "buttonCam":
+                camButtonsLogic()
+                break;
+            case "buttonFloating1":
+                floatingButtonsLogic(this, -1)
+                break;
+            case "buttonFloating2":
+                floatingButtonsLogic(this, 1)
+                break;
             default:
-                console.log("Unknown button clicked");
+                console.log("error")
+                break;
         }
     });
 });
 
-// function updateY(buttonId) {
-//   if (buttonId === "Up" && upAndDown < manualAjust) {
-//     upAndDown++;
-//   } else if (buttonId === "Down" && upAndDown > -manualAjust) {
-//     upAndDown--;
-//   }
-//   newYposition = upAndDown * translationDistance;
-// }
+function carouselButtonsLogic(buttonClicked) {
+    buttonsCarousel.forEach(button => button.classList.remove('active'));
+    buttonClicked.classList.add('active');
+    console.log('Botón clickeado:', buttonClicked.textContent);
+    switch (buttonClicked.textContent) {
+        case 'Ajustar':
+            buttonFloatingImg1.src = '../src/assets/icons/AjustarAcercar.svg';
+            buttonFloatingImg2.src = '../src/assets/icons/AjustarAlejar.svg';
+            buttonFloating1.id = 'Ajustar'
+            buttonFloating2.id = 'Ajustar'
+            break;
+        case 'Tamaño':
+            buttonFloatingImg1.src = '../src/assets/icons/TamañoMenos.svg';
+            buttonFloatingImg2.src = '../src/assets/icons/TamañoMas.svg';
+            buttonFloating1.id = 'Tamaño'
+            buttonFloating2.id = 'Tamaño'
+            break;
+        case 'Modelo':
+            buttonFloatingImg1.src = '../src/assets/icons/ModeloAnterior.svg';
+            buttonFloatingImg2.src = '../src/assets/icons/ModeloSiguiente.svg';
+            buttonFloating1.id = 'Modelo'
+            buttonFloating2.id = 'Modelo'
+            break;
+        case 'Posición':
+            buttonFloatingImg1.src = '../src/assets/icons/PosicionAbajo.svg';
+            buttonFloatingImg2.src = '../src/assets/icons/PosicionArriba.svg';
+            buttonFloating1.id = 'Posición'
+            buttonFloating2.id = 'Posición'
+            break;
+        case 'Dedo':
+            buttonFloatingImg1.src = '../src/assets/icons/DedoAnterior.svg';
+            buttonFloatingImg2.src = '../src/assets/icons/DedoSiguiente.svg';
+            buttonFloating1.id = 'Dedo'
+            buttonFloating2.id = 'Dedo'
+            break;
+    }
+}
 
-// function updateX(buttonId) {
-//   if (buttonId === "Left" && leftAndRight < manualAjust) {
-//     leftAndRight++;
-//   } else if (buttonId === "Right" && leftAndRight > -manualAjust) {
-//     leftAndRight--;
-//   }
-//   newXposition = leftAndRight * translationDistance;
-// }
+function photoButtonsLogic() {
+    screenShot()
+}
 
-// function updateZoom(direction) {
-//   const delta = (direction === "ZoomIn") ? 1 : -1;
-//   if (zoomInAndOut + delta >= -manualAjust && zoomInAndOut + delta <= manualAjust) {
-//     zoomInAndOut += delta;
-//     newScale = 1 + (zoomInAndOut * 0.05);
-//   }
-// }
+function camButtonsLogic(buttonClicked) {
+    console.log("uwu")
+    flipCamera()
+}
 
-function updateCounter(operator) {
-    idModel = (operator === 'ChangeRight') ? (idModel + 1) % fetched.frontAR.length : (idModel - 1 + fetched.frontAR.length) % fetched.frontAR.length;
+function floatingButtonsLogic(buttonClicked, factor) {
+    switch (buttonClicked.id) {
+        case 'Ajustar':
+            console.log("Ajustar")
+            break;
+        case 'Tamaño':
+            updateZoom(factor)
+            break;
+        case 'Modelo':
+            updateCounter(factor)
+            break;
+        case 'Posición':
+            updateY(factor)
+            break;
+        case 'Dedo':
+            console.log("Dedo")
+            break;
+    }
+}
+
+function updateY(factor) {
+    upAndDown += factor
+    newYposition = upAndDown * translationDistance;
+}
+
+function updateZoom(factor) {
+    zoomInAndOut += factor;
+    newScale = 1 + (zoomInAndOut * 0.05);
+}
+
+function updateCounter(factor) {
+    idModel = (idModel + factor + fetched.frontAR.length) % fetched.frontAR.length;
+    console.log(idModel)
     image.src = fetched.frontAR[idModel]
 }
 

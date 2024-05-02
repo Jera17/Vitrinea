@@ -1,11 +1,11 @@
-body,
+/* body,
 html {
   margin: 0;
   padding: 0;
   height: 100%;
   background-size: cover;
   background-position: center;
-  background-color: bisque;
+  background-color: rgb(86, 86, 173);
 }
 .input_video,
 #pose-canvas{
@@ -25,7 +25,6 @@ html {
   z-index: 9999;
   display: block;
 }
-
 .buttonsContainer {
   position: fixed;
   bottom: 0;
@@ -158,4 +157,4 @@ html {
   align-items: center;
   align-self: center;
   z-index: 4;
-}
+} */

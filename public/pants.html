@@ -1,37 +1,47 @@
 <!DOCTYPE html>
 <html>
-
 <head>
   <meta charset="UTF-8">
   <link rel="icon" href="../src/assets/icon.png" type="image/x-icon">
-  <link rel="stylesheet" href="../src/styles/cameraCanva.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../src/styles/cameraCanva.css">
   <title>Vitrinea Ar</title>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
-
 </head>
-
 <body>
-  <div class="container">
-    <div class="camera">
+  <div class="camera">
       <img src="../src/assets/loading.gif" alt="Cargando..." id="loading">
       <video class="input_video"></video>
       <canvas id="pose-canvas"></canvas>
-    </div>
-    <div class="buttons">
-      <button id="Up" class="my-button">▲</button>
-      <button id="Down" class="my-button">▼</button>
-      <!-- <button id="Left" class="my-button">◄</button>
-      <button id="Right" class="my-button">►</button> -->
-      <button id="ScreenShot" class="my-button">o</button>
-      <button id="FlipCamera" class="my-button">↺</button>
-      <button id="ChangeLeft" class="my-button">↩︎</button>
-      <button id="ChangeRight" class="my-button">↪︎</button>
-    </div>
+  </div>
+  <div class="buttonsContainer">
+      <div class="grid-container">
+          <div class="floatingContainer">
+              <div class="floatingButtons">
+                  <button class="buttonFloating1" id=" "><img src="" alt="Icon"></button>
+                  <button class="buttonFloating2" id=" "><img src="" alt="Icon"></button>
+              </div>
+          </div>
+          <div class="carouselContainer">
+              <div class="carouselButtons">
+                  <button class="buttonCarousel active">Ajustar</button>
+                  <button class="buttonCarousel">Tamaño</button>
+                  <button class="buttonCarousel">Modelo</button>
+                  <button class="buttonCarousel">Posición</button>
+                  <!-- <button class="buttonCarousel">Dedo</button> -->
+              </div>
+          </div>
+          <div class="mainContainer">
+              <div class="mainButtons">
+                  <button class="buttonPhoto"><img src="../src/assets/icons/Foto.svg" alt="Icon"></button>
+                  <button class="buttonCam"><img src="../src/assets/icons/Camara.svg" alt="Icon"></button>
+              </div>
+          </div>
+      </div>
   </div>
   <script src="..\src\scripts\pants.js" type="module"></script>
 </body>
-
 </html>
