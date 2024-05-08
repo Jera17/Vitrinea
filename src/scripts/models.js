@@ -22,15 +22,80 @@ initializeApp(firebaseConfig);
 const db = getFirestore();
 const docRef = doc(db, 'products', queryString);
 
+var nullsEliminados = false
+
 async function fetchArModel() {
   const doc = await getDoc(docRef);
   if (!doc.exists()) {
-      alert("Error: Image reference not found.");
-      throw new Error("Product reference doesn't exist. Stopping execution.");
+    alert("Error: Image reference not found.");
+    throw new Error("Product reference doesn't exist. Stopping execution.");
   }
-  return doc.data().arModel;
+  // console.log(doc.data().arModel.frontAR)
+
+
+  function imageToBase64(url, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+      var reader = new FileReader();
+      reader.onloadend = function () {
+        callback(reader.result);
+      }
+      reader.readAsDataURL(xhr.response);
+    };
+    xhr.open('GET', url);
+    xhr.responseType = 'blob';
+    xhr.send();
+  }
+  async function convertUrlsToBase64(urls) {
+    return new Promise((resolve, reject) => {
+      var counter = 0;
+      urls.forEach(function (url, index) {
+        imageToBase64(url, function (base64) {
+          urls[index] = base64;
+          counter++;
+          if (counter === urls.length) {
+            resolve(urls);
+          }
+        });
+      });
+    });
+  }
+
+  var modelosAr = doc.data().arModel
+
+  // for (let index = 0; index < modelosAr.frontAR.length; index++) {
+  //   if (modelosAr.backAR === null) {
+  //     modelosAr.backAR = modelosAr.frontAR
+  //   }
+  //   else if (modelosAr.backAR[index] === '' || modelosAr.backAR[index] === undefined || modelosAr.backAR[index] === null) {
+  //     modelosAr.backAR[index] = modelosAr.frontAR[index]
+  //   }
+  // }
+  
+  modelosAr.frontAR = await convertUrlsToBase64(doc.data().arModel.frontAR)
+    .then(function (urls) {
+      return urls
+    });
+
+  modelosAr.backAR = await convertUrlsToBase64(doc.data().arModel.backAR)
+    .then(function (urls) {
+      return urls
+    });
+
+  return modelosAr;
+
 }
 
-const fetched = await fetchArModel()
+
+
+
+var fetched = await fetchArModel()
 console.log("Data Fetched")
-export {fetched}
+console.log(fetched)
+
+//-----------------------------------------
+
+
+
+
+export { fetched }

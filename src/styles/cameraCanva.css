@@ -42,7 +42,8 @@ html {
 .floatingContainer {
   display: flex;
   display: inline-block;
-  background-color: #9b9b9b45;
+  background-color: #d0d0d0cf;
+  /* background-color: #c3c3c397; */
   align-content: center;
   border-radius: 50px / 100%;
   margin: 0 auto;
@@ -100,7 +101,7 @@ html {
   width: auto;
   height: auto;
   margin: 0 8px;
-  background-color: none;
+  background-color: #ffffff00;
   color: #202020;
   border: none;
   border-radius: 25% / 50%;
