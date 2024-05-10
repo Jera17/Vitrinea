@@ -3,6 +3,7 @@ import { fetched } from "./models.js"
 const video = document.getElementsByClassName('input_video')[0];
 const canvas = document.querySelector("#pose-canvas")
 const ctx = canvas.getContext("2d")
+var loaded = document.getElementById('loading')
 
 const buttons = document.querySelectorAll('button');
 const buttonsCarousel = document.querySelectorAll('.buttonCarousel');
@@ -33,13 +34,11 @@ var zoomInAndOut = 0
 var newScale = 1
 var fingerId = 1
 let isFrontCamera = true;
-let meshLoaded = false;
 
 function onResultsHands(results) {
-  if (!meshLoaded) {
+  if (loaded.style.display !== 'none') {
+      loaded.style.display = 'none';
       console.log("Mesh Loaded");
-      meshLoaded = true;
-      document.getElementById('loading').style.display = 'none';
   }
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;

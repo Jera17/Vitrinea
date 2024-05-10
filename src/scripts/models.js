@@ -22,16 +22,12 @@ initializeApp(firebaseConfig);
 const db = getFirestore();
 const docRef = doc(db, 'products', queryString);
 
-var nullsEliminados = false
-
 async function fetchArModel() {
   const doc = await getDoc(docRef);
   if (!doc.exists()) {
     alert("Error: Image reference not found.");
     throw new Error("Product reference doesn't exist. Stopping execution.");
   }
-  // console.log(doc.data().arModel.frontAR)
-
 
   function imageToBase64(url, callback) {
     var xhr = new XMLHttpRequest();
@@ -47,7 +43,7 @@ async function fetchArModel() {
     xhr.send();
   }
   async function convertUrlsToBase64(urls) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       var counter = 0;
       urls.forEach(function (url, index) {
         imageToBase64(url, function (base64) {
@@ -71,7 +67,7 @@ async function fetchArModel() {
   //     modelosAr.backAR[index] = modelosAr.frontAR[index]
   //   }
   // }
-  
+
   modelosAr.frontAR = await convertUrlsToBase64(doc.data().arModel.frontAR)
     .then(function (urls) {
       return urls
@@ -83,19 +79,8 @@ async function fetchArModel() {
     });
 
   return modelosAr;
-
 }
 
-
-
-
 var fetched = await fetchArModel()
-console.log("Data Fetched")
-console.log(fetched)
-
-//-----------------------------------------
-
-
-
 
 export { fetched }

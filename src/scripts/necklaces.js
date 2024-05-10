@@ -3,6 +3,8 @@ import { fetched } from "./models.js"
 const video = document.getElementsByClassName('input_video')[0];
 const canvas = document.querySelector("#pose-canvas")
 const ctx = canvas.getContext("2d")
+var loaded = document.getElementById('loading')
+
 const buttons = document.querySelectorAll('button');
 const buttonsCarousel = document.querySelectorAll('.buttonCarousel');
 
@@ -18,8 +20,6 @@ buttonFloating1.id = 'Tamaño'
 buttonFloating2.id = 'Tamaño'
 
 var idModel = 0
-//cambie todas las instancias de "frontAr" por "image" tener en cuenta por
-//si durante pruebas hay un error, de lo contrario eliminar esta linea
 var image = new Image();
 image.src = fetched.frontAR[idModel]
 
@@ -32,13 +32,11 @@ var newXposition = 0
 var zoomInAndOut = 0
 var newScale = 1
 let isFrontCamera = true;
-let meshLoaded = false;
 
 function onResultsPose(results) {
-  if (!meshLoaded) {
+  if (loaded.style.display !== 'none') {
+      loaded.style.display = 'none';
       console.log("Mesh Loaded");
-      meshLoaded = true;
-      document.getElementById('loading').style.display = 'none';
   }
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;

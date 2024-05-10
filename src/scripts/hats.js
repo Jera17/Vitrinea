@@ -3,6 +3,7 @@ import { fetched } from "./models.js"
 const video = document.getElementsByClassName('input_video')[0];
 const canvas = document.querySelector("#pose-canvas");
 const ctx = canvas.getContext("2d");
+var loaded = document.getElementById('loading')
 
 const buttons = document.querySelectorAll('button');
 const buttonsCarousel = document.querySelectorAll('.buttonCarousel');
@@ -31,13 +32,11 @@ var newXposition = 0
 var zoomInAndOut = 0
 var newScale = 1
 let isFrontCamera = true;
-let meshLoaded = false;
 
 function onResultsFaceMesh(results) {
-  if (!meshLoaded) {
+  if (loaded.style.display !== 'none') {
+      loaded.style.display = 'none';
       console.log("Mesh Loaded");
-      meshLoaded = true;
-      document.getElementById('loading').style.display = 'none';
   }
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
@@ -158,16 +157,26 @@ function floatingButtonsLogic(buttonClicked, factor) {
   }
 }
 
+function updateX(factor) {
+  if (Math.abs(leftAndRight + factor) <= manualAjust) {
+    leftAndRight += factor
+    newXposition = leftAndRight * translationDistance;
+  }
+}
+
 function updateY(factor) {
-  upAndDown += factor
-  newYposition = upAndDown * translationDistance;
+  if (Math.abs(upAndDown + factor) <= manualAjust) {
+    upAndDown += factor
+    newYposition = upAndDown * translationDistance;
+  }
 }
 
 function updateZoom(factor) {
-  zoomInAndOut += factor;
-  newScale = 1 + (zoomInAndOut * 0.05);
+  if (Math.abs(zoomInAndOut + factor) <= manualAjust) {
+    zoomInAndOut += factor;
+    newScale = 1 + (zoomInAndOut * 0.05);
+  }
 }
-
 function updateCounter(factor) {
   idModel = (idModel + factor + fetched.frontAR.length) % fetched.frontAR.length;
   console.log(idModel)
