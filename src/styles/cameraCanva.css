@@ -97,6 +97,7 @@ html {
   white-space: nowrap;
   text-align: center;
   scrollbar-width: none;
+  padding: 0 40%;
 }
 
 .carouselButtons .buttonCarousel {
@@ -132,7 +133,6 @@ html {
   padding-left: 34%;
   gap: 12%;
   height: 100%;
-  
   display: flex;
   justify-content: space-around;
   align-self: center;

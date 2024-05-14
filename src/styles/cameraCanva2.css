@@ -1,0 +1,22 @@
+
+body {
+  margin: 0;
+}
+
+.carousel {
+  display: flex;
+  overflow-x: scroll;
+  padding: 0 40%;
+}
+
+.carousel-button {
+  padding: 10px 20px;
+  background-color: #ddd;
+  border: none;
+  cursor: pointer;
+}
+
+.carousel-button.active {
+  background-color: #007bff;
+  color: white;
+}

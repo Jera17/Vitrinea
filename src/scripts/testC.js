@@ -1,53 +1,40 @@
+    const carousel = document.querySelector(".carousel");
+    const buttons = document.querySelectorAll(".carousel-button");
+    const buttonPading = parseInt(window.getComputedStyle(buttons[0]).paddingLeft) * 2
+    console.log(buttonPading)
+    // Add event listener for scroll event on carousel container
+    carousel.addEventListener("scroll", () => {
+        const carouselRect = carousel.getBoundingClientRect();
 
-var canvas = document.getElementById('canvas');
-var ctx = canvas.getContext('2d');
+        buttons.forEach(button => {
+            const buttonRect = button.getBoundingClientRect();
+            // Calculate the horizontal center of each button relative to the carousel container
+            const buttonCenter = buttonRect.left + (buttonRect.width / 2) - carouselRect.left + buttonPading;
+            // Check if the button is in the middle of the carousel
+            if (buttonCenter >= carouselRect.width / 2 && buttonCenter <= carouselRect.width / 2 + buttonRect.width) {
+                // Remove 'active' class from all buttons
+                buttons.forEach(btn => btn.classList.remove("active"));
 
-function imageToBase64(url, callback) {
-    var xhr = new XMLHttpRequest();
-    xhr.onload = function () {
-        var reader = new FileReader();
-        reader.onloadend = function () {
-            callback(reader.result);
-        }
-        reader.readAsDataURL(xhr.response);
-    };
-    xhr.open('GET', url);
-    xhr.responseType = 'blob';
-    xhr.send();
-}
-
-async function convertUrlsToBase64(urls, callback) {
-    var counter = 0;
-
-    urls.forEach(function (url, index) {
-        imageToBase64(url, function (base64) {
-            urls[index] = base64;
-            counter++;
-            if (counter === urls.length) {
-                callback();
+                // Add 'active' class to the button in the middle
+                button.classList.add("active");
             }
         });
     });
-}
 
+    // Add click event listener to each button
+    buttons.forEach(button => {
+        button.addEventListener("click", () => {
+            // Remove 'active' class from all buttons
+            buttons.forEach(btn => btn.classList.remove("active"));
 
-var urls = [
-    'https://firebasestorage.googleapis.com/v0/b/vitrinea-4433b.appspot.com/o/vitrineaar%2Fglasses%2Fdefault%2Fglasses.png?alt=media&token=98fdbe39-e53e-4939-89bb-349d5bb2dfe5',
-    'https://i.imgur.com/pptqNMs.jpeg'
-];
+            // Add 'active' class to the clicked button
+            button.classList.add("active");
 
-// Example usage:
-var ewe = await convertUrlsToBase64(urls, function () {
-    console.log(urls);
-    return urls
-});
-
-
-
-function drawImageOnCanvas(url) {
-    var image = new Image();
-    image.onload = function () {
-        ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-    };
-    image.src = url;
-}
+            // Scroll the carousel to the clicked button
+            const scrollLeft = button.offsetLeft - (carousel.offsetWidth - button.offsetWidth) / 2;
+            carousel.scrollTo({
+                left: scrollLeft,
+                behavior: "smooth"
+            });
+        });
+    });
