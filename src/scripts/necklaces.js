@@ -7,15 +7,20 @@ var loaded = document.getElementById('loading')
 
 const buttons = document.querySelectorAll('button');
 const buttonsCarousel = document.querySelectorAll('.buttonCarousel');
+const carousel = document.querySelector(".carouselButtons");
+const buttonPading = parseInt(window.getComputedStyle(buttons[0]).paddingLeft) * 2
+var activeButton = buttonsCarousel[0]
 
 const buttonFloating1 = document.querySelector('.buttonFloating1');
 const buttonFloating2 = document.querySelector('.buttonFloating2');
 
-var buttonFloatingImg1 = buttonFloating1.querySelector('img');
-var buttonFloatingImg2 = buttonFloating2.querySelector('img');
+var buttonFloatingImg1 = document.createElement('img');
+var buttonFloatingImg2 = document.createElement('img');
 
 buttonFloatingImg1.src = '../src/assets/icons/TamañoMenos.svg';
 buttonFloatingImg2.src = '../src/assets/icons/TamañoMas.svg';
+buttonFloating1.appendChild(buttonFloatingImg1);
+buttonFloating2.appendChild(buttonFloatingImg2);
 buttonFloating1.id = 'Tamaño'
 buttonFloating2.id = 'Tamaño'
 
@@ -50,12 +55,32 @@ function onResultsPose(results) {
   }
 }
 
+carousel.addEventListener("scroll", () => {
+  const carouselRect = carousel.getBoundingClientRect();
+  buttonsCarousel.forEach(button => {
+      const buttonRect = button.getBoundingClientRect();
+      const buttonCenter = buttonRect.left + (buttonRect.width / 2) - carouselRect.left + buttonPading;
+      if (buttonCenter >= carouselRect.width / 2 && buttonCenter <= carouselRect.width / 2 + buttonRect.width) {
+          if(button != activeButton){
+              buttonsCarousel.forEach(btn => btn.classList.remove("active"));
+              carouselButtonsLogic(button)
+              button.classList.add("active");
+              activeButton = button
+          }
+      }
+  });
+});
+
 buttons.forEach(function (button) {
   button.addEventListener("click", function () {
       switch (this.className) {
           case "buttonCarousel":
           case "buttonCarousel active":
-              carouselButtonsLogic(this)
+            const scrollLeft = button.offsetLeft - (carousel.offsetWidth - button.offsetWidth) / 2;
+            carousel.scrollTo({
+                left: scrollLeft,
+                behavior: "smooth"
+            });
               break;
           case "buttonPhoto":
               photoButtonsLogic()

@@ -7,15 +7,20 @@ var loaded = document.getElementById('loading')
 
 const buttons = document.querySelectorAll('button');
 const buttonsCarousel = document.querySelectorAll('.buttonCarousel');
+const carousel = document.querySelector(".carouselButtons");
+const buttonPading = parseInt(window.getComputedStyle(buttons[0]).paddingLeft) * 2
+var activeButton = buttonsCarousel[0]
 
 const buttonFloating1 = document.querySelector('.buttonFloating1');
 const buttonFloating2 = document.querySelector('.buttonFloating2');
 
-var buttonFloatingImg1 = buttonFloating1.querySelector('img');
-var buttonFloatingImg2 = buttonFloating2.querySelector('img');
+var buttonFloatingImg1 = document.createElement('img');
+var buttonFloatingImg2 = document.createElement('img');
 
 buttonFloatingImg1.src = '../src/assets/icons/TamañoMenos.svg';
 buttonFloatingImg2.src = '../src/assets/icons/TamañoMas.svg';
+buttonFloating1.appendChild(buttonFloatingImg1);
+buttonFloating2.appendChild(buttonFloatingImg2);
 buttonFloating1.id = 'Tamaño'
 buttonFloating2.id = 'Tamaño'
 
@@ -37,8 +42,8 @@ let isFrontCamera = true;
 
 function onResultsHands(results) {
   if (loaded.style.display !== 'none') {
-      loaded.style.display = 'none';
-      console.log("Mesh Loaded");
+    loaded.style.display = 'none';
+    console.log("Mesh Loaded");
   }
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
@@ -52,37 +57,49 @@ function onResultsHands(results) {
   }
 }
 
-function drawPoints(x, y, r, c) {
-  ctx.beginPath();
-  ctx.arc(x, y, r, 0, 2 * Math.PI); // Using arc() method to draw a circle representing the point
-  ctx.fillStyle = c;
-  ctx.fill();
-  ctx.closePath();
-}
+carousel.addEventListener("scroll", () => {
+  const carouselRect = carousel.getBoundingClientRect();
+  buttonsCarousel.forEach(button => {
+    const buttonRect = button.getBoundingClientRect();
+    const buttonCenter = buttonRect.left + (buttonRect.width / 2) - carouselRect.left + buttonPading;
+    if (buttonCenter >= carouselRect.width / 2 && buttonCenter <= carouselRect.width / 2 + buttonRect.width) {
+      if (button != activeButton) {
+        buttonsCarousel.forEach(btn => btn.classList.remove("active"));
+        carouselButtonsLogic(button)
+        button.classList.add("active");
+        activeButton = button
+      }
+    }
+  });
+});
 
 buttons.forEach(function (button) {
   button.addEventListener("click", function () {
-      switch (this.className) {
-          case "buttonCarousel":
-          case "buttonCarousel active":
-              carouselButtonsLogic(this)
-              break;
-          case "buttonPhoto":
-              photoButtonsLogic()
-              break;
-          case "buttonCam":
-              camButtonsLogic()
-              break;
-          case "buttonFloating1":
-              floatingButtonsLogic(this, -1)
-              break;
-          case "buttonFloating2":
-              floatingButtonsLogic(this, 1)
-              break;
-          default:
-              console.log("error")
-              break;
-      }
+    switch (this.className) {
+      case "buttonCarousel":
+      case "buttonCarousel active":
+        const scrollLeft = button.offsetLeft - (carousel.offsetWidth - button.offsetWidth) / 2;
+        carousel.scrollTo({
+          left: scrollLeft,
+          behavior: "smooth"
+        });
+        break;
+      case "buttonPhoto":
+        screenShot()
+        break;
+      case "buttonCam":
+        flipCamera()
+        break;
+      case "buttonFloating1":
+        floatingButtonsLogic(this, -1)
+        break;
+      case "buttonFloating2":
+        floatingButtonsLogic(this, 1)
+        break;
+      default:
+        console.log("error")
+        break;
+    }
   });
 });
 
@@ -91,66 +108,57 @@ function carouselButtonsLogic(buttonClicked) {
   buttonClicked.classList.add('active');
   console.log('Botón clickeado:', buttonClicked.textContent);
   switch (buttonClicked.textContent) {
-      case 'Ajustar':
-          buttonFloatingImg1.src = '../src/assets/icons/AjustarAcercar.svg';
-          buttonFloatingImg2.src = '../src/assets/icons/AjustarAlejar.svg';
-          buttonFloating1.id = 'Ajustar'
-          buttonFloating2.id = 'Ajustar'
-          break;
-      case 'Tamaño':
-          buttonFloatingImg1.src = '../src/assets/icons/TamañoMenos.svg';
-          buttonFloatingImg2.src = '../src/assets/icons/TamañoMas.svg';
-          buttonFloating1.id = 'Tamaño'
-          buttonFloating2.id = 'Tamaño'
-          break;
-      case 'Modelo':
-          buttonFloatingImg1.src = '../src/assets/icons/ModeloAnterior.svg';
-          buttonFloatingImg2.src = '../src/assets/icons/ModeloSiguiente.svg';
-          buttonFloating1.id = 'Modelo'
-          buttonFloating2.id = 'Modelo'
-          break;
-      case 'Posición':
-          buttonFloatingImg1.src = '../src/assets/icons/PosicionAbajo.svg';
-          buttonFloatingImg2.src = '../src/assets/icons/PosicionArriba.svg';
-          buttonFloating1.id = 'Posición'
-          buttonFloating2.id = 'Posición'
-          break;
-      case 'Dedo':
-          buttonFloatingImg1.src = '../src/assets/icons/DedoAnterior.svg';
-          buttonFloatingImg2.src = '../src/assets/icons/DedoSiguiente.svg';
-          buttonFloating1.id = 'Dedo'
-          buttonFloating2.id = 'Dedo'
-          break;
+    case 'Ajustar':
+      buttonFloatingImg1.src = '../src/assets/icons/AjustarAcercar.svg';
+      buttonFloatingImg2.src = '../src/assets/icons/AjustarAlejar.svg';
+      buttonFloating1.id = 'Ajustar'
+      buttonFloating2.id = 'Ajustar'
+      break;
+    case 'Tamaño':
+      buttonFloatingImg1.src = '../src/assets/icons/TamañoMenos.svg';
+      buttonFloatingImg2.src = '../src/assets/icons/TamañoMas.svg';
+      buttonFloating1.id = 'Tamaño'
+      buttonFloating2.id = 'Tamaño'
+      break;
+    case 'Modelo':
+      buttonFloatingImg1.src = '../src/assets/icons/ModeloAnterior.svg';
+      buttonFloatingImg2.src = '../src/assets/icons/ModeloSiguiente.svg';
+      buttonFloating1.id = 'Modelo'
+      buttonFloating2.id = 'Modelo'
+      break;
+    case 'Posición':
+      buttonFloatingImg1.src = '../src/assets/icons/PosicionAbajo.svg';
+      buttonFloatingImg2.src = '../src/assets/icons/PosicionArriba.svg';
+      buttonFloating1.id = 'Posición'
+      buttonFloating2.id = 'Posición'
+      break;
+    case 'Dedo':
+      buttonFloatingImg1.src = '../src/assets/icons/DedoAnterior.svg';
+      buttonFloatingImg2.src = '../src/assets/icons/DedoSiguiente.svg';
+      buttonFloating1.id = 'Dedo'
+      buttonFloating2.id = 'Dedo'
+      break;
   }
-}
-
-function photoButtonsLogic() {
-  screenShot()
-}
-
-function camButtonsLogic(buttonClicked) {
-  console.log("uwu")
-  flipCamera()
 }
 
 function floatingButtonsLogic(buttonClicked, factor) {
   switch (buttonClicked.id) {
-      case 'Ajustar':
-          updateX(factor)
-          break;
-      case 'Tamaño':
-          updateZoom(factor)
-          break;
-      case 'Modelo':
-          updateCounter(factor)
-          break;
-      case 'Posición':
-          updateY(factor)
-          break;
-      case 'Dedo':
-          updateFinger(factor)
-          console.log("Dedo")
-          break;
+    case 'Ajustar':
+      updateX(factor)
+      break;
+    case 'Tamaño':
+      updateZoom(factor)
+      break;
+    case 'Modelo':
+      updateCounter(factor)
+      break;
+    case 'Posición':
+      updateY(factor)
+      break;
+    case 'Dedo':
+      updateFinger(factor)
+      console.log("Dedo")
+      break;
   }
 }
 
@@ -267,9 +275,11 @@ function updateModel(newIdModel) {
   imgBack.src = fetched.backAR[newIdModel] ? fetched.backAR[newIdModel] : fetched.frontAR[newIdModel];
 }
 
-const hands = new Hands({locateFile: (file) => {
-  return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
-}});
+const hands = new Hands({
+  locateFile: (file) => {
+    return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+  }
+});
 hands.setOptions({
   maxNumHands: 1,
   modelComplexity: 1,
@@ -280,7 +290,7 @@ hands.onResults(onResultsHands);
 
 const camera = new Camera(video, {
   onFrame: async () => {
-    await hands.send({image: video});
+    await hands.send({ image: video });
   },
   width: 1280,
   height: 720
