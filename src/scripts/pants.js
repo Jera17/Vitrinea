@@ -62,16 +62,16 @@ function onResultsPose(results) {
 carousel.addEventListener("scroll", () => {
   const carouselRect = carousel.getBoundingClientRect();
   buttonsCarousel.forEach(button => {
-      const buttonRect = button.getBoundingClientRect();
-      const buttonCenter = buttonRect.left + (buttonRect.width / 2) - carouselRect.left + buttonPading;
-      if (buttonCenter >= carouselRect.width / 2 && buttonCenter <= carouselRect.width / 2 + buttonRect.width) {
-          if(button != activeButton){
-              buttonsCarousel.forEach(btn => btn.classList.remove("active"));
-              carouselButtonsLogic(button)
-              button.classList.add("active");
-              activeButton = button
-          }
+    const buttonRect = button.getBoundingClientRect();
+    const buttonCenter = buttonRect.left + (buttonRect.width / 2) - carouselRect.left + buttonPading;
+    if (buttonCenter >= carouselRect.width / 2 && buttonCenter <= carouselRect.width / 2 + buttonRect.width) {
+      if (button != activeButton) {
+        buttonsCarousel.forEach(btn => btn.classList.remove("active"));
+        carouselButtonsLogic(button)
+        button.classList.add("active");
+        activeButton = button
       }
+    }
   });
 });
 
@@ -82,15 +82,15 @@ buttons.forEach(function (button) {
       case "buttonCarousel active":
         const scrollLeft = button.offsetLeft - (carousel.offsetWidth - button.offsetWidth) / 2;
         carousel.scrollTo({
-            left: scrollLeft,
-            behavior: "smooth"
+          left: scrollLeft,
+          behavior: "smooth"
         });
         break;
       case "buttonPhoto":
-        photoButtonsLogic()
+        screenShot()
         break;
       case "buttonCam":
-        camButtonsLogic()
+        flipCamera()
         break;
       case "buttonFloating1":
         floatingButtonsLogic(this, -1)
@@ -141,15 +141,6 @@ function carouselButtonsLogic(buttonClicked) {
       buttonFloating2.id = 'Dedo'
       break;
   }
-}
-
-function photoButtonsLogic() {
-  screenShot()
-}
-
-function camButtonsLogic(buttonClicked) {
-  console.log("uwu")
-  flipCamera()
 }
 
 function floatingButtonsLogic(buttonClicked, factor) {
@@ -236,7 +227,7 @@ function getCoords(rsl, nodes) {
   const Xcenter = (x0 + x1 + x2 + x3) / 4
   const Ycenter = (y0 + y1 + y2 + y3) / 4
 
-  const shoulderWidth = Math.sqrt(Math.pow((x1 - x0), 2) + Math.pow((y1 - y0), 2)) * 1.7  * newScale//ancho entre hombros
+  const shoulderWidth = Math.sqrt(Math.pow((x1 - x0), 2) + Math.pow((y1 - y0), 2)) * 1.7 * newScale//ancho entre hombros
   const torsosHeight = (shoulderWidth * imgFront.height) / imgFront.width * 1.2 //largo del hombro a la cadera
   const magX = x1 - x0
   const magY = y1 - y0

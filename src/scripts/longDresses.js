@@ -62,16 +62,16 @@ function onResultsPose(results) {
 carousel.addEventListener("scroll", () => {
   const carouselRect = carousel.getBoundingClientRect();
   buttonsCarousel.forEach(button => {
-      const buttonRect = button.getBoundingClientRect();
-      const buttonCenter = buttonRect.left + (buttonRect.width / 2) - carouselRect.left + buttonPading;
-      if (buttonCenter >= carouselRect.width / 2 && buttonCenter <= carouselRect.width / 2 + buttonRect.width) {
-          if(button != activeButton){
-              buttonsCarousel.forEach(btn => btn.classList.remove("active"));
-              carouselButtonsLogic(button)
-              button.classList.add("active");
-              activeButton = button
-          }
+    const buttonRect = button.getBoundingClientRect();
+    const buttonCenter = buttonRect.left + (buttonRect.width / 2) - carouselRect.left + buttonPading;
+    if (buttonCenter >= carouselRect.width / 2 && buttonCenter <= carouselRect.width / 2 + buttonRect.width) {
+      if (button != activeButton) {
+        buttonsCarousel.forEach(btn => btn.classList.remove("active"));
+        carouselButtonsLogic(button)
+        button.classList.add("active");
+        activeButton = button
       }
+    }
   });
 });
 
@@ -82,8 +82,8 @@ buttons.forEach(function (button) {
       case "buttonCarousel active":
         const scrollLeft = button.offsetLeft - (carousel.offsetWidth - button.offsetWidth) / 2;
         carousel.scrollTo({
-            left: scrollLeft,
-            behavior: "smooth"
+          left: scrollLeft,
+          behavior: "smooth"
         });
         break;
       case "buttonPhoto":

@@ -157,24 +157,23 @@ function floatingButtonsLogic(buttonClicked, factor) {
       break;
     case 'Dedo':
       updateFinger(factor)
-      console.log("Dedo")
       break;
   }
 }
 
 function updateY(factor) {
-  upAndDown += factor
-  newYposition = upAndDown * translationDistance;
-}
-
-function updateX(factor) {
-  leftAndRight += factor
-  newXposition = leftAndRight * translationDistance;
+  if (Math.abs(upAndDown + factor) <= manualAjust) {
+    upAndDown += factor
+    console.log(upAndDown)
+    newYposition = upAndDown * translationDistance;
+  }
 }
 
 function updateZoom(factor) {
-  zoomInAndOut += factor;
-  newScale = 1 + (zoomInAndOut * 0.05);
+  if (Math.abs(zoomInAndOut + factor) <= manualAjust) {
+    zoomInAndOut += factor;
+    newScale = 1 + (zoomInAndOut * 0.05);
+  }
 }
 
 function updateCounter(factor) {
