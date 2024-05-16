@@ -282,7 +282,7 @@ function drawImage(hand) {
 }
 function updateModel(newIdModel) {
   imgFront.src = fetched.frontAR[newIdModel];
-  imgBack.src = fetched.backAR[newIdModel] ? fetched.backAR[newIdModel] : fetched.frontAR[newIdModel];
+  imgBack.src = fetched.backAR ? fetched.backAR[newIdModel] : fetched.frontAR[newIdModel];
 }
 
 const hands = new Hands({

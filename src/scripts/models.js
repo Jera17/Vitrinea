@@ -57,27 +57,40 @@ async function fetchArModel() {
     });
   }
 
-  var modelosAr = doc.data().arModel
+  function obtenerArraysDeImagenes(objeto) {
+    if (!objeto || !objeto.frontAR) {
+      return null;
+    } else if (!objeto.backAR) {
+      const nuevoObjeto = {
+        frontAR: objeto.frontAR.slice()
+      };
+      return nuevoObjeto;
+    } else if (!objeto || !objeto.frontAR || !objeto.backAR) {
+      const nuevoObjeto = {
+        frontAR: objeto.frontAR.slice(),
+        backAR: objeto.backAR.slice()
+      };
+      return nuevoObjeto;
+    }
+  }
 
-  // for (let index = 0; index < modelosAr.frontAR.length; index++) {
-  //   if (modelosAr.backAR === null) {
-  //     modelosAr.backAR = modelosAr.frontAR
-  //   }
-  //   else if (modelosAr.backAR[index] === '' || modelosAr.backAR[index] === undefined || modelosAr.backAR[index] === null) {
-  //     modelosAr.backAR[index] = modelosAr.frontAR[index]
-  //   }
-  // }
+  var modelosAr = obtenerArraysDeImagenes(doc.data().arModel);
 
-  modelosAr.frontAR = await convertUrlsToBase64(doc.data().arModel.frontAR)
-    .then(function (urls) {
-      return urls
-    });
-
-  modelosAr.backAR = await convertUrlsToBase64(doc.data().arModel.backAR)
-    .then(function (urls) {
-      return urls
-    });
-
+  if (!modelosAr.backAR) {
+    modelosAr.frontAR = await convertUrlsToBase64(modelosAr.frontAR)
+      .then(function (urls) {
+        return urls
+      });
+  }else{
+    modelosAr.frontAR = await convertUrlsToBase64(modelosAr.frontAR)
+      .then(function (urls) {
+        return urls
+      });
+    modelosAr.backAR = await convertUrlsToBase64(modelosAr.backAR)
+      .then(function (urls) {
+        return urls
+      });
+  }
   return modelosAr;
 }
 

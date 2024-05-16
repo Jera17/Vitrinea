@@ -254,7 +254,6 @@ function drawImage(hand) {
     return result;
   }
 
-  // Ejemplo de uso:
   const point1A = [rslt[9].x, rslt[9].y, 0];
   const point2A = [rslt[10].x, rslt[10].y, 0];
   const point1B = [rslt[9].x, rslt[9].y, 0];
@@ -271,7 +270,7 @@ function drawImage(hand) {
 
 function updateModel(newIdModel) {
   imgFront.src = fetched.frontAR[newIdModel];
-  imgBack.src = fetched.backAR[newIdModel] ? fetched.backAR[newIdModel] : fetched.frontAR[newIdModel];
+  imgBack.src = fetched.backAR ? fetched.backAR[newIdModel] : fetched.frontAR[newIdModel];
 }
 
 const hands = new Hands({
