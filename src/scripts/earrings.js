@@ -36,7 +36,7 @@ var leftAndRight = 0
 var newXposition = 0
 var zoomInAndOut = 0
 var newScale = 1
-let isFrontCamera = true;
+var isFrontCamera = true;
 
 function onResultsFaceMesh(results) {
   if (loaded.style.display !== 'none') {

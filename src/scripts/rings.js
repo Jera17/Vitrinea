@@ -38,7 +38,7 @@ var newXposition = 0
 var zoomInAndOut = 0
 var newScale = 1
 var fingerId = 1
-let isFrontCamera = true;
+var isFrontCamera = true;
 
 function onResultsHands(results) {
   if (loaded.style.display !== 'none') {

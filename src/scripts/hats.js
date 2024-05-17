@@ -36,7 +36,7 @@ var leftAndRight = 0
 var newXposition = 0
 var zoomInAndOut = 0
 var newScale = 1
-let isFrontCamera = true;
+var isFrontCamera = true;
 
 function onResultsFaceMesh(results) {
   if (loaded.style.display !== 'none') {
@@ -45,8 +45,7 @@ function onResultsFaceMesh(results) {
   }
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
-  ctx.clearRect(0, 0, video.videoWidth, video.videoHeight)
-
+  ctx.clearRect(0, 0, canvas.videoWidth, canvas.videoHeight)
   if (results.multiFaceLandmarks) {
     results.multiFaceLandmarks[0].forEach(multiFaceLandmarks => {
       multiFaceLandmarks.x *= video.videoWidth

@@ -39,7 +39,7 @@ var leftAndRight = 0
 var newXposition = 1
 var zoomInAndOut = 0
 var newScale = 1
-let isFrontCamera = true;
+var isFrontCamera = true;
 
 function onResultsPose(results) {
   if (loaded.style.display !== 'none') {
@@ -48,8 +48,7 @@ function onResultsPose(results) {
   }
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
-  ctx.clearRect(0, 0, video.videoWidth, video.videoHeight)
-
+  ctx.clearRect(0, 0, canvas.videoWidth, canvas.videoHeight)
   if (results.poseLandmarks) {
     results.poseLandmarks.forEach(poseLandmarks => {
       poseLandmarks.x *= video.videoWidth
