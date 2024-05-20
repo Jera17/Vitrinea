@@ -58,14 +58,14 @@ async function fetchArModel() {
   }
 
   function obtenerArraysDeImagenes(objeto) {
-    if (!objeto || !objeto.frontAR) {
-      return null;
-    } else if (!objeto.backAR) {
+      if (objeto.backAR == null) {
+      console.log("No hay imagenes backAR")
       const nuevoObjeto = {
         frontAR: objeto.frontAR.slice()
       };
       return nuevoObjeto;
-    } else if (!objeto || !objeto.frontAR || !objeto.backAR) {
+    } else if (objeto.backAR != null) {
+      console.log("Si hay imagenes backAR")
       const nuevoObjeto = {
         frontAR: objeto.frontAR.slice(),
         backAR: objeto.backAR.slice()
@@ -78,9 +78,9 @@ async function fetchArModel() {
 
   if (!modelosAr.backAR) {
     modelosAr.frontAR = await convertUrlsToBase64(modelosAr.frontAR)
-      .then(function (urls) {
-        return urls
-      });
+    .then(function (urls) {
+      return urls
+    });
   }else{
     modelosAr.frontAR = await convertUrlsToBase64(modelosAr.frontAR)
       .then(function (urls) {
