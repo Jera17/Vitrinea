@@ -98,7 +98,8 @@ html {
   overflow-x: scroll;
   padding: 0 40%;
   scroll-behavior: smooth;
-  scroll-snap-type: x proximity;
+  /* scroll-snap-type: x proximity; */
+  scroll-snap-type: x mandatory;
   scrollbar-width: none;
   text-align: center;
   white-space: nowrap;
