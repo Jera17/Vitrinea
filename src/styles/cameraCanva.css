@@ -25,14 +25,26 @@ html {
   width: 100%;
 }
 
-#loading {
-  display: inline-block;
-  left: 50%;
+.spinner {
   position: absolute;
   top: 40%;
-  transform: translate(-50%, -50%);
-  width: 50%;
-  z-index: 1;
+  left: 50%;
+  width: 100px;
+  height: 100px;
+  margin-top: -50px;
+  margin-left: -50px;
+  border-radius: 50%;
+  background: radial-gradient(farthest-side, #805CFE 94%, #0000) top/9px 9px no-repeat,
+    conic-gradient(#FE6C32 10%, #805CFE);
+  -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 9px), #000 0);
+  mask: radial-gradient(farthest-side, #0000 calc(100% - 9px), #000 0);
+  animation: spinner 1s infinite linear;
+}
+
+@keyframes spinner {
+  100% {
+    transform: rotate(1turn);
+  }
 }
 
 .buttonsContainer {

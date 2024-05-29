@@ -1,40 +1,22 @@
-    const carousel = document.querySelector(".carousel");
-    const buttons = document.querySelectorAll(".carousel-button");
-    const buttonPading = parseInt(window.getComputedStyle(buttons[0]).paddingLeft) * 2
-    console.log(buttonPading)
-    // Add event listener for scroll event on carousel container
-    carousel.addEventListener("scroll", () => {
-        const carouselRect = carousel.getBoundingClientRect();
+(function() {
+    emailjs.init("jgWzsk6ZY8IW3pakh"); // Id de mi usuario o el usuario quien manda el correo
+})();
 
-        buttons.forEach(button => {
-            const buttonRect = button.getBoundingClientRect();
-            // Calculate the horizontal center of each button relative to the carousel container
-            const buttonCenter = buttonRect.left + (buttonRect.width / 2) - carouselRect.left + buttonPading;
-            // Check if the button is in the middle of the carousel
-            if (buttonCenter >= carouselRect.width / 2 && buttonCenter <= carouselRect.width / 2 + buttonRect.width) {
-                // Remove 'active' class from all buttons
-                buttons.forEach(btn => btn.classList.remove("active"));
-
-                // Add 'active' class to the button in the middle
-                button.classList.add("active");
-            }
-        });
-    });
-
-    // Add click event listener to each button
-    buttons.forEach(button => {
-        button.addEventListener("click", () => {
-            // Remove 'active' class from all buttons
-            buttons.forEach(btn => btn.classList.remove("active"));
-
-            // Add 'active' class to the clicked button
-            button.classList.add("active");
-
-            // Scroll the carousel to the clicked button
-            const scrollLeft = button.offsetLeft - (carousel.offsetWidth - button.offsetWidth) / 2;
-            carousel.scrollTo({
-                left: scrollLeft,
-                behavior: "smooth"
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('sendEmailButton').addEventListener('click', function() {
+        
+        var templateParams = {
+            to_name: 'Luisito uwu', //Nombre de ejemplo de usuario
+            to_email: 'jjera2617@gmail.com', //Correo de ejemplo de usuario
+            message: 'Aqui deberia haber un mensaje pero por ahora no lo hay UwU.', //Mensaje para el usuario
+            from_name: 'Vitrinea' //Nombre de quien lo envia
+        };
+        console.log(templateParams)
+        emailjs.send('service_9k7eo7z', 'template_y1thtqa', templateParams)
+            .then(function(response) {
+                console.log('Correo enviado exitosamente!', response.status, response.text);
+            }, function(error) {
+                console.log('Fallo al enviar el correo...', error);
             });
-        });
     });
+});
