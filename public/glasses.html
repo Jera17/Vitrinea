@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <link rel="icon" href="../src/assets/icon.png" type="image/x-icon">
@@ -7,13 +8,16 @@
     <link rel="stylesheet" href="../src/styles/cameraCanva.css">
     <title>Vitrinea Ar</title>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"
+        crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
 </head>
+
 <body>
     <div class="camera">
-        <img src="../src/assets/loading.gif" id="loading">
+        <div class="spinner"></div>
         <video class="input_video"></video>
         <canvas id="pose-canvas"></canvas>
     </div>
@@ -44,4 +48,5 @@
     </div>
     <script src="../src/scripts/glasses.js" type="module"></script>
 </body>
+
 </html>
