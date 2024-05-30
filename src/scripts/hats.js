@@ -45,13 +45,13 @@ function onResultsFaceMesh(results) {
     canvas.height = video.videoHeight;
     console.log("Mesh Loaded");
   }
+  ctx.clearRect(0, 0, canvas.videoWidth, canvas.videoHeight)
   if (results.multiFaceLandmarks) {
     results.multiFaceLandmarks[0].forEach(multiFaceLandmarks => {
       multiFaceLandmarks.x *= video.videoWidth
       multiFaceLandmarks.y *= video.videoHeight
     });
     imageDraw(results.multiFaceLandmarks[0])
-    ctx.clearRect(0, 0, canvas.videoWidth, canvas.videoHeight)
   }
 }
 

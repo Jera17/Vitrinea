@@ -46,13 +46,13 @@ function onResultsHands(results) {
     canvas.height = video.videoHeight;
     console.log("Mesh Loaded");
   }
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   if (results.multiHandLandmarks[0]) {
     results.multiHandLandmarks[0].forEach(multiHandLandmarks => {
       multiHandLandmarks.x *= video.videoWidth
       multiHandLandmarks.y *= video.videoHeight
     });
     drawImage(results);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
 }
 
