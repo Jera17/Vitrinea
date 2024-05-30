@@ -49,8 +49,6 @@ function onResultsFaceMesh(results) {
         canvas.height = video.videoHeight;
         console.log("Mesh Loaded");
     }
-    //Limpia el canva para que se pueda dibujar el siguiente frame de la simulación
-    ctx.clearRect(0, 0, video.videoWidth, video.videoHeight)
     //Si se realizó el trackeo, dibujar sobre este la simulación
     if (results.multiFaceLandmarks[0]) {
         //Escalar el trackeo para que se ajuste al tamaño de la imagen
@@ -60,6 +58,8 @@ function onResultsFaceMesh(results) {
         });
         //dibujar simulación
         imageDraw(results.multiFaceLandmarks[0])
+        //Limpia el canva para que se pueda dibujar el siguiente frame de la simulación
+        ctx.clearRect(0, 0, video.videoWidth, video.videoHeight)
     }
 }
 

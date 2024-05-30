@@ -47,13 +47,13 @@ function onResultsPose(results) {
     canvas.height = video.videoHeight;
     console.log("Mesh Loaded");
   }
-  ctx.clearRect(0, 0, canvas.videoWidth, canvas.videoHeight)
   if (results.poseLandmarks) {
     results.poseLandmarks.forEach(poseLandmarks => {
       poseLandmarks.x *= video.videoWidth
       poseLandmarks.y *= video.videoHeight
     });
     getCoords(results.poseLandmarks, nodes)
+    ctx.clearRect(0, 0, canvas.videoWidth, canvas.videoHeight)
   }
 }
 
@@ -222,7 +222,7 @@ function getCoords(rsl, nodes) {
 
   const torsosWidth = (torsosHeight * imgFront.width) / imgFront.height * 1.0 //largo del hombro a la cadera
 
-  ctx.drawImage(imgFront, x0 - (torsosWidth/2) - newXposition, y0 * 0.9 - newYposition, torsosWidth, torsosHeight)
+  ctx.drawImage(imgFront, x0 - (torsosWidth / 2) - newXposition, y0 * 0.9 - newYposition, torsosWidth, torsosHeight)
 }
 
 function updateModel(newIdModel) {
