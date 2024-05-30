@@ -3,7 +3,7 @@ import { fetched } from "./models.js"
 const video = document.getElementsByClassName('input_video')[0];
 const canvas = document.querySelector("#pose-canvas");
 const ctx = canvas.getContext("2d");
-var loaded = document.getElementById('loading')
+var loaded = document.getElementsByClassName('spinner')[0];
 
 const buttons = document.querySelectorAll('button');
 const buttonsCarousel = document.querySelectorAll('.buttonCarousel');
@@ -41,10 +41,10 @@ var isFrontCamera = true;
 function onResultsFaceMesh(results) {
   if (loaded.style.display !== 'none') {
     loaded.style.display = 'none';
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
     console.log("Mesh Loaded");
   }
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
   ctx.clearRect(0, 0, canvas.videoWidth, canvas.videoHeight)
   if (results.multiFaceLandmarks) {
     results.multiFaceLandmarks[0].forEach(multiFaceLandmarks => {
