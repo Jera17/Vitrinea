@@ -45,7 +45,7 @@ function onResultsFaceMesh(results) {
     canvas.height = video.videoHeight;
     console.log("Mesh Loaded");
   }
-  ctx.clearRect(0, 0, canvas.videoWidth, canvas.videoHeight)
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
   if (results.multiFaceLandmarks) {
     results.multiFaceLandmarks[0].forEach(multiFaceLandmarks => {
       multiFaceLandmarks.x *= video.videoWidth

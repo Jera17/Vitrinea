@@ -47,7 +47,7 @@ function onResultsPose(results) {
     canvas.height = video.videoHeight;
     console.log("Mesh Loaded");
   }
-  ctx.clearRect(0, 0, canvas.videoWidth, canvas.videoHeight)
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
   if (results.poseLandmarks) {
     results.poseLandmarks.forEach(poseLandmarks => {
       poseLandmarks.x *= video.videoWidth

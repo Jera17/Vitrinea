@@ -50,7 +50,7 @@ function onResultsFaceMesh(results) {
         console.log("Mesh Loaded");
     }
     //Si se realizó el trackeo, dibujar sobre este la simulación
-    ctx.clearRect(0, 0, video.videoWidth, video.videoHeight)
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
     //Limpia el canva para que se pueda dibujar el siguiente frame de la simulación
     if (results.multiFaceLandmarks[0]) {
         //Escalar el trackeo para que se ajuste al tamaño de la imagen
