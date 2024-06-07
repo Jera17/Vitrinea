@@ -251,8 +251,9 @@ function drawImage(hand) {
   ctx.rotate(angleHand + ((Math.PI / 2)) * componenteX)
 
   //Scale
-  // var FingerLenght = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2)) * 2 * newScale
-  var FingerLenght = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2)) * 2 * newScale
+  var scaleHand = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2)) * 2 * newScale
+  var sizeX = scaleHand / 2
+  var sizeY = (sizeX * imgFront.height) / imgFront.width
 
   //Flip (Usando producto punto)
   function crossProductFromPoints(point1A, point2A, point1B, point2B) {
@@ -275,7 +276,7 @@ function drawImage(hand) {
   const result = crossProductFromPoints(point1A, point2A, point1B, point2B);
 
   const selectedImage = ((result[2] * handeness) < 0) ? imgFront : imgBack
-  ctx.drawImage(selectedImage, (0 - FingerLenght / 4) + newXposition, ((0 - FingerLenght / 2) / 1.25) - newYposition, FingerLenght / 2, FingerLenght / 2)
+  ctx.drawImage(selectedImage, (0 - scaleHand / 4) + newXposition, ((0 - scaleHand / 2) / 1.25) - newYposition, sizeX, sizeY)
 
   ctx.restore()
   ctx.closePath()
