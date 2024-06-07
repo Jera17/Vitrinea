@@ -1,5 +1,5 @@
 :root {
-  --blancoTransp: #d0d0d0cf;
+  --blancoTransp: #DEDEDE;
   --moradoVitr: #805cfe;
 }
 
@@ -50,24 +50,26 @@ html {
 
 .buttonsContainer {
   bottom: 0;
-  height: 260px;
+  height: 280px;
   position: fixed;
   width: 100%;
 }
 
 .grid-container {
   display: grid;
-  grid-template-rows: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr;
   height: 100%;
 }
 
 .floatingContainer {
   align-content: center;
-  background-color: #70707040;
+  background-color: rgba(112, 112, 112, 0.8);
   border-radius: 50px / 100%;
+  box-shadow: inset 0px 3px 6px rgba(0, 0, 0, 0.16);
   display: flex;
   display: inline-block;
   margin: 0 auto;
+  padding: 2px;
   z-index: 2;
 }
 
@@ -85,6 +87,7 @@ html {
   border-radius: 50%;
   color: #805CFE;
   cursor: pointer;
+  display: flex;
   height: 40px;
   justify-content: center;
   margin: 0 5px;
@@ -100,6 +103,7 @@ html {
   justify-content: space-around;
   margin-top: 26px;
   overflow: hidden;
+  /* padding: 32px 0 24px; */
   padding: 40px 0 30px;
   position: relative;
   text-align: center;
@@ -139,7 +143,9 @@ html {
 }
 
 .carouselButtons .buttonCarousel.active {
-  background-color: green;
+  background-color: rgba(70, 70, 70, 0.8);
+  box-shadow: inset 0px 3px 6px rgba(0, 0, 0, 0.16);
+  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.16);
   color: #ffffff;
 }
 
@@ -147,7 +153,6 @@ html {
   align-content: center;
   background-color: var(--blancoTransp);
   justify-content: space-around;
-  padding-top: 4px;
 }
 
 .mainButtons {
@@ -156,7 +161,7 @@ html {
   gap: 12%;
   height: 100%;
   justify-content: space-around;
-  padding-bottom: 50px;
+  padding-bottom: 40px;
   padding-left: 34%;
 }
 
@@ -168,6 +173,7 @@ html {
   border-radius: 50%;
   color: var(--moradoVitr);
   cursor: pointer;
+  display: flex;
   height: 40px;
   justify-content: center;
   top: 0;
@@ -182,8 +188,14 @@ html {
   border-radius: 50%;
   color: white;
   cursor: pointer;
+  display: flex;
   height: 70px;
   justify-content: center;
   width: 70px;
   z-index: 4;
+}
+
+.emptyContainer{
+  background-color: var(--blancoTransp);
+  height: 20px;
 }
