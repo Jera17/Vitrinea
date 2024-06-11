@@ -46,7 +46,7 @@ function onResultsFaceMesh(results) {
     console.log("Mesh Loaded");
   }
   ctx.clearRect(0, 0, canvas.width, canvas.height)
-  if (results.multiFaceLandmarks) {
+  if (results.multiFaceLandmarks[0]) {
     results.multiFaceLandmarks[0].forEach(multiFaceLandmarks => {
       multiFaceLandmarks.x *= video.videoWidth
       multiFaceLandmarks.y *= video.videoHeight
@@ -227,10 +227,24 @@ function imageDraw(rsl) {
   ctx.restore()
 }
 
+// const faceMesh = new FaceMesh({
+//   locateFile: (file) => {
+//       return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`;
+//   }
+// });
+// faceMesh.onResults(onResultsFaceMesh);
+
+
 const faceMesh = new FaceMesh({
   locateFile: (file) => {
-    return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@0.1/${file}`;
+    return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`;
   }
+});
+faceMesh.setOptions({
+  maxNumFaces: 1,
+  refineLandmarks: true,
+  minDetectionConfidence: 0.5,
+  minTrackingConfidence: 0.5
 });
 faceMesh.onResults(onResultsFaceMesh);
 

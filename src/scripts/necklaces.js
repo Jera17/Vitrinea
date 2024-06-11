@@ -237,8 +237,14 @@ function drawPoints(x, y, r, c) {
 
 const pose = new Pose({
   locateFile: (file) => {
-    return `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.2/${file}`;
+    return `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`;
   }
+});
+pose.setOptions({
+  modelComplexity: 1,
+  smoothLandmarks: true,
+  minDetectionConfidence: 0.5,
+  minTrackingConfidence: 0.5
 });
 pose.onResults(onResultsPose);
 
