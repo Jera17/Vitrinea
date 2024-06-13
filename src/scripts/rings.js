@@ -1,4 +1,5 @@
 import { fetched } from "./models.js"
+console.time('Mesh');
 
 const video = document.getElementsByClassName('input_video')[0];
 const canvas = document.querySelector("#pose-canvas")
@@ -46,6 +47,7 @@ function onResultsHands(results) {
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     console.log("Mesh Loaded");
+    console.timeEnd('Mesh');
   }
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   if (results.multiHandLandmarks[0]) {
@@ -280,7 +282,7 @@ const hands = new Hands({
 });
 hands.setOptions({
   maxNumHands: 1,
-  modelComplexity: 1,
+  modelComplexity: 0,
   minDetectionConfidence: 0.5,
   minTrackingConfidence: 0.5
 });

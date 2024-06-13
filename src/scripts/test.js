@@ -1,9 +1,10 @@
 import { fetched } from "./models.js"
+console.time('Mesh');
 
 const video = document.getElementsByClassName('input_video')[0];
 const canvas = document.querySelector("#pose-canvas")
 const ctx = canvas.getContext("2d")
-var loaded = document.getElementById('loading')
+var loaded = document.getElementsByClassName('spinner')[0];
 
 const buttons = document.querySelectorAll('button');
 const buttonsCarousel = document.querySelectorAll('.buttonCarousel');
@@ -39,14 +40,17 @@ var zoomInAndOut = 0
 var newScale = 1
 var fingerId = 1
 var isFrontCamera = true;
+var webLoaded = false;
 
 function onResultsHands(results) {
     if (loaded.style.display !== 'none') {
         loaded.style.display = 'none';
+        webLoaded = true;
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
         console.log("Mesh Loaded");
+        console.timeEnd('Mesh');
     }
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (results.multiHandLandmarks[0]) {
         results.multiHandLandmarks[0].forEach(multiHandLandmarks => {
@@ -73,33 +77,39 @@ carousel.addEventListener("scroll", () => {
     });
 });
 
-
 buttons.forEach(function (button) {
     button.addEventListener("click", function () {
-        switch (this.className) {
-            case "buttonCarousel":
-            case "buttonCarousel active":
-                const scrollLeft = button.offsetLeft - (carousel.offsetWidth - button.offsetWidth) / 2;
-                carousel.scrollTo({
-                    left: scrollLeft,
-                    behavior: "smooth"
-                });
-                break;
-            case "buttonPhoto":
-                screenShot()
-                break;
-            case "buttonCam":
-                flipCamera()
-                break;
-            case "buttonFloating1":
-                floatingButtonsLogic(this, -1)
-                break;
-            case "buttonFloating2":
-                floatingButtonsLogic(this, 1)
-                break;
-            default:
-                console.log("error")
-                break;
+        if (webLoaded === true) {
+            switch (this.className) {
+                case "buttonCarousel":
+                case "buttonCarousel active":
+                    const scrollLeft = button.offsetLeft - (carousel.offsetWidth - button.offsetWidth) / 2;
+                    carousel.scrollTo({
+                        left: scrollLeft,
+                        behavior: "smooth"
+                    });
+                    break;
+                case "buttonPhoto":
+                    screenShot()
+                    break;
+                case "buttonCam":
+                    flipCamera()
+                    break;
+                case "timer":
+                    timerStart(5, screenShot)
+                    break;
+                case "buttonFloating1":
+                    floatingButtonsLogic(this, -1)
+                    break;
+                case "buttonFloating2":
+                    floatingButtonsLogic(this, 1)
+                    break;
+                default:
+                    console.log("error")
+                    break;
+            }
+        }else{
+            console.log("Web not loaded");
         }
     });
 });
@@ -185,6 +195,22 @@ function updateCounter(factor) {
 
 function updateFinger(operator) {
     fingerId = (operator > 0) ? (fingerId + 1) % 4 : (fingerId - 1 + 4) % 4;
+}
+
+function timerStart(segundos, callback) {
+    const cuentaRegresivaElemento = document.getElementById('cuenta-regresiva');
+
+    const intervalo = setInterval(() => {
+        cuentaRegresivaElemento.textContent = segundos;
+        console.log(segundos);
+        segundos--;
+
+        if (segundos < 0) {
+            clearInterval(intervalo);
+            cuentaRegresivaElemento.textContent = "";
+            callback();
+        }
+    }, 1000);
 }
 
 function flipCamera() {
@@ -281,7 +307,7 @@ const hands = new Hands({
 });
 hands.setOptions({
     maxNumHands: 1,
-    modelComplexity: 1,
+    modelComplexity: 0,
     minDetectionConfidence: 0.5,
     minTrackingConfidence: 0.5
 });

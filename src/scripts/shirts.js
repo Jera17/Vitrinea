@@ -1,4 +1,5 @@
 import { fetched } from "./models.js"
+console.time('Mesh');
 
 const video = document.getElementsByClassName('input_video')[0];
 const canvas = document.querySelector("#pose-canvas")
@@ -47,6 +48,7 @@ function onResultsPose(results) {
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     console.log("Mesh Loaded");
+    console.timeEnd('Mesh');
   }
   ctx.clearRect(0, 0, canvas.width, canvas.height)
   if (results.poseLandmarks) {
@@ -265,7 +267,7 @@ const pose = new Pose({
   }
 });
 pose.setOptions({
-  modelComplexity: 1,
+  modelComplexity: 0,
   smoothLandmarks: true,
   minDetectionConfidence: 0.5,
   minTrackingConfidence: 0.5
