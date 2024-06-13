@@ -37,6 +37,7 @@ var newYposition = 0
 var leftAndRight = 0
 var newXposition = 1
 var zoomInAndOut = 0
+var shoulderId = 0
 var newScale = 1
 var isFrontCamera = true;
 
@@ -132,11 +133,11 @@ function carouselButtonsLogic(buttonClicked) {
       buttonFloating1.id = 'Posición'
       buttonFloating2.id = 'Posición'
       break;
-    case 'Dedo':
+    case 'Hombro':
       buttonFloatingImg1.src = '../src/assets/icons/DedoAnterior.svg';
       buttonFloatingImg2.src = '../src/assets/icons/DedoSiguiente.svg';
-      buttonFloating1.id = 'Dedo'
-      buttonFloating2.id = 'Dedo'
+      buttonFloating1.id = 'Hombro'
+      buttonFloating2.id = 'Hombro'
       break;
   }
 }
@@ -155,8 +156,8 @@ function floatingButtonsLogic(buttonClicked, factor) {
     case 'Posición':
       updateY(factor)
       break;
-    case 'Dedo':
-      console.log("Dedo")
+    case 'Hombro':
+      updateShoulder(factor)
       break;
   }
 }
@@ -187,6 +188,11 @@ function updateCounter(factor) {
   updateModel(idModel)
 }
 
+function updateShoulder(operator) {
+  console.log(shoulderId)
+  shoulderId = (operator > 0) ? (shoulderId + 1) % 2 : (shoulderId - 1 + 2) % 2;
+}
+
 function flipCamera() {
   isFrontCamera = !isFrontCamera;
   camera.h.facingMode = isFrontCamera ? "user" : "environment";
@@ -213,10 +219,10 @@ function screenShot() {
 }
 
 function getCoords(rsl, nodes) {
-  const x0 = (rsl[nodes[0]].x) //hombro izquierdo
-  const y0 = (rsl[nodes[0]].y)
-  const x1 = (rsl[nodes[1]].x) //cadera izquierdo
-  const y1 = (rsl[nodes[1]].y)
+  const x0 = (rsl[nodes[0]+shoulderId].x) //hombro izquierdo
+  const y0 = (rsl[nodes[0]+shoulderId].y)
+  const x1 = (rsl[nodes[1]+shoulderId].x) //cadera izquierdo
+  const y1 = (rsl[nodes[1]+shoulderId].y)
 
   const torsosHeight = Math.sqrt(Math.pow((x1 - x0), 2) + Math.pow((y1 - y0), 2)) * 1.0 * newScale //ancho entre hombros
 

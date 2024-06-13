@@ -1,9 +1,10 @@
 import { fetched } from "./models.js"
+console.time('Mesh');
 
 const video = document.getElementsByClassName('input_video')[0];
 const canvas = document.querySelector("#pose-canvas")
 const ctx = canvas.getContext("2d")
-var loaded = document.getElementById('loading')
+var loaded = document.getElementsByClassName('spinner')[0];
 
 const buttons = document.querySelectorAll('button');
 const buttonsCarousel = document.querySelectorAll('.buttonCarousel');
@@ -43,10 +44,11 @@ var isFrontCamera = true;
 function onResultsHands(results) {
     if (loaded.style.display !== 'none') {
         loaded.style.display = 'none';
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
         console.log("Mesh Loaded");
+        console.timeEnd('Mesh');
     }
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (results.multiHandLandmarks[0]) {
         results.multiHandLandmarks[0].forEach(multiHandLandmarks => {
@@ -73,7 +75,6 @@ carousel.addEventListener("scroll", () => {
     });
 });
 
-
 buttons.forEach(function (button) {
     button.addEventListener("click", function () {
         switch (this.className) {
@@ -90,6 +91,9 @@ buttons.forEach(function (button) {
                 break;
             case "buttonCam":
                 flipCamera()
+                break;
+            case "timer":
+                timerStart(5, screenShot)
                 break;
             case "buttonFloating1":
                 floatingButtonsLogic(this, -1)
@@ -187,6 +191,22 @@ function updateFinger(operator) {
     fingerId = (operator > 0) ? (fingerId + 1) % 4 : (fingerId - 1 + 4) % 4;
 }
 
+function timerStart(segundos, callback) {
+    const cuentaRegresivaElemento = document.getElementById('cuenta-regresiva');
+
+    const intervalo = setInterval(() => {
+        cuentaRegresivaElemento.textContent = segundos;
+        console.log(segundos);
+        segundos--;
+
+        if (segundos < 0) {
+            clearInterval(intervalo);
+            cuentaRegresivaElemento.textContent = "";
+            callback();
+        }
+    }, 1000);
+}
+
 function flipCamera() {
     isFrontCamera = !isFrontCamera;
     camera.h.facingMode = isFrontCamera ? "user" : "environment";
@@ -281,7 +301,7 @@ const hands = new Hands({
 });
 hands.setOptions({
     maxNumHands: 1,
-    modelComplexity: 1,
+    modelComplexity: 0,
     minDetectionConfidence: 0.5,
     minTrackingConfidence: 0.5
 });

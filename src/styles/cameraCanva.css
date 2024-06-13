@@ -1,5 +1,5 @@
 :root {
-  --blancoTransp: #DEDEDE;
+  --blancoTransp: rgba(222, 222, 222, 0.6);
   --moradoVitr: #805cfe;
 }
 
@@ -61,6 +61,32 @@ html {
   height: 100%;
 }
 
+.grid-container .floatingContainer,
+.grid-container .carouselContainer,
+.grid-container .mainContainer,
+.grid-container .emptyContainer {
+  backdrop-filter: blur(2px);
+  background-color: var(--blancoTransp);
+}
+
+#cuenta-regresiva {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  width: 100px;
+  height: 100px;
+  margin-top: -50px;
+  margin-left: -50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 4rem;
+  text-shadow:0 0 1rem transparent;
+  text-shadow:0 0 0 rgb(0, 0, 0), 0 0 1rem transparent;
+  z-index: 1000;
+}
+
 .floatingContainer {
   align-content: center;
   background-color: rgba(112, 112, 112, 0.8);
@@ -96,14 +122,12 @@ html {
 
 .carouselContainer {
   align-items: center;
-  background-color: var(--blancoTransp);
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   display: flex;
   justify-content: space-around;
   margin-top: 26px;
   overflow: hidden;
-  /* padding: 32px 0 24px; */
   padding: 40px 0 30px;
   position: relative;
   text-align: center;
@@ -115,7 +139,6 @@ html {
   overflow-x: scroll;
   padding: 0 40%;
   scroll-behavior: smooth;
-  /* scroll-snap-type: x proximity; */
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
   text-align: center;
@@ -151,20 +174,19 @@ html {
 
 .mainContainer {
   align-content: center;
-  background-color: var(--blancoTransp);
   justify-content: space-around;
 }
 
 .mainButtons {
   align-self: center;
   display: flex;
-  gap: 12%;
+  /* gap: 12%; */
   height: 100%;
   justify-content: space-around;
   padding-bottom: 40px;
-  padding-left: 34%;
 }
 
+.mainButtons .timer,
 .mainButtons .buttonCam {
   align-items: center;
   align-self: center;
@@ -196,6 +218,5 @@ html {
 }
 
 .emptyContainer{
-  background-color: var(--blancoTransp);
   height: 20px;
 }
