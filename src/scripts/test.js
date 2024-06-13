@@ -41,6 +41,7 @@ var newScale = 1
 var fingerId = 1
 var isFrontCamera = true;
 
+
 function onResultsHands(results) {
     if (loaded.style.display !== 'none') {
         loaded.style.display = 'none';
