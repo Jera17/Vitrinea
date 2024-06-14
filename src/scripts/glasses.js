@@ -38,12 +38,15 @@ var newXposition = 0
 var zoomInAndOut = 0
 var newScale = 1
 var isFrontCamera = true;
+var webLoaded = false;
 
 //Funcion donde se genera el trackeo de cuerpo
 function onResultsFaceMesh(results) {
     //Quitar el gif de 'cargando' cuando se inicia la funcion actual
     if (loaded.style.display !== 'none') {
         loaded.style.display = 'none';
+        //Asegurarse que la web esté cargada
+        webLoaded = true;
         //Establece el ancho del canva segun el ancho de el video
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
@@ -59,7 +62,7 @@ function onResultsFaceMesh(results) {
             multiFaceLandmarks.y *= video.videoHeight
         });
         //dibujar simulación
-        imageDraw(results.multiFaceLandmarks[0])
+        simImage(results.multiFaceLandmarks[0])
     }
 }
 
@@ -83,31 +86,36 @@ carousel.addEventListener("scroll", () => {
 //Cuando se clicka un boton
 buttons.forEach(function (button) {
     button.addEventListener("click", function () {
-        switch (this.className) {
-            case "buttonCarousel":
-            case "buttonCarousel active":
-                //Desplazar al boton activo
-                const scrollLeft = button.offsetLeft - (carousel.offsetWidth - button.offsetWidth) / 2;
-                carousel.scrollTo({
-                    left: scrollLeft,
-                    behavior: "smooth"
-                });
-                break;
-            case "buttonPhoto":
-                screenShot()
-                break;
-            case "buttonCam":
-                flipCamera()
-                break;
-            case "buttonFloating1":
-                floatingButtonsLogic(this, -1)
-                break;
-            case "buttonFloating2":
-                floatingButtonsLogic(this, 1)
-                break;
-            default:
-                console.log("error")
-                break;
+        if (webLoaded === true) {
+            switch (this.className) {
+                case "buttonCarousel":
+                case "buttonCarousel active":
+                    //Desplazar al boton activo
+                    const scrollLeft = button.offsetLeft - (carousel.offsetWidth - button.offsetWidth) / 2;
+                    carousel.scrollTo({
+                        left: scrollLeft,
+                        behavior: "smooth"
+                    });
+                    break;
+                case "buttonPhoto":
+                    screenShot()
+                    break;
+                case "buttonCam":
+                    flipCamera()
+                    break;
+                case "timer":
+                    timerStart(5, screenShot)
+                    break;
+                case "buttonFloating1":
+                    floatingButtonsLogic(this, -1)
+                    break;
+                case "buttonFloating2":
+                    floatingButtonsLogic(this, 1)
+                    break;
+                default:
+                    console.log("error")
+                    break;
+            }
         }
     });
 });
@@ -192,6 +200,22 @@ function updateCounter(factor) {
     console.log(idModel)
     image.src = fetched.frontAR[idModel]
 }
+//Funcion de cuenta regresiva
+function timerStart(segundos, callback) {
+    const cuentaRegresivaElemento = document.getElementById('cuenta-regresiva');
+
+    const intervalo = setInterval(() => {
+        cuentaRegresivaElemento.textContent = segundos;
+        console.log(segundos);
+        segundos--;
+
+        if (segundos < 0) {
+            clearInterval(intervalo);
+            cuentaRegresivaElemento.textContent = "";
+            callback();
+        }
+    }, 1000);
+}
 //Utilizar la camara de atras/adelante
 function flipCamera() {
     isFrontCamera = !isFrontCamera;
@@ -217,7 +241,7 @@ function screenShot() {
     downloadLink.click(); //empezar descarga de imagen
 }
 
-function imageDraw(rsl) {
+function simImage(rsl) {
     //Nodos de la simulacion cien izquirda, cien derecha y centro puente de la nariz
     const nodes = [127, 356, 168];
     ctx.save()

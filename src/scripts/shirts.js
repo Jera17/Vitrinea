@@ -41,10 +41,12 @@ var newXposition = 1
 var zoomInAndOut = 0
 var newScale = 1
 var isFrontCamera = true;
+var webLoaded = false;
 
 function onResultsPose(results) {
   if (loaded.style.display !== 'none') {
     loaded.style.display = 'none';
+    webLoaded = true;
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     console.log("Mesh Loaded");
@@ -56,7 +58,7 @@ function onResultsPose(results) {
       poseLandmarks.x *= video.videoWidth
       poseLandmarks.y *= video.videoHeight
     });
-    getCoords(results.poseLandmarks, nodes)
+    simImage(results.poseLandmarks, nodes)
   }
 }
 
@@ -78,30 +80,35 @@ carousel.addEventListener("scroll", () => {
 
 buttons.forEach(function (button) {
   button.addEventListener("click", function () {
-    switch (this.className) {
-      case "buttonCarousel":
-      case "buttonCarousel active":
-        const scrollLeft = button.offsetLeft - (carousel.offsetWidth - button.offsetWidth) / 2;
-        carousel.scrollTo({
-          left: scrollLeft,
-          behavior: "smooth"
-        });
-        break;
-      case "buttonPhoto":
-        screenShot()
-        break;
-      case "buttonCam":
-        flipCamera()
-        break;
-      case "buttonFloating1":
-        floatingButtonsLogic(this, -1)
-        break;
-      case "buttonFloating2":
-        floatingButtonsLogic(this, 1)
-        break;
-      default:
-        console.log("error")
-        break;
+    if (webLoaded === true) {
+      switch (this.className) {
+        case "buttonCarousel":
+        case "buttonCarousel active":
+          const scrollLeft = button.offsetLeft - (carousel.offsetWidth - button.offsetWidth) / 2;
+          carousel.scrollTo({
+            left: scrollLeft,
+            behavior: "smooth"
+          });
+          break;
+        case "buttonPhoto":
+          screenShot()
+          break;
+        case "buttonCam":
+          flipCamera()
+          break;
+          case "timer":
+            timerStart(5, screenShot)
+            break;
+        case "buttonFloating1":
+          floatingButtonsLogic(this, -1)
+          break;
+        case "buttonFloating2":
+          floatingButtonsLogic(this, 1)
+          break;
+        default:
+          console.log("error")
+          break;
+      }
     }
   });
 });
@@ -191,6 +198,22 @@ function updateCounter(factor) {
   updateModel(idModel)
 }
 
+function timerStart(segundos, callback) {
+  const cuentaRegresivaElemento = document.getElementById('cuenta-regresiva');
+
+  const intervalo = setInterval(() => {
+    cuentaRegresivaElemento.textContent = segundos;
+    console.log(segundos);
+    segundos--;
+
+    if (segundos < 0) {
+      clearInterval(intervalo);
+      cuentaRegresivaElemento.textContent = "";
+      callback();
+    }
+  }, 1000);
+}
+
 function flipCamera() {
   isFrontCamera = !isFrontCamera;
   camera.h.facingMode = isFrontCamera ? "user" : "environment";
@@ -216,7 +239,7 @@ function screenShot() {
   downloadLink.click();
 }
 
-function getCoords(rsl, nodes) {
+function simImage(rsl, nodes) {
   const x0 = (rsl[nodes[0]].x) //hombro izquierdo
   const y0 = (rsl[nodes[0]].y)
   const x1 = (rsl[nodes[0] + 1].x) //hombro derecho

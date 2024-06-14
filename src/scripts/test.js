@@ -40,11 +40,12 @@ var zoomInAndOut = 0
 var newScale = 1
 var fingerId = 1
 var isFrontCamera = true;
-
+var webLoaded = false;
 
 function onResultsHands(results) {
     if (loaded.style.display !== 'none') {
         loaded.style.display = 'none';
+        webLoaded = true;
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
         console.log("Mesh Loaded");
@@ -78,33 +79,38 @@ carousel.addEventListener("scroll", () => {
 
 buttons.forEach(function (button) {
     button.addEventListener("click", function () {
-        switch (this.className) {
-            case "buttonCarousel":
-            case "buttonCarousel active":
-                const scrollLeft = button.offsetLeft - (carousel.offsetWidth - button.offsetWidth) / 2;
-                carousel.scrollTo({
-                    left: scrollLeft,
-                    behavior: "smooth"
-                });
-                break;
-            case "buttonPhoto":
-                screenShot()
-                break;
-            case "buttonCam":
-                flipCamera()
-                break;
-            case "timer":
-                timerStart(5, screenShot)
-                break;
-            case "buttonFloating1":
-                floatingButtonsLogic(this, -1)
-                break;
-            case "buttonFloating2":
-                floatingButtonsLogic(this, 1)
-                break;
-            default:
-                console.log("error")
-                break;
+        if (webLoaded === true) {
+            console.log("Botón clickeado:", this.className)
+            switch (this.className) {
+                case "buttonCarousel":
+                case "buttonCarousel active":
+                    const scrollLeft = button.offsetLeft - (carousel.offsetWidth - button.offsetWidth) / 2;
+                    carousel.scrollTo({
+                        left: scrollLeft,
+                        behavior: "smooth"
+                    });
+                    break;
+                case "buttonPhoto":
+                    screenShot()
+                    break;
+                case "buttonCam":
+                    flipCamera()
+                    break;
+                case "timer":
+                    timerStart(5, screenShot)
+                    break;
+                case "buttonFloating1":
+                    floatingButtonsLogic(this, -1)
+                    break;
+                case "buttonFloating2":
+                    floatingButtonsLogic(this, 1)
+                    break;
+                default:
+                    console.log("error")
+                    break;
+            }
+        }else{
+            console.log("Web not loaded");
         }
     });
 });

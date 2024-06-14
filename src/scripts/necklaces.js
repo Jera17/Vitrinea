@@ -37,10 +37,12 @@ var newXposition = 0
 var zoomInAndOut = 0
 var newScale = 1
 var isFrontCamera = true;
+var webLoaded = false;
 
 function onResultsPose(results) {
   if (loaded.style.display !== 'none') {
     loaded.style.display = 'none';
+    webLoaded = true;
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     console.log("Mesh Loaded");
@@ -73,30 +75,35 @@ carousel.addEventListener("scroll", () => {
 
 buttons.forEach(function (button) {
   button.addEventListener("click", function () {
-    switch (this.className) {
-      case "buttonCarousel":
-      case "buttonCarousel active":
-        const scrollLeft = button.offsetLeft - (carousel.offsetWidth - button.offsetWidth) / 2;
-        carousel.scrollTo({
-          left: scrollLeft,
-          behavior: "smooth"
-        });
-        break;
-      case "buttonPhoto":
-        screenShot()
-        break;
-      case "buttonCam":
-        flipCamera()
-        break;
-      case "buttonFloating1":
-        floatingButtonsLogic(this, -1)
-        break;
-      case "buttonFloating2":
-        floatingButtonsLogic(this, 1)
-        break;
-      default:
-        console.log("error")
-        break;
+    if (webLoaded === true) {
+      switch (this.className) {
+        case "buttonCarousel":
+        case "buttonCarousel active":
+          const scrollLeft = button.offsetLeft - (carousel.offsetWidth - button.offsetWidth) / 2;
+          carousel.scrollTo({
+            left: scrollLeft,
+            behavior: "smooth"
+          });
+          break;
+        case "buttonPhoto":
+          screenShot()
+          break;
+        case "buttonCam":
+          flipCamera()
+          break;
+        case "timer":
+          timerStart(5, screenShot)
+          break;
+        case "buttonFloating1":
+          floatingButtonsLogic(this, -1)
+          break;
+        case "buttonFloating2":
+          floatingButtonsLogic(this, 1)
+          break;
+        default:
+          console.log("error")
+          break;
+      }
     }
   });
 });
@@ -178,6 +185,22 @@ function updateCounter(factor) {
   idModel = (idModel + factor + fetched.frontAR.length) % fetched.frontAR.length;
   console.log(idModel)
   image.src = fetched.frontAR[idModel]
+}
+
+function timerStart(segundos, callback) {
+  const cuentaRegresivaElemento = document.getElementById('cuenta-regresiva');
+
+  const intervalo = setInterval(() => {
+    cuentaRegresivaElemento.textContent = segundos;
+    console.log(segundos);
+    segundos--;
+
+    if (segundos < 0) {
+      clearInterval(intervalo);
+      cuentaRegresivaElemento.textContent = "";
+      callback();
+    }
+  }, 1000);
 }
 
 function flipCamera() {

@@ -37,9 +37,11 @@ var newXposition = 0
 var zoomInAndOut = 0
 var newScale = 1
 var isFrontCamera = true;
+var webLoaded = false;
 
 function onResultsFaceMesh(results) {
   if (loaded.style.display !== 'none') {
+    webLoaded = true;
     loaded.style.display = 'none';
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
@@ -51,7 +53,7 @@ function onResultsFaceMesh(results) {
       multiFaceLandmarks.x *= video.videoWidth
       multiFaceLandmarks.y *= video.videoHeight
     });
-    imageDraw(results.multiFaceLandmarks[0])
+    simImage(results.multiFaceLandmarks[0])
   }
 }
 
@@ -73,30 +75,35 @@ carousel.addEventListener("scroll", () => {
 
 buttons.forEach(function (button) {
   button.addEventListener("click", function () {
-    switch (this.className) {
-      case "buttonCarousel":
-      case "buttonCarousel active":
-        const scrollLeft = button.offsetLeft - (carousel.offsetWidth - button.offsetWidth) / 2;
-        carousel.scrollTo({
-          left: scrollLeft,
-          behavior: "smooth"
-        });
-        break;
-      case "buttonPhoto":
-        screenShot()
-        break;
-      case "buttonCam":
-        flipCamera()
-        break;
-      case "buttonFloating1":
-        floatingButtonsLogic(this, -1)
-        break;
-      case "buttonFloating2":
-        floatingButtonsLogic(this, 1)
-        break;
-      default:
-        console.log("error")
-        break;
+    if (webLoaded === true) {
+      switch (this.className) {
+        case "buttonCarousel":
+        case "buttonCarousel active":
+          const scrollLeft = button.offsetLeft - (carousel.offsetWidth - button.offsetWidth) / 2;
+          carousel.scrollTo({
+            left: scrollLeft,
+            behavior: "smooth"
+          });
+          break;
+        case "buttonPhoto":
+          screenShot()
+          break;
+        case "buttonCam":
+          flipCamera()
+          break;
+        case "timer":
+          timerStart(5, screenShot)
+          break;
+        case "buttonFloating1":
+          floatingButtonsLogic(this, -1)
+          break;
+        case "buttonFloating2":
+          floatingButtonsLogic(this, 1)
+          break;
+        default:
+          console.log("error")
+          break;
+      }
     }
   });
 });
@@ -186,6 +193,22 @@ function flipCamera() {
   camera.start();
 }
 
+function timerStart(segundos, callback) {
+  const cuentaRegresivaElemento = document.getElementById('cuenta-regresiva');
+
+  const intervalo = setInterval(() => {
+    cuentaRegresivaElemento.textContent = segundos;
+    console.log(segundos);
+    segundos--;
+
+    if (segundos < 0) {
+      clearInterval(intervalo);
+      cuentaRegresivaElemento.textContent = "";
+      callback();
+    }
+  }, 1000);
+}
+
 function screenShot() {
   const combinedCanvas = document.createElement('canvas');
   const combinedCtx = combinedCanvas.getContext('2d');
@@ -203,7 +226,7 @@ function screenShot() {
   downloadLink.click();
 }
 
-function imageDraw(rsl) {
+function simImage(rsl) {
   const nodes = [162, 389, 10, 0];  //Right, left, center
   ctx.save()
   const x0 = rsl[nodes[0]].x
@@ -226,14 +249,6 @@ function imageDraw(rsl) {
   ctx.drawImage(image, 0 - (sizeX / 2) + newXposition, 0 - (sizeY / 1.3) - newYposition, sizeX, sizeY)
   ctx.restore()
 }
-
-// const faceMesh = new FaceMesh({
-//   locateFile: (file) => {
-//       return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`;
-//   }
-// });
-// faceMesh.onResults(onResultsFaceMesh);
-
 
 const faceMesh = new FaceMesh({
   locateFile: (file) => {
