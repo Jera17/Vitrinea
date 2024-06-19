@@ -71,20 +71,35 @@ html {
 
 #cuenta-regresiva {
   position: absolute;
-  top: 40%;
-  left: 50%;
-  width: 100px;
-  height: 100px;
-  margin-top: -50px;
-  margin-left: -50px;
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   font-size: 4rem;
-  text-shadow:0 0 1rem transparent;
-  text-shadow:0 0 0 rgb(0, 0, 0), 0 0 1rem transparent;
+  text-shadow: 0 0 1rem transparent;
+  text-shadow: 0 0 0 rgb(0, 0, 0), 0 0 1rem transparent;
   z-index: 1000;
+  background-color: #d4d4d400;
+  pointer-events: none;
+}
+
+.blink {
+  animation: blink-animation 0.5s;
+}
+
+@keyframes blink-animation {
+
+  0%,
+  100% {
+    background-color: #d4d4d4;
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
 }
 
 .floatingContainer {
@@ -217,6 +232,6 @@ html {
   z-index: 4;
 }
 
-.emptyContainer{
+.emptyContainer {
   height: 20px;
 }

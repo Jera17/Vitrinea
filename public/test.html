@@ -6,12 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../src/styles/cameraCanva.css">
     <title>Vitrinea Ar</title>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils@0.1/drawing_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script> -->
     <script src="../src/scripts/API/camera_utils.js"></script>
-    <script src="../src/scripts/API/control_utils.js"></script>
     <script src="../src/scripts/API/drawing_utils.js"></script>
     <script src="../src/scripts/API/hands.js"></script>
     <!-- <script src="../src/scripts/mediapipe/hands.js"></script> -->
@@ -20,7 +15,7 @@
     <div class="camera">
         <div class="spinner"></div>
         <div id="cuenta-regresiva"></div>
-        <video class="input_video"></video>
+        <video class="input_video" autoplay playsinline></video>
         <canvas id="pose-canvas"></canvas>
     </div>
     <div class="buttonsContainer">
