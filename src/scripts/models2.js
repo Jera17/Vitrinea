@@ -11,7 +11,7 @@ const firebaseConfig = {
   measurementId: "G-CD1X17RQTG"
 };
 
-const queryString = window.location.search.substring(1)
+const queryString = window.location.search.substring(1);
 
 if (!queryString) {
   alert("Error: No reference to the image found in the query string.");
@@ -29,6 +29,26 @@ async function fetchArModel() {
     throw new Error("Product reference doesn't exist. Stopping execution.");
   }
 
+  let modelosAr = obtenerArraysDeImagenes(doc.data().arModel);
+
+  function obtenerArraysDeImagenes(objeto) {
+    console.log(objeto)
+    if (!objeto.frontAR) {
+      alert("No hay imagenes frontAR");
+      return null;
+    } else if (!objeto.backAR) {
+      console.log("No hay imagenes backAR");
+      return { frontAR: objeto.frontAR.slice() };
+    } else {
+      console.log("Si hay imagenes backAR");
+      return {
+        frontAR: objeto.frontAR.slice(),
+        backAR: objeto.backAR.slice()
+      };
+    }
+  }
+
+
   function imageToBase64(url, callback) {
     var xhr = new XMLHttpRequest();
     xhr.onload = function () {
@@ -42,62 +62,69 @@ async function fetchArModel() {
     xhr.responseType = 'blob';
     xhr.send();
   }
-  async function convertUrlsToBase64(urls) {
+
+  // if (!modelosAr.backAR) {
+  //   console.log("uwu")
+  //   modelosAr.frontAR = await convertUrlsToBase64(modelosAr.frontAR);
+  // } else {
+  //   console.log("ewe")
+  //   modelosAr.frontAR = await convertUrlsToBase64(modelosAr.frontAR);
+  //   modelosAr.backAR = await convertUrlsToBase64(modelosAr.backAR);
+  // }
+
+  // async function convertUrlsToBase64(urls) {
+  //   return new Promise((resolve) => {
+  //     var counter = 0;
+  //     console.log(urls)
+  //     urls.forEach(function (url, index) {
+  //       imageToBase64(url, function (base64) {
+  //         urls[index] = base64;
+  //         counter++;
+  //         if (counter === urls.length) {
+  //           resolve(urls);
+  //         }
+  //       });
+  //     });
+  //   });
+  // }
+
+  async function convertUrlsToBase64(modelos) {
     return new Promise((resolve) => {
+      let urls = [];
+      let keys = [];
+  
+      if (modelos.frontAR) {
+        urls = urls.concat(modelos.frontAR);
+        keys = keys.concat(Array(modelos.frontAR.length).fill('frontAR'));
+      }
+      if (modelos.backAR) {
+        urls = urls.concat(modelos.backAR);
+        keys = keys.concat(Array(modelos.backAR.length).fill('backAR'));
+      }
+  
       var counter = 0;
       urls.forEach(function (url, index) {
         imageToBase64(url, function (base64) {
-          urls[index] = base64;
+          if (keys[index] === 'frontAR') {
+            modelos.frontAR[index - (keys.indexOf('frontAR'))] = base64;
+          } else {
+            modelos.backAR[index - (keys.indexOf('backAR'))] = base64;
+          }
           counter++;
           if (counter === urls.length) {
-            resolve(urls);
+            resolve(modelos);
           }
         });
       });
     });
   }
+  
+  modelosAr = await convertUrlsToBase64(modelosAr);
 
-  function obtenerArraysDeImagenes(objeto) {
-    console.log(objeto)
-    if (objeto.frontAR == null || objeto.frontAR == '' || objeto.frontAR == undefined) {
-      alert("No hay imagenes frontAR");
-      return null;
-    }else if (objeto.backAR == null || objeto.backAR == '' || objeto.backAR == undefined) {
-      console.log("No hay imagenes backAR");
-      const nuevoObjeto = {
-        frontAR: objeto.frontAR.slice()
-      };
-      return nuevoObjeto;
-    } else if (objeto.backAR != null && objeto.backAR != '' && objeto.backAR != undefined) {
-      console.log("Si hay imagenes backAR")
-      const nuevoObjeto = {
-        frontAR: objeto.frontAR.slice(),
-        backAR: objeto.backAR.slice()
-      };
-      return nuevoObjeto;
-    }
-  }
 
-  var modelosAr = obtenerArraysDeImagenes(doc.data().arModel);
-
-  if (!modelosAr.backAR) {
-    modelosAr.frontAR = await convertUrlsToBase64(modelosAr.frontAR)
-      .then(function (urls) {
-        return urls
-      });
-  } else {
-    modelosAr.frontAR = await convertUrlsToBase64(modelosAr.frontAR)
-      .then(function (urls) {
-        return urls
-      });
-    modelosAr.backAR = await convertUrlsToBase64(modelosAr.backAR)
-      .then(function (urls) {
-        return urls
-      });
-  }
-  return modelosAr;
+  // Dispatch custom event with fetched data
+  document.dispatchEvent(new CustomEvent('dataFetched', { detail: modelosAr }));
 }
 
-var fetched = await fetchArModel()
-
-export { fetched }
+// Start fetching data
+fetchArModel();

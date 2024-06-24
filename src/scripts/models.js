@@ -11,7 +11,7 @@ const firebaseConfig = {
   measurementId: "G-CD1X17RQTG"
 };
 
-const queryString = window.location.search.substring(1)
+const queryString = window.location.search.substring(1);
 
 if (!queryString) {
   alert("Error: No reference to the image found in the query string.");
@@ -23,81 +23,70 @@ const db = getFirestore();
 const docRef = doc(db, 'products', queryString);
 
 async function fetchArModel() {
-  const doc = await getDoc(docRef);
-  if (!doc.exists()) {
+  const docSnap = await getDoc(docRef);
+  if (!docSnap.exists()) {
     alert("Error: Image reference not found.");
     throw new Error("Product reference doesn't exist. Stopping execution.");
   }
 
-  function imageToBase64(url, callback) {
-    var xhr = new XMLHttpRequest();
+  const modelosAr = getImagesArrays(docSnap.data().arModel);
+
+  if (!modelosAr) {
+    alert("No hay imagenes frontAR");
+    throw new Error("No frontAR images. Stopping execution.");
+  }
+
+  const base64ModelosAr = await convertUrlsToBase64(modelosAr);
+  return base64ModelosAr;
+}
+
+function getImagesArrays(obj) {
+  if (!obj.frontAR) return null;
+
+  const images = { frontAR: obj.frontAR.slice() };
+  if (obj.backAR === null || obj.backAR === '' || obj.backAR === undefined || obj.backAR.length === 0) {
+    images.backAR = obj.frontAR.slice()
+  } else {
+    images.backAR = obj.backAR.slice()
+  }
+  
+  return images;
+}
+
+function imageToBase64(url) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
     xhr.onload = function () {
-      var reader = new FileReader();
+      const reader = new FileReader();
       reader.onloadend = function () {
-        callback(reader.result);
-      }
+        resolve(reader.result);
+      };
       reader.readAsDataURL(xhr.response);
     };
+    xhr.onerror = reject;
     xhr.open('GET', url);
     xhr.responseType = 'blob';
     xhr.send();
-  }
-  async function convertUrlsToBase64(urls) {
-    return new Promise((resolve) => {
-      var counter = 0;
-      urls.forEach(function (url, index) {
-        imageToBase64(url, function (base64) {
-          urls[index] = base64;
-          counter++;
-          if (counter === urls.length) {
-            resolve(urls);
-          }
-        });
-      });
-    });
-  }
-
-  function obtenerArraysDeImagenes(objeto) {
-    console.log(objeto)
-    if (objeto.frontAR == null || objeto.frontAR == '' || objeto.frontAR == undefined) {
-      alert("No hay imagenes frontAR");
-      return null;
-    }else if (objeto.backAR == null || objeto.backAR == '' || objeto.backAR == undefined) {
-      console.log("No hay imagenes backAR");
-      const nuevoObjeto = {
-        frontAR: objeto.frontAR.slice()
-      };
-      return nuevoObjeto;
-    } else if (objeto.backAR != null && objeto.backAR != '' && objeto.backAR != undefined) {
-      console.log("Si hay imagenes backAR")
-      const nuevoObjeto = {
-        frontAR: objeto.frontAR.slice(),
-        backAR: objeto.backAR.slice()
-      };
-      return nuevoObjeto;
-    }
-  }
-
-  var modelosAr = obtenerArraysDeImagenes(doc.data().arModel);
-
-  if (!modelosAr.backAR) {
-    modelosAr.frontAR = await convertUrlsToBase64(modelosAr.frontAR)
-      .then(function (urls) {
-        return urls
-      });
-  } else {
-    modelosAr.frontAR = await convertUrlsToBase64(modelosAr.frontAR)
-      .then(function (urls) {
-        return urls
-      });
-    modelosAr.backAR = await convertUrlsToBase64(modelosAr.backAR)
-      .then(function (urls) {
-        return urls
-      });
-  }
-  return modelosAr;
+  });
 }
 
-var fetched = await fetchArModel()
+async function convertUrlsToBase64(modelos) {
+  const convertPromises = [];
 
-export { fetched }
+  if (modelos.frontAR) {
+    // console.log("uwu")
+    convertPromises.push(...modelos.frontAR.map((url, index) => imageToBase64(url).then(base64 => modelos.frontAR[index] = base64)));
+  }
+  if (modelos.backAR) {
+    // console.log("ewe")
+    convertPromises.push(...modelos.backAR.map((url, index) => imageToBase64(url).then(base64 => modelos.backAR[index] = base64)));
+  }
+  // console.log(modelos)
+
+  await Promise.all(convertPromises);
+  return modelos;
+}
+
+const fetched = await fetchArModel();
+
+export { fetched };
