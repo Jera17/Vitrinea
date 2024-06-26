@@ -4,7 +4,7 @@ import { fetched } from "./models.js"
 const video = document.getElementsByClassName('input_video')[0];
 const canvas = document.querySelector("#pose-canvas");
 const ctx = canvas.getContext("2d");
-var loaded = document.getElementsByClassName('spinner')[0];
+const loaded = document.getElementsByClassName('spinner')[0];
 
 const buttons = document.querySelectorAll('button');
 const buttonsCarousel = document.querySelectorAll('.buttonCarousel');
@@ -15,8 +15,8 @@ var activeButton = buttonsCarousel[0]
 const buttonFloating1 = document.querySelector('.buttonFloating1');
 const buttonFloating2 = document.querySelector('.buttonFloating2');
 
-var buttonFloatingImg1 = document.createElement('img');
-var buttonFloatingImg2 = document.createElement('img');
+const buttonFloatingImg1 = document.createElement('img');
+const buttonFloatingImg2 = document.createElement('img');
 
 buttonFloatingImg1.src = '../src/assets/icons/TamañoMenos.svg';
 buttonFloatingImg2.src = '../src/assets/icons/TamañoMas.svg';
@@ -25,20 +25,20 @@ buttonFloating2.appendChild(buttonFloatingImg2);
 buttonFloating1.id = 'Tamaño'
 buttonFloating2.id = 'Tamaño'
 
-var idModel = 0
-var image = new Image();
+//Nodos de la simulacion cien izquirda, cien derecha y centro puente de la nariz
+const nodes = [127, 356, 168];
+let idModel = 0
+let image = new Image();
+let manualAjust = 10
+let translationDistance = 5
+let upAndDown = 0
+let newYposition = 0
+let leftAndRight = 0
+let newXposition = 0
+let zoomInAndOut = 0
+let newScale = 1
+let webLoaded = false;
 image.src = fetched.frontAR[idModel]
-
-const manualAjust = 10
-var translationDistance = 5
-var upAndDown = 0
-var newYposition = 0
-var leftAndRight = 0
-var newXposition = 0
-var zoomInAndOut = 0
-var newScale = 1
-var isFrontCamera = true;
-var webLoaded = false;
 
 //Funcion donde se genera el trackeo de cuerpo
 function onResultsFaceMesh(results) {
@@ -104,7 +104,7 @@ buttons.forEach(function (button) {
                     flipCamera()
                     break;
                 case "timer":
-                    timerStart(5, screenShot)
+                    timerStart(this, 5, screenShot)
                     break;
                 case "buttonFloating1":
                     floatingButtonsLogic(this, -1)
@@ -125,61 +125,31 @@ function carouselButtonsLogic(buttonClicked) {
     buttonsCarousel.forEach(button => button.classList.remove('active'));
     buttonClicked.classList.add('active');
     console.log('Botón clickeado:', buttonClicked.textContent);
-    //Se cambia los iconos y ID de los botones flotantes
-    switch (buttonClicked.textContent) {
-        case 'Ajustar':
-            buttonFloatingImg1.src = '../src/assets/icons/AjustarAcercar.svg';
-            buttonFloatingImg2.src = '../src/assets/icons/AjustarAlejar.svg';
-            buttonFloating1.id = 'Ajustar'
-            buttonFloating2.id = 'Ajustar'
-            break;
-        case 'Tamaño':
-            buttonFloatingImg1.src = '../src/assets/icons/TamañoMenos.svg';
-            buttonFloatingImg2.src = '../src/assets/icons/TamañoMas.svg';
-            buttonFloating1.id = 'Tamaño'
-            buttonFloating2.id = 'Tamaño'
-            break;
-        case 'Modelo':
-            buttonFloatingImg1.src = '../src/assets/icons/ModeloAnterior.svg';
-            buttonFloatingImg2.src = '../src/assets/icons/ModeloSiguiente.svg';
-            buttonFloating1.id = 'Modelo'
-            buttonFloating2.id = 'Modelo'
-            break;
-        case 'Posición':
-            buttonFloatingImg1.src = '../src/assets/icons/PosicionAbajo.svg';
-            buttonFloatingImg2.src = '../src/assets/icons/PosicionArriba.svg';
-            buttonFloating1.id = 'Posición'
-            buttonFloating2.id = 'Posición'
-            break;
-        case 'Dedo':
-            buttonFloatingImg1.src = '../src/assets/icons/DedoAnterior.svg';
-            buttonFloatingImg2.src = '../src/assets/icons/DedoSiguiente.svg';
-            buttonFloating1.id = 'Dedo'
-            buttonFloating2.id = 'Dedo'
-            break;
+    const iconMap = {
+        'Ajustar': ['AjustarAcercar.svg', 'AjustarAlejar.svg', 'Ajustar'],
+        'Tamaño': ['TamañoMenos.svg', 'TamañoMas.svg', 'Tamaño'],
+        'Modelo': ['ModeloAnterior.svg', 'ModeloSiguiente.svg', 'Modelo'],
+        'Posición': ['PosicionAbajo.svg', 'PosicionArriba.svg', 'Posición']
+    };
+    const icons = iconMap[buttonClicked.textContent];
+    if (icons) {
+        [buttonFloatingImg1.src, buttonFloatingImg2.src] = icons.slice(0, 2).map(icon => `../src/assets/icons/${icon}`);
+        buttonFloating1.id = buttonFloating2.id = icons[2];
     }
 }
 
 //Los botones flotantes llaman a una funcion con respecto a su ID
 function floatingButtonsLogic(buttonClicked, factor) {
-    switch (buttonClicked.id) {
-        case 'Ajustar':
-            console.log("Ajustar")
-            break;
-        case 'Tamaño':
-            updateZoom(factor)
-            break;
-        case 'Modelo':
-            updateCounter(factor)
-            break;
-        case 'Posición':
-            updateY(factor)
-            break;
-        case 'Dedo':
-            console.log("Dedo")
-            break;
-    }
+    const logicMap = {
+        'Ajustar': () => updateX(factor),
+        'Tamaño': () => updateZoom(factor),
+        'Modelo': () => updateCounter(factor),
+        'Posición': () => updateY(factor)
+    };
+    const logicFunction = logicMap[buttonClicked.id];
+    if (logicFunction) logicFunction();
 }
+
 //Actualiza la posicion en Y del elemento segun el factor (1 o -1), y lo acumula en una variable contador y multiplica por una constante
 function updateY(factor) {
     if (Math.abs(upAndDown + factor) <= manualAjust) { //Si el contador + 1 es <= a la variable de cuantas veces se puede ajustar manualmente
@@ -201,8 +171,11 @@ function updateCounter(factor) {
     image.src = fetched.frontAR[idModel]
 }
 //Funcion de cuenta regresiva
-function timerStart(segundos, callback) {
+function timerStart(botonTimer, segundos, callback) {
     const cuentaRegresivaElemento = document.getElementById('cuenta-regresiva');
+    botonTimer.disabled = true;
+    console.log(botonTimer)
+    console.log("Deshabilitado")
 
     const intervalo = setInterval(() => {
         cuentaRegresivaElemento.textContent = segundos;
@@ -213,15 +186,24 @@ function timerStart(segundos, callback) {
             clearInterval(intervalo);
             cuentaRegresivaElemento.textContent = "";
             callback();
+
+            cuentaRegresivaElemento.classList.add('blink');
+            setTimeout(() => {
+                cuentaRegresivaElemento.classList.remove('blink');
+            }, 1000);
+
+            botonTimer.disabled = false;
+            console.log(botonTimer)
+            console.log("Habilitado")
         }
     }, 1000);
 }
+
 //Utilizar la camara de atras/adelante
 function flipCamera() {
-    isFrontCamera = !isFrontCamera;
-    camera.h.facingMode = isFrontCamera ? "user" : "environment";
-    video.style.transform = canvas.style.transform = isFrontCamera ? "scaleX(-1)" : "scaleX(1)"; //Girar horizontalmente para invertir la imagen
-    camera.stop(); //apagar y encender para reiniciar la camara y se apliquen los cambios
+    camera.h.facingMode = camera.h.facingMode === "user" ? "environment" : "user";
+    video.style.transform = canvas.style.transform = camera.h.facingMode === "user" ? "scaleX(-1)" : "scaleX(1)";
+    camera.stop();
     camera.start();
 }
 
@@ -242,8 +224,6 @@ function screenShot() {
 }
 
 function simImage(rsl) {
-    //Nodos de la simulacion cien izquirda, cien derecha y centro puente de la nariz
-    const nodes = [127, 356, 168];
     ctx.save()
     const x0 = rsl[nodes[0]].x
     const y0 = rsl[nodes[0]].y
@@ -278,7 +258,9 @@ const camera = new Camera(video, {
     onFrame: async () => {
         await faceMesh.send({ image: video });
     },
-    width: { ideal: 1280 },
-    height: { ideal: 720 }
+    width: 854,
+    height: 480,
+    facingMode: "environment"
 });
 camera.start();
+video.style.transform = canvas.style.transform = camera.h.facingMode === "user" ? "scaleX(-1)" : "scaleX(1)";

@@ -1,8 +1,9 @@
 import { fetched } from "./models.js"
 
+//Crear Variables
 const video = document.getElementsByClassName('input_video')[0];
-const canvas = document.querySelector("#pose-canvas")
-const ctx = canvas.getContext("2d")
+const canvas = document.querySelector("#pose-canvas");
+const ctx = canvas.getContext("2d");
 const loaded = document.getElementsByClassName('spinner')[0];
 
 const buttons = document.querySelectorAll('button');
@@ -24,9 +25,9 @@ buttonFloating2.appendChild(buttonFloatingImg2);
 buttonFloating1.id = 'Tamaño'
 buttonFloating2.id = 'Tamaño'
 
+const nodes = [127, 356, 168];
 let idModel = 0
-let imgFront = new Image();
-let imgBack = new Image();
+let image = new Image();
 let manualAjust = 10
 let translationDistance = 5
 let upAndDown = 0
@@ -36,41 +37,53 @@ let newXposition = 0
 let zoomInAndOut = 0
 let newScale = 1
 let webLoaded = false;
-updateModel(idModel)
+image.src = fetched.frontAR[idModel]
 
-function onResultsHands(results) {
+//Funcion donde se genera el trackeo de cuerpo
+function onResultsFaceMesh(results) {
+    //Quitar el gif de 'cargando' cuando se inicia la funcion actual
     if (loaded.style.display !== 'none') {
         loaded.style.display = 'none';
+        //Asegurarse que la web esté cargada
         webLoaded = true;
+        //Establece el ancho del canva segun el ancho de el video
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
         console.log("Mesh Loaded");
     }
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if (results.multiHandLandmarks[0]) {
-        results.multiHandLandmarks[0].forEach(multiHandLandmarks => {
-            multiHandLandmarks.x *= video.videoWidth
-            multiHandLandmarks.y *= video.videoHeight
-            drawPoint(multiHandLandmarks.x, multiHandLandmarks.y, 'red');
+    //Si se realizó el trackeo, dibujar sobre este la simulación
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    //Limpia el canva para que se pueda dibujar el siguiente frame de la simulación
+    if (results.multiFaceLandmarks[0]) {
+        //Escalar el trackeo para que se ajuste al tamaño de la imagen
+        results.multiFaceLandmarks[0].forEach(multiFaceLandmarks => {
+            multiFaceLandmarks.x *= video.videoWidth
+            multiFaceLandmarks.y *= video.videoHeight
+            drawPoints(multiFaceLandmarks.x, multiFaceLandmarks.y, 2, "red")
         });
-        simImage(results);
+        //dibujar simulación
+        simImage(results.multiFaceLandmarks[0])
+        drawPoints(results.multiFaceLandmarks[0][nodes[0]].x, results.multiFaceLandmarks[0][nodes[0]].y, 4, "blue")
+        drawPoints(results.multiFaceLandmarks[0][nodes[1]].x, results.multiFaceLandmarks[0][nodes[1]].y, 4, "blue")
     }
 }
 
-function drawPoint(x, y, color) {
+function drawPoints(x, y, r, c) {
     ctx.beginPath();
-    ctx.arc(x, y, 5, 0, 2 * Math.PI);
-    ctx.fillStyle = color;
+    ctx.arc(x, y, r, 0, 2 * Math.PI); // Using arc() method to draw a circle representing the point
+    ctx.fillStyle = c;
     ctx.fill();
+    ctx.closePath();
 }
 
+//Cuando se scrollea el carrusel
 carousel.addEventListener("scroll", () => {
     const carouselRect = carousel.getBoundingClientRect();
     buttonsCarousel.forEach(button => {
         const buttonRect = button.getBoundingClientRect();
         const buttonCenter = buttonRect.left + (buttonRect.width / 2) - carouselRect.left + buttonPading;
         if (buttonCenter >= carouselRect.width / 2 && buttonCenter <= carouselRect.width / 2 + buttonRect.width) {
-            if (button != activeButton) {
+            if (button != activeButton) { //Si el boton clickeado no es el activo, desplazarse hacia el y activarlo
                 buttonsCarousel.forEach(btn => btn.classList.remove("active"));
                 carouselButtonsLogic(button)
                 button.classList.add("active");
@@ -80,13 +93,14 @@ carousel.addEventListener("scroll", () => {
     });
 });
 
-
+//Cuando se clicka un boton
 buttons.forEach(function (button) {
     button.addEventListener("click", function () {
         if (webLoaded === true) {
             switch (this.className) {
                 case "buttonCarousel":
                 case "buttonCarousel active":
+                    //Desplazar al boton activo
                     const scrollLeft = button.offsetLeft - (carousel.offsetWidth - button.offsetWidth) / 2;
                     carousel.scrollTo({
                         left: scrollLeft,
@@ -109,13 +123,14 @@ buttons.forEach(function (button) {
                     floatingButtonsLogic(this, 1)
                     break;
                 default:
-                    console.error("Unhandled button class: ", this.className);
+                    console.log("error")
                     break;
             }
         }
     });
 });
 
+//Cuando se clicka un boton del carrusel, se activa solo ese boton
 function carouselButtonsLogic(buttonClicked) {
     buttonsCarousel.forEach(button => button.classList.remove('active'));
     buttonClicked.classList.add('active');
@@ -124,8 +139,7 @@ function carouselButtonsLogic(buttonClicked) {
         'Ajustar': ['AjustarAcercar.svg', 'AjustarAlejar.svg', 'Ajustar'],
         'Tamaño': ['TamañoMenos.svg', 'TamañoMas.svg', 'Tamaño'],
         'Modelo': ['ModeloAnterior.svg', 'ModeloSiguiente.svg', 'Modelo'],
-        'Posición': ['PosicionAbajo.svg', 'PosicionArriba.svg', 'Posición'],
-        'Dedo': ['DedoAnterior.svg', 'DedoSiguiente.svg', 'Dedo']
+        'Posición': ['PosicionAbajo.svg', 'PosicionArriba.svg', 'Posición']
     };
     const icons = iconMap[buttonClicked.textContent];
     if (icons) {
@@ -134,6 +148,7 @@ function carouselButtonsLogic(buttonClicked) {
     }
 }
 
+//Los botones flotantes llaman a una funcion con respecto a su ID
 function floatingButtonsLogic(buttonClicked, factor) {
     const logicMap = {
         'Ajustar': () => updateX(factor),
@@ -145,36 +160,27 @@ function floatingButtonsLogic(buttonClicked, factor) {
     if (logicFunction) logicFunction();
 }
 
+//Actualiza la posicion en Y del elemento segun el factor (1 o -1), y lo acumula en una variable contador y multiplica por una constante
 function updateY(factor) {
-    if (Math.abs(upAndDown + factor) <= manualAjust) {
+    if (Math.abs(upAndDown + factor) <= manualAjust) { //Si el contador + 1 es <= a la variable de cuantas veces se puede ajustar manualmente
         upAndDown += factor
-        console.log(upAndDown)
         newYposition = upAndDown * translationDistance;
     }
 }
-
+//Actualiza la poel tamaño del elemento segun el factor (1 o -1), y lo acumula en una variable contador y multiplica por una constante
 function updateZoom(factor) {
-    if (Math.abs(zoomInAndOut + factor) <= manualAjust) {
+    if (Math.abs(zoomInAndOut + factor) <= manualAjust) { //Si el contador + 1 es <= a la variable de cuantas veces se puede ajustar manualmente
         zoomInAndOut += factor;
         newScale = 1 + (zoomInAndOut * 0.05);
     }
 }
-
-function updateModel(newIdModel) {
-    imgFront.src = fetched.frontAR[newIdModel];
-    imgBack.src = fetched.backAR ? fetched.backAR[newIdModel] : fetched.frontAR[newIdModel];
-}
-
+//Recorrer el array de imagenes
 function updateCounter(factor) {
     idModel = (idModel + factor + fetched.frontAR.length) % fetched.frontAR.length;
-    updateModel(idModel)
     console.log(idModel)
+    image.src = fetched.frontAR[idModel]
 }
-
-function updateFinger(operator) {
-    fingerId = (operator > 0) ? (fingerId + 1) % 4 : (fingerId - 1 + 4) % 4;
-}
-
+//Funcion de cuenta regresiva
 function timerStart(botonTimer, segundos, callback) {
     const cuentaRegresivaElemento = document.getElementById('cuenta-regresiva');
     botonTimer.disabled = true;
@@ -203,6 +209,7 @@ function timerStart(botonTimer, segundos, callback) {
     }, 1000);
 }
 
+//Utilizar la camara de atras/adelante
 function flipCamera() {
     camera.h.facingMode = camera.h.facingMode === "user" ? "environment" : "user";
     video.style.transform = canvas.style.transform = camera.h.facingMode === "user" ? "scaleX(-1)" : "scaleX(1)";
@@ -211,99 +218,57 @@ function flipCamera() {
 }
 
 function screenShot() {
-    const combinedCanvas = document.createElement('canvas');
+    const combinedCanvas = document.createElement('canvas'); //Crea canva para dibujar la simulacion y video sobre este
     const combinedCtx = combinedCanvas.getContext('2d');
 
     combinedCanvas.width = video.videoWidth;
     combinedCanvas.height = video.videoHeight;
-    combinedCtx.drawImage(video, 0, 0, combinedCanvas.width, combinedCanvas.height);
+    combinedCtx.drawImage(video, 0, 0, combinedCanvas.width, combinedCanvas.height);//dibuja simulacion y video en el canva combinado
     combinedCtx.drawImage(canvas, 0, 0, combinedCanvas.width, combinedCanvas.height);
 
-    let image_data_url = combinedCanvas.toDataURL('image/jpeg');
+    let image_data_url = combinedCanvas.toDataURL('image/jpeg'); //convertir a jpeg
     const downloadLink = document.createElement('a');
     downloadLink.href = image_data_url;
     downloadLink.download = 'webcam_snapshot.jpg';
-    downloadLink.click();
+    downloadLink.click(); //empezar descarga de imagen
 }
 
-function simImage(hand) {
-    const rslt = hand.multiHandLandmarks[0]
-    const rslt3D = hand.multiHandWorldLandmarks[0]
-    // console.log(rslt3D[0].x, rslt3D[0].y, rslt3D[0].z)
-    const handeness = hand.multiHandedness[0].label === "Left" ? -1 : 1;
-
-    ctx.save();
-    const x1 = rslt[0].x
-    const y1 = rslt[0].y
-    const x2 = rslt[9].x
-    const y2 = rslt[9].y
-
-    ctx.beginPath()
+function simImage(rsl) {
+    //Nodos de la simulacion cien izquirda, cien derecha y centro puente de la nariz
     ctx.save()
-    //set the position center of the canva and from hand
-    const tanx = (x1 - x2)
-    const tany = (y1 - y2)
-    const pstx = x1 + tanx
-    const psty = y1 + tany
-    ctx.translate(pstx, psty)
-
-    //set angle of the image
-    var componenteX = 1
-    if ((x1 - x2) > 0) {
-        componenteX = -1
-    }
-    const pendiente = ((y2 - y1) / (x2 - x1))
-    const angleHand = Math.atan(pendiente)
-    ctx.rotate(angleHand + ((Math.PI / 2)) * componenteX)
-
-    //Scale
-    var scaleHand = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2)) * 2 * newScale
-    var sizeX = scaleHand / 2
-    var sizeY = (sizeX * imgFront.height) / imgFront.width
-
-    //Flip (Usando producto punto)
-    function crossProductFromPoints(point1A, point2A, point1B, point2B) {
-        const vectorA = [point2A[0] - point1A[0], point2A[1] - point1A[1], point2A[2] - point1A[2]];
-        const vectorB = [point2B[0] - point1B[0], point2B[1] - point1B[1], point2B[2] - point1B[2]];
-        const result = [
-            vectorA[1] * vectorB[2] - vectorA[2] * vectorB[1],
-            vectorA[2] * vectorB[0] - vectorA[0] * vectorB[2],
-            vectorA[0] * vectorB[1] - vectorA[1] * vectorB[0]
-        ];
-        return result;
-    }
-
-    // Ejemplo de uso:
-    const point1A = [rslt[9].x, rslt[9].y, 0];
-    const point2A = [rslt[10].x, rslt[10].y, 0];
-    const point1B = [rslt[9].x, rslt[9].y, 0];
-    const point2B = [rslt[13].x, rslt[13].y, 0];
-
-    const result = crossProductFromPoints(point1A, point2A, point1B, point2B);
-
-    const selectedImage = ((result[2] * handeness) < 0) ? imgFront : imgBack
-    ctx.drawImage(selectedImage, (0 - scaleHand / 4) + newXposition, ((0 - scaleHand / 2) / 1.25) - newYposition, sizeX, sizeY)
-    drawPoint((0 - scaleHand / 4) + newXposition + (sizeX/2), ((0 - scaleHand / 2) / 1.25) - newYposition + (sizeY/2), 'green')
+    const x0 = rsl[nodes[0]].x
+    const y0 = rsl[nodes[0]].y
+    const x1 = rsl[nodes[1]].x
+    const y1 = rsl[nodes[1]].y
+    const sizeX = Math.sqrt(Math.pow((x1 - x0), 2) + Math.pow((y1 - y0), 2)) * newScale //Distancia de cien a cien
+    const sizeY = (sizeX * image.height) / image.width //Escala la altura de la imagen con respecto a su ancho 
+    const originX = rsl[nodes[2]].x
+    const originY = rsl[nodes[2]].y
+    ctx.translate(originX, originY) //poner el origen de imagen en el puente de la nariz
+    const angleHead = Math.atan((y1 - y0) / (x1 - x0)) //calcula la inclinacion de la cabeza para inclinar la imagen
+    ctx.rotate(angleHead)
+    ctx.drawImage(image, 0 - (sizeX / 2) + newXposition, 0 - (sizeY / 3) - newYposition, sizeX, sizeY)
+    drawPoints(0 - (sizeX / 2) + newXposition + (sizeX/2), 0 - (sizeY / 3) - newYposition + (sizeY/2), 4, "green")
     ctx.restore()
-    ctx.closePath()
 }
-
-const hands = new Hands({
+//tracking de rostro
+const faceMesh = new FaceMesh({
     locateFile: (file) => {
-        return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+        return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`;
     }
 });
-hands.setOptions({
-    maxNumHands: 1,
-    modelComplexity: 0,
+faceMesh.setOptions({
+    maxNumFaces: 1,
+    refineLandmarks: true,
     minDetectionConfidence: 0.5,
     minTrackingConfidence: 0.5
 });
-hands.onResults(onResultsHands);
+faceMesh.onResults(onResultsFaceMesh);
 
+//Configuracion de la camara
 const camera = new Camera(video, {
     onFrame: async () => {
-        await hands.send({ image: video });
+        await faceMesh.send({ image: video });
     },
     width: 854,
     height: 480,

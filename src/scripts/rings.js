@@ -1,10 +1,11 @@
-import { fetched } from "./models.js"
+console.log('Mesh');
 console.time('Mesh');
+import { fetched } from "./models.js"
 
 const video = document.getElementsByClassName('input_video')[0];
 const canvas = document.querySelector("#pose-canvas")
 const ctx = canvas.getContext("2d")
-var loaded = document.getElementsByClassName('spinner')[0];
+const loaded = document.getElementsByClassName('loading')[0];
 
 const buttons = document.querySelectorAll('button');
 const buttonsCarousel = document.querySelectorAll('.buttonCarousel');
@@ -15,8 +16,8 @@ var activeButton = buttonsCarousel[0]
 const buttonFloating1 = document.querySelector('.buttonFloating1');
 const buttonFloating2 = document.querySelector('.buttonFloating2');
 
-var buttonFloatingImg1 = document.createElement('img');
-var buttonFloatingImg2 = document.createElement('img');
+const buttonFloatingImg1 = document.createElement('img');
+const buttonFloatingImg2 = document.createElement('img');
 
 buttonFloatingImg1.src = '../src/assets/icons/TamañoMenos.svg';
 buttonFloatingImg2.src = '../src/assets/icons/TamañoMas.svg';
@@ -24,32 +25,29 @@ buttonFloating1.appendChild(buttonFloatingImg1);
 buttonFloating2.appendChild(buttonFloatingImg2);
 buttonFloating1.id = 'Tamaño'
 buttonFloating2.id = 'Tamaño'
-
-var idModel = 0
-var imgFront = new Image();
-var imgBack = new Image();
+////////////////
+let idModel = 0
+let imgFront = new Image();
+let imgBack = new Image();
+let manualAjust = 10
+let translationDistance = 5
+let upAndDown = 0
+let newYposition = 0
+let leftAndRight = 0
+let newXposition = 0
+let zoomInAndOut = 0
+let newScale = 1
+let fingerId = 1
+let webLoaded = false;
 updateModel(idModel)
-
-const manualAjust = 10
-var translationDistance = 5
-var upAndDown = 0
-var newYposition = 0
-var leftAndRight = 0
-var newXposition = 0
-var zoomInAndOut = 0
-var newScale = 1
-var fingerId = 1
-var isFrontCamera = true;
-var webLoaded = false;
 
 function onResultsHands(results) {
   if (loaded.style.display !== 'none') {
+    console.timeEnd('Mesh');
     loaded.style.display = 'none';
     webLoaded = true;
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-    console.log("Mesh Loaded");
-    console.timeEnd('Mesh');
   }
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   if (results.multiHandLandmarks[0]) {
@@ -96,7 +94,7 @@ buttons.forEach(function (button) {
           flipCamera()
           break;
         case "timer":
-          timerStart(5, screenShot)
+          timerStart(this, 5, screenShot)
           break;
         case "buttonFloating1":
           floatingButtonsLogic(this, -1)
@@ -105,7 +103,7 @@ buttons.forEach(function (button) {
           floatingButtonsLogic(this, 1)
           break;
         default:
-          console.log("error")
+          console.error("Unhandled button class: ", this.className);
           break;
       }
     }
@@ -116,64 +114,35 @@ function carouselButtonsLogic(buttonClicked) {
   buttonsCarousel.forEach(button => button.classList.remove('active'));
   buttonClicked.classList.add('active');
   console.log('Botón clickeado:', buttonClicked.textContent);
-  switch (buttonClicked.textContent) {
-    case 'Ajustar':
-      buttonFloatingImg1.src = '../src/assets/icons/AjustarAcercar.svg';
-      buttonFloatingImg2.src = '../src/assets/icons/AjustarAlejar.svg';
-      buttonFloating1.id = 'Ajustar'
-      buttonFloating2.id = 'Ajustar'
-      break;
-    case 'Tamaño':
-      buttonFloatingImg1.src = '../src/assets/icons/TamañoMenos.svg';
-      buttonFloatingImg2.src = '../src/assets/icons/TamañoMas.svg';
-      buttonFloating1.id = 'Tamaño'
-      buttonFloating2.id = 'Tamaño'
-      break;
-    case 'Modelo':
-      buttonFloatingImg1.src = '../src/assets/icons/ModeloAnterior.svg';
-      buttonFloatingImg2.src = '../src/assets/icons/ModeloSiguiente.svg';
-      buttonFloating1.id = 'Modelo'
-      buttonFloating2.id = 'Modelo'
-      break;
-    case 'Posición':
-      buttonFloatingImg1.src = '../src/assets/icons/PosicionAbajo.svg';
-      buttonFloatingImg2.src = '../src/assets/icons/PosicionArriba.svg';
-      buttonFloating1.id = 'Posición'
-      buttonFloating2.id = 'Posición'
-      break;
-    case 'Dedo':
-      buttonFloatingImg1.src = '../src/assets/icons/DedoAnterior.svg';
-      buttonFloatingImg2.src = '../src/assets/icons/DedoSiguiente.svg';
-      buttonFloating1.id = 'Dedo'
-      buttonFloating2.id = 'Dedo'
-      break;
+  const iconMap = {
+    'Ajustar': ['AjustarAcercar.svg', 'AjustarAlejar.svg', 'Ajustar'],
+    'Tamaño': ['TamañoMenos.svg', 'TamañoMas.svg', 'Tamaño'],
+    'Modelo': ['ModeloAnterior.svg', 'ModeloSiguiente.svg', 'Modelo'],
+    'Posición': ['PosicionAbajo.svg', 'PosicionArriba.svg', 'Posición'],
+    'Dedo': ['DedoAnterior.svg', 'DedoSiguiente.svg', 'Dedo']
+  };
+  const icons = iconMap[buttonClicked.textContent];
+  if (icons) {
+    [buttonFloatingImg1.src, buttonFloatingImg2.src] = icons.slice(0, 2).map(icon => `../src/assets/icons/${icon}`);
+    buttonFloating1.id = buttonFloating2.id = icons[2];
   }
 }
 
 function floatingButtonsLogic(buttonClicked, factor) {
-  switch (buttonClicked.id) {
-    case 'Ajustar':
-      updateX(factor)
-      break;
-    case 'Tamaño':
-      updateZoom(factor)
-      break;
-    case 'Modelo':
-      updateCounter(factor)
-      break;
-    case 'Posición':
-      updateY(factor)
-      break;
-    case 'Dedo':
-      updateFinger(factor)
-      break;
-  }
+  const logicMap = {
+    'Ajustar': () => updateX(factor),
+    'Tamaño': () => updateZoom(factor),
+    'Modelo': () => updateCounter(factor),
+    'Posición': () => updateY(factor),
+    'Dedo': () => updateFinger(factor)
+  };
+  const logicFunction = logicMap[buttonClicked.id];
+  if (logicFunction) logicFunction();
 }
 
 function updateY(factor) {
   if (Math.abs(upAndDown + factor) <= manualAjust) {
     upAndDown += factor
-    console.log(upAndDown)
     newYposition = upAndDown * translationDistance;
   }
 }
@@ -185,18 +154,25 @@ function updateZoom(factor) {
   }
 }
 
+function updateModel(newIdModel) {
+  imgFront.src = fetched.frontAR[newIdModel];
+  imgBack.src = fetched.backAR ? fetched.backAR[newIdModel] : fetched.frontAR[newIdModel];
+}
+
 function updateCounter(factor) {
   idModel = (idModel + factor + fetched.frontAR.length) % fetched.frontAR.length;
   updateModel(idModel)
-  console.log(idModel)
 }
 
 function updateFinger(operator) {
   fingerId = (operator > 0) ? (fingerId + 1) % 4 : (fingerId - 1 + 4) % 4;
 }
 
-function timerStart(segundos, callback) {
+function timerStart(botonTimer, segundos, callback) {
   const cuentaRegresivaElemento = document.getElementById('cuenta-regresiva');
+  botonTimer.disabled = true;
+  console.log(botonTimer)
+  console.log("Deshabilitado")
 
   const intervalo = setInterval(() => {
     cuentaRegresivaElemento.textContent = segundos;
@@ -207,14 +183,22 @@ function timerStart(segundos, callback) {
       clearInterval(intervalo);
       cuentaRegresivaElemento.textContent = "";
       callback();
+
+      cuentaRegresivaElemento.classList.add('blink');
+      setTimeout(() => {
+        cuentaRegresivaElemento.classList.remove('blink');
+      }, 1000);
+
+      botonTimer.disabled = false;
+      console.log(botonTimer)
+      console.log("Habilitado")
     }
   }, 1000);
 }
 
 function flipCamera() {
-  isFrontCamera = !isFrontCamera;
-  camera.h.facingMode = isFrontCamera ? "user" : "environment";
-  video.style.transform = canvas.style.transform = isFrontCamera ? "scaleX(-1)" : "scaleX(1)";
+  camera.h.facingMode = camera.h.facingMode === "user" ? "environment" : "user";
+  video.style.transform = canvas.style.transform = camera.h.facingMode === "user" ? "scaleX(-1)" : "scaleX(1)";
   camera.stop();
   camera.start();
 }
@@ -237,7 +221,6 @@ function screenShot() {
 
 function simImage(hand) {
   const rslt = hand.multiHandLandmarks[0]
-  const rslt3D = hand.multiHandWorldLandmarks[0]
   const handeness = hand.multiHandedness[0].label === "Left" ? -1 : 1;
 
   ctx.save();
@@ -293,11 +276,6 @@ function simImage(hand) {
   ctx.closePath()
 }
 
-function updateModel(newIdModel) {
-  imgFront.src = fetched.frontAR[newIdModel];
-  imgBack.src = fetched.backAR ? fetched.backAR[newIdModel] : fetched.frontAR[newIdModel];
-}
-
 const hands = new Hands({
   locateFile: (file) => {
     return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
@@ -315,7 +293,9 @@ const camera = new Camera(video, {
   onFrame: async () => {
     await hands.send({ image: video });
   },
-  width: 1280,
-  height: 720
+  width: 854,
+  height: 480,
+  facingMode: "environment"
 });
 camera.start();
+video.style.transform = canvas.style.transform = camera.h.facingMode === "user" ? "scaleX(-1)" : "scaleX(1)";
