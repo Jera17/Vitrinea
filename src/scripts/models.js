@@ -49,7 +49,7 @@ function getImagesArrays(obj) {
   } else {
     images.backAR = obj.backAR.slice()
   }
-  
+
   return images;
 }
 

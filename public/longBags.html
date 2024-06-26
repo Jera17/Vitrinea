@@ -1,51 +1,54 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <meta charset="UTF-8">
-    <link rel="icon" href="../src/assets/icon.png" type="image/x-icon">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../src/styles/cameraCanva.css">
-    <title>Vitrinea Ar</title>
-    <script src="../src/scripts/API/camera_utils.js"></script>
-    <script src="../src/scripts/API/control_utils.js"></script>
-    <script src="../src/scripts/API/drawing_utils.js"></script>
-    <script src="../src/scripts/API/pose.js" type="module"></script>
-    <script src="../src/scripts/models.js" type="module"></script>
-    <script src="../src/scripts/longBags.js" type="module"></script>
+  <meta charset="UTF-8">
+  <link rel="icon" href="../src/assets/icon.png" type="image/x-icon">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../src/styles/cameraCanva.css">
+  <title>Vitrinea Ar</title>
+  <script src="../src/scripts/API/camera_utils.js"></script>
+  <script src="../src/scripts/API/control_utils.js"></script>
+  <script src="../src/scripts/API/drawing_utils.js"></script>
+  <script src="../src/scripts/API/pose.js" type="module"></script>
+  <script src="../src/scripts/models.js" type="module"></script>
+  <script src="../src/scripts/longBags.js" type="module"></script>
 </head>
+
 <body>
-    <div class="camera">
-        <div class="spinner"></div>
-        <div id="cuenta-regresiva"></div>
-        <video class="input_video" autoplay playsinline></video>
-        <canvas id="pose-canvas"></canvas>
-    </div>
-    <div class="buttonsContainer">
-        <div class="grid-container">
-            <div class="floatingContainer">
-                <div class="floatingButtons">
-                    <button class="buttonFloating1" id=" "></button>
-                    <button class="buttonFloating2" id=" "></button>
-                </div>
-            </div>
-            <div class="carouselContainer">
-                <div class="carouselButtons">
-                    <button class="buttonCarousel active">Ajustar</button>
-                    <button class="buttonCarousel">Tamaño</button>
-                    <button class="buttonCarousel">Modelo</button>
-                    <button class="buttonCarousel">Posición</button>
-                    <button class="buttonCarousel">Hombro</button>
-                </div>
-            </div>
-            <div class="mainContainer">
-                <div class="mainButtons">
-                    <button class="timer"><img src="../src/assets/icons/Timer.svg" alt="Icon"></button>
-                    <button class="buttonPhoto"><img src="../src/assets/icons/Foto.svg" alt="Icon"></button>
-                    <button class="buttonCam"><img src="../src/assets/icons/Camara.svg" alt="Icon"></button>
-                </div>
-            </div>
-            <div class="emptyContainer"></div>
+  <div class="camera">
+    <img class="loading" src="../src/assets/loading.gif"></img>
+    <div id="cuenta-regresiva"></div>
+    <video class="input_video" autoplay playsinline></video>
+    <canvas id="pose-canvas"></canvas>
+  </div>
+  <div class="buttonsContainer">
+    <div class="grid-container">
+      <div class="floatingContainer">
+        <div class="floatingButtons">
+          <button class="buttonFloating1" id=" "></button>
+          <button class="buttonFloating2" id=" "></button>
         </div>
+      </div>
+      <div class="carouselContainer">
+        <div class="carouselButtons">
+          <button class="buttonCarousel active">Ajustar</button>
+          <button class="buttonCarousel">Tamaño</button>
+          <button class="buttonCarousel">Modelo</button>
+          <button class="buttonCarousel">Posición</button>
+          <button class="buttonCarousel">Hombro</button>
+        </div>
+      </div>
+      <div class="mainContainer">
+        <div class="mainButtons">
+          <button class="timer"><img src="../src/assets/icons/Timer.svg" alt="Icon"></button>
+          <button class="buttonPhoto"><img src="../src/assets/icons/Foto.svg" alt="Icon"></button>
+          <button class="buttonCam"><img src="../src/assets/icons/Camara.svg" alt="Icon"></button>
+        </div>
+      </div>
+      <div class="emptyContainer"></div>
     </div>
+  </div>
 </body>
+
 </html>

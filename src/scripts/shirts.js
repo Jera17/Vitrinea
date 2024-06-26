@@ -4,7 +4,7 @@ console.time('Mesh');
 const video = document.getElementsByClassName('input_video')[0];
 const canvas = document.querySelector("#pose-canvas")
 const ctx = canvas.getContext("2d")
-const loaded = document.getElementsByClassName('spinner')[0];
+const loaded = document.getElementsByClassName('loading')[0];
 
 const buttons = document.querySelectorAll('button');
 const buttonsCarousel = document.querySelectorAll('.buttonCarousel');
@@ -93,9 +93,9 @@ buttons.forEach(function (button) {
         case "buttonCam":
           flipCamera()
           break;
-          case "timer":
-            timerStart(this, 5, screenShot)
-            break;
+        case "timer":
+          timerStart(this, 5, screenShot)
+          break;
         case "buttonFloating1":
           floatingButtonsLogic(this, -1)
           break;
