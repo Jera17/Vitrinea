@@ -41,14 +41,13 @@ updateModel(idModel)
 function onResultsHands(results) {
   if (!webLoaded) {
     webLoaded = true;
-    loaded.classList.add('fadeOut');
+    console.log("Mesh Loaded");
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-    console.log("Mesh Loaded");
+    loaded.classList.add('fadeOut');
     setTimeout(() => {
       loaded.classList.remove('fadeOut');
       loaded.style.display = 'none';
-      console.log("uwu")
     }, 500);
   }
   ctx.clearRect(0, 0, canvas.width, canvas.height);

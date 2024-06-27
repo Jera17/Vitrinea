@@ -38,12 +38,16 @@ let webLoaded = false;
 image.src = fetched.frontAR[idModel]
 
 function onResultsFaceMesh(results) {
-  if (loaded.style.display !== 'none') {
-    loaded.style.display = 'none';
+  if (!webLoaded) {
     webLoaded = true;
+    console.log("Mesh Loaded");
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-    console.log("Mesh Loaded");
+    loaded.classList.add('fadeOut');
+    setTimeout(() => {
+      loaded.classList.remove('fadeOut');
+      loaded.style.display = 'none';
+    }, 500);
   }
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   if (results.multiFaceLandmarks[0]) {

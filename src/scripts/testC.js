@@ -41,15 +41,16 @@ image.src = fetched.frontAR[idModel]
 
 //Funcion donde se genera el trackeo de cuerpo
 function onResultsFaceMesh(results) {
-  //Quitar el gif de 'cargando' cuando se inicia la funcion actual
-  if (loaded.style.display !== 'none') {
-    loaded.style.display = 'none';
-    //Asegurarse que la web esté cargada
+  if (!webLoaded) {
     webLoaded = true;
-    //Establece el ancho del canva segun el ancho de el video
+    console.log("Mesh Loaded");
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-    console.log("Mesh Loaded");
+    loaded.classList.add('fadeOut');
+    setTimeout(() => {
+      loaded.classList.remove('fadeOut');
+      loaded.style.display = 'none';
+    }, 500);
   }
   //Si se realizó el trackeo, dibujar sobre este la simulación
   ctx.clearRect(0, 0, canvas.width, canvas.height)
