@@ -22,7 +22,7 @@ html {
   object-fit: cover;
   position: absolute;
   top: 0;
-  transform: scaleX(-1);
+  /* transform: scaleX(-1); */
   width: 100%;
 }
 

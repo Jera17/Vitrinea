@@ -1,4 +1,4 @@
-import { fetched } from "./models.js"
+import { fetched, updateData } from "./models.js"
 
 const video = document.getElementsByClassName('input_video')[0];
 const canvas = document.querySelector("#pose-canvas")
@@ -24,17 +24,30 @@ buttonFloating2.appendChild(buttonFloatingImg2);
 buttonFloating1.id = 'Tamaño'
 buttonFloating2.id = 'Tamaño'
 
+let simSetings = fetched.name;
+if (window.location.hash.substring(1) === 'A') {
+  document.querySelector('.buttonPhoto').querySelector('img').src = '../src/assets/icons/PosicionArriba.svg';
+  document.querySelector('.buttonPhoto').classList.replace('buttonPhoto', 'buttonUpdate');
+}
+
 let idModel = 0
 let imgFront = new Image();
 let imgBack = new Image();
 let manualAjust = 10
 let translationDistance = 5
-let upAndDown = 0
-let newYposition = 0
-let leftAndRight = 0
-let newXposition = 0
-let zoomInAndOut = 0
-let newScale = 1
+if (simSetings && simSetings.split(',').map(num => parseFloat(num)).length === 3) {
+  console.log("Settings Fetched")
+} else {
+  console.log("Settings No Fetched")
+  simSetings = '0,0,0'
+}
+let numerosArray = simSetings.split(',').map(num => parseFloat(num));
+
+let upAndDown = numerosArray[0];
+let leftAndRight = numerosArray[1];
+let zoomInAndOut = numerosArray[2];
+
+console.log(upAndDown, leftAndRight, zoomInAndOut)
 let webLoaded = false;
 updateModel(idModel)
 
@@ -84,7 +97,6 @@ carousel.addEventListener("scroll", () => {
   });
 });
 
-
 buttons.forEach(function (button) {
   button.addEventListener("click", function () {
     if (webLoaded === true) {
@@ -99,6 +111,14 @@ buttons.forEach(function (button) {
           break;
         case "buttonPhoto":
           screenShot()
+          break;
+        case "buttonUpdate":
+          simSetings = `${upAndDown},${leftAndRight},${zoomInAndOut}`;
+          const newData = {
+            'arModel.name': simSetings
+          };
+          console.log("Update", newData);
+          updateData(newData);
           break;
         case "buttonCam":
           flipCamera()
@@ -147,20 +167,18 @@ function floatingButtonsLogic(buttonClicked, factor) {
   };
   const logicFunction = logicMap[buttonClicked.id];
   if (logicFunction) logicFunction();
+  console.log(upAndDown, leftAndRight, zoomInAndOut)
 }
 
 function updateY(factor) {
   if (Math.abs(upAndDown + factor) <= manualAjust) {
     upAndDown += factor
-    console.log(upAndDown)
-    newYposition = upAndDown * translationDistance;
   }
 }
 
 function updateZoom(factor) {
   if (Math.abs(zoomInAndOut + factor) <= manualAjust) {
     zoomInAndOut += factor;
-    newScale = 1 + (zoomInAndOut * 0.05);
   }
 }
 
@@ -172,7 +190,6 @@ function updateModel(newIdModel) {
 function updateCounter(factor) {
   idModel = (idModel + factor + fetched.frontAR.length) % fetched.frontAR.length;
   updateModel(idModel)
-  console.log(idModel)
 }
 
 function updateFinger(operator) {
@@ -210,6 +227,7 @@ function timerStart(botonTimer, segundos, callback) {
 function flipCamera() {
   camera.h.facingMode = camera.h.facingMode === "user" ? "environment" : "user";
   video.style.transform = canvas.style.transform = camera.h.facingMode === "user" ? "scaleX(-1)" : "scaleX(1)";
+  console.log(camera.h.facingMode)
   camera.stop();
   camera.start();
 }
@@ -261,7 +279,7 @@ function simImage(hand) {
   ctx.rotate(angleHand + ((Math.PI / 2)) * componenteX)
 
   //Scale
-  var scaleHand = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2)) * 2 * newScale
+  var scaleHand = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2)) * 2 * (1 + (zoomInAndOut * 0.05))
   var sizeX = scaleHand / 2
   var sizeY = (sizeX * imgFront.height) / imgFront.width
 
@@ -286,8 +304,8 @@ function simImage(hand) {
   const result = crossProductFromPoints(point1A, point2A, point1B, point2B);
 
   const selectedImage = ((result[2] * handeness) < 0) ? imgFront : imgBack
-  ctx.drawImage(selectedImage, (0 - scaleHand / 4) + newXposition, ((0 - scaleHand / 2) / 1.25) - newYposition, sizeX, sizeY)
-  drawPoint((0 - scaleHand / 4) + newXposition + (sizeX / 2), ((0 - scaleHand / 2) / 1.25) - newYposition + (sizeY / 2), 'green')
+  ctx.drawImage(selectedImage, (0 - scaleHand / 4) + (leftAndRight * translationDistance), ((0 - scaleHand / 2) / 1.25) - (upAndDown * translationDistance), sizeX, sizeY)
+  drawPoint((0 - scaleHand / 4) + (leftAndRight * translationDistance) + (sizeX / 2), ((0 - scaleHand / 2) / 1.25) - (upAndDown * translationDistance) + (sizeY / 2), 'green')
   ctx.restore()
   ctx.closePath()
 }
@@ -314,4 +332,4 @@ const camera = new Camera(video, {
   facingMode: "environment"
 });
 camera.start();
-video.style.transform = canvas.style.transform = camera.h.facingMode === "user" ? "scaleX(-1)" : "scaleX(1)";
+console.log(camera.h.facingMode)

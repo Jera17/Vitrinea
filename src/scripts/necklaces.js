@@ -266,4 +266,3 @@ const camera = new Camera(video, {
   facingMode: "environment"
 });
 camera.start();
-video.style.transform = canvas.style.transform = camera.h.facingMode === "user" ? "scaleX(-1)" : "scaleX(1)";
