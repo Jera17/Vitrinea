@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+import { getFirestore, doc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDJ-M3HOY63LuwIgNPLaf1G3WBk9gUf6WI",
@@ -42,14 +42,13 @@ async function fetchArModel() {
 
 function getImagesArrays(obj) {
   if (!obj.frontAR) return null;
-
   const images = { frontAR: obj.frontAR.slice() };
   if (obj.backAR === null || obj.backAR === '' || obj.backAR === undefined || obj.backAR.length === 0) {
     images.backAR = obj.frontAR.slice()
   } else {
     images.backAR = obj.backAR.slice()
   }
-
+  images.name = obj.name
   return images;
 }
 
@@ -74,17 +73,23 @@ async function convertUrlsToBase64(modelos) {
   const convertPromises = [];
 
   if (modelos.frontAR) {
-    // console.log("uwu")
     convertPromises.push(...modelos.frontAR.map((url, index) => imageToBase64(url).then(base64 => modelos.frontAR[index] = base64)));
   }
   if (modelos.backAR) {
-    // console.log("ewe")
     convertPromises.push(...modelos.backAR.map((url, index) => imageToBase64(url).then(base64 => modelos.backAR[index] = base64)));
   }
-  // console.log(modelos)
 
   await Promise.all(convertPromises);
   return modelos;
+}
+
+export async function updateData(newData) {
+  try {
+    await updateDoc(docRef, newData);
+    console.log('Dato actualizado exitosamente');
+  } catch (error) {
+    console.error('Error al actualizar el dato:', error);
+  }
 }
 
 const fetched = await fetchArModel();
