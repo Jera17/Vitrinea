@@ -1,5 +1,7 @@
 :root {
-  --blancoTransp: rgba(222, 222, 222, 0.6);
+  --fondoHUD: rgba(32, 32, 32, 0.35);
+  --fondoBotones: rgb(112, 112, 112);
+  --colorBotones: rgb(214, 214, 214);
   --moradoVitr: #805cfe;
 }
 
@@ -92,8 +94,7 @@ html {
 .grid-container .carouselContainer,
 .grid-container .mainContainer,
 .grid-container .emptyContainer {
-  backdrop-filter: blur(2px);
-  background-color: var(--blancoTransp);
+  background-color: var(--fondoHUD);
 }
 
 #cuenta-regresiva {
@@ -150,10 +151,10 @@ html {
 .floatingButtons .buttonFloating1,
 .floatingButtons .buttonFloating2 {
   align-items: center;
-  background-color: #ffffff;
+  background-color: var(--fondoBotones);
   border: none;
   border-radius: 50%;
-  color: #805CFE;
+  color: var(--colorBotones);
   cursor: pointer;
   display: flex;
   height: 40px;
@@ -193,7 +194,7 @@ html {
   background-color: #ffffff00;
   border: none;
   border-radius: 25% / 50%;
-  color: #202020;
+  color: #ffffff;
   cursor: pointer;
   display: inline-flex;
   font-size: 100%;
@@ -208,7 +209,7 @@ html {
 }
 
 .carouselButtons .buttonCarousel.active {
-  background-color: rgba(70, 70, 70, 0.8);
+  background-color: rgba(32, 32, 32, 0.6);
   box-shadow: inset 0px 3px 6px rgba(0, 0, 0, 0.16);
   box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.16);
   color: #ffffff;
@@ -232,10 +233,10 @@ html {
 .mainButtons .buttonCam {
   align-items: center;
   align-self: center;
-  background-color: #ffffff;
+  background-color: var(--fondoBotones);
   border: none;
   border-radius: 50%;
-  color: var(--moradoVitr);
+  color: var(--colorBotones);
   cursor: pointer;
   display: flex;
   height: 40px;
@@ -244,13 +245,15 @@ html {
   width: 40px;
 }
 
-.mainButtons .buttonPhoto {
+.mainButtons .buttonPhoto,
+.mainButtons .buttonUpdate {
   align-items: center;
   align-self: center;
   background-color: var(--moradoVitr);
   border: none;
   border-radius: 50%;
   color: white;
+  color:var(--colorBotones);
   cursor: pointer;
   display: flex;
   height: 70px;
