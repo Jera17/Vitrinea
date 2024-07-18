@@ -186,12 +186,6 @@ function timerStart(botonTimer, segundos, callback) {
       clearInterval(intervalo);
       cuentaRegresivaElemento.textContent = "";
       callback();
-
-      cuentaRegresivaElemento.classList.add('blink');
-      setTimeout(() => {
-        cuentaRegresivaElemento.classList.remove('blink');
-      }, 1000);
-
       botonTimer.disabled = false;
       console.log(botonTimer)
       console.log("Habilitado")
@@ -199,14 +193,13 @@ function timerStart(botonTimer, segundos, callback) {
   }, 1000);
 }
 
-function flipCamera() {
-  camera.h.facingMode = camera.h.facingMode === "user" ? "environment" : "user";
-  video.style.transform = canvas.style.transform = camera.h.facingMode === "user" ? "scaleX(-1)" : "scaleX(1)";
-  camera.stop();
-  camera.start();
-}
-
 function screenShot() {
+  const cuentaRegresivaElemento = document.getElementById('cuenta-regresiva');
+  cuentaRegresivaElemento.classList.add('blink');
+  setTimeout(() => {
+    cuentaRegresivaElemento.classList.remove('blink');
+  }, 1000);
+
   const combinedCanvas = document.createElement('canvas');
   const combinedCtx = combinedCanvas.getContext('2d');
 
@@ -220,6 +213,13 @@ function screenShot() {
   downloadLink.href = image_data_url;
   downloadLink.download = 'webcam_snapshot.jpg';
   downloadLink.click();
+}
+
+function flipCamera() {
+  camera.h.facingMode = camera.h.facingMode === "user" ? "environment" : "user";
+  video.style.transform = canvas.style.transform = camera.h.facingMode === "user" ? "scaleX(-1)" : "scaleX(1)";
+  camera.stop();
+  camera.start();
 }
 
 function simImage(hand) {
