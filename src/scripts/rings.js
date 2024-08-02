@@ -1,6 +1,6 @@
 console.log('Mesh');
 console.time('Mesh');
-import { fetched } from "./models.js"
+import { fetched } from "./Utils/dataBase.js"
 
 const video = document.getElementsByClassName('input_video')[0];
 const canvas = document.querySelector("#pose-canvas")

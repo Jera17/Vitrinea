@@ -1,4 +1,4 @@
-import { fetched } from "./models.js"
+import { fetched } from "./Utils/dataBase.js"
 
 //Crear Variables
 const video = document.getElementsByClassName('input_video')[0];

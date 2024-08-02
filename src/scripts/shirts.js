@@ -1,4 +1,4 @@
-import { fetched } from "./models.js"
+import { fetched } from "./Utils/dataBase.js"
 console.time('Mesh');
 
 const video = document.getElementsByClassName('input_video')[0];
