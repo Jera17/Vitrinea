@@ -34,6 +34,9 @@ let simulation = {
   }
 }
 
+simulation.img.front.crossOrigin = 'anonymous';
+simulation.img.back.crossOrigin = 'anonymous';
+
 export {
   video, canvas, ctx, loaded, buttons, buttonsCarousel, carousel, buttonPading,
   buttonFloating1, buttonFloating2, buttonFloatingImg1, buttonFloatingImg2,

@@ -1,27 +1,15 @@
 import { fetched } from "./Utils/dataBase.js"
 import {
-  handleWebLoaded, setupCarouselScrollHandler, 
+  handleWebLoaded, updateSimulationConfig, setupCarouselScrollHandler, 
   handleButtonClick, updateModel
 } from "./Utils/utils.js"
 import {
   video, canvas, ctx, buttons, simulation
 } from "./Utils/var.js";
 
-let config = fetched.name.split(',').map(num => parseFloat(num))
-if (fetched.name && fetched.name.split(',').map(num => parseFloat(num)).length === 3) {
-// if (fetched.name && fetched.name.split(',').map(num => parseFloat(num)).length === 5) {
-  simulation.config.leftAndRight = config[0];
-  simulation.config.upAndDown = config[1];
-  simulation.config.zoomInAndOut = config[2];
-  // simulation.relativePosition = config[3];
-  // simulation.config.translationDistance = config[4];
-  console.log("Settings Fetched")
-  console.log(simulation)
-  console.log(simulation.config)
-}
-
 let webLoaded = false;
 updateModel(simulation.img, fetched);
+updateSimulationConfig(fetched, simulation);
 
 function onResultsHands(results) {
   webLoaded = handleWebLoaded(webLoaded);
@@ -44,15 +32,10 @@ function drawPoint(x, y, color) {
 }
 
 setupCarouselScrollHandler();
+
 buttons.forEach(function (button) {
   button.addEventListener("click", function () {
-    if (webLoaded === true) {
-      let result = handleButtonClick(this,
-        simulation, fetched, flipCamera
-      );
-      simulation.config = result.config
-      simulation.img = result.img
-    }
+      handleButtonClick(this, fetched, flipCamera);
   });
 });
 

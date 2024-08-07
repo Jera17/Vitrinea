@@ -30,14 +30,14 @@ async function fetchArModel() {
   }
 
   const modelosAr = getImagesArrays(docSnap.data().arModel);
-
+  console.log(modelosAr);
   if (!modelosAr) {
     alert("No hay imagenes frontAR");
     throw new Error("No frontAR images. Stopping execution.");
   }
-
-  const base64ModelosAr = await convertUrlsToBase64(modelosAr);
-  return base64ModelosAr;
+  return modelosAr;
+  // const base64ModelosAr = await convertUrlsToBase64(modelosAr);
+  // return base64ModelosAr;
 }
 
 function getImagesArrays(obj) {
@@ -49,39 +49,40 @@ function getImagesArrays(obj) {
     images.backAR = obj.backAR.slice()
   }
   images.name = obj.name
+  images.simConfig = obj.simConfig
   return images;
 }
 
-function imageToBase64(url) {
-  return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    xhr.onload = function () {
-      const reader = new FileReader();
-      reader.onloadend = function () {
-        resolve(reader.result);
-      };
-      reader.readAsDataURL(xhr.response);
-    };
-    xhr.onerror = reject;
-    xhr.open('GET', url);
-    xhr.responseType = 'blob';
-    xhr.send();
-  });
-}
+// function imageToBase64(url) {
+//   return new Promise((resolve, reject) => {
+//     const xhr = new XMLHttpRequest();
+//     xhr.onload = function () {
+//       const reader = new FileReader();
+//       reader.onloadend = function () {
+//         resolve(reader.result);
+//       };
+//       reader.readAsDataURL(xhr.response);
+//     };
+//     xhr.onerror = reject;
+//     xhr.open('GET', url);
+//     xhr.responseType = 'blob';
+//     xhr.send();
+//   });
+// }
 
-async function convertUrlsToBase64(modelos) {
-  const convertPromises = [];
+// async function convertUrlsToBase64(modelos) {
+//   const convertPromises = [];
 
-  if (modelos.frontAR) {
-    convertPromises.push(...modelos.frontAR.map((url, index) => imageToBase64(url).then(base64 => modelos.frontAR[index] = base64)));
-  }
-  if (modelos.backAR) {
-    convertPromises.push(...modelos.backAR.map((url, index) => imageToBase64(url).then(base64 => modelos.backAR[index] = base64)));
-  }
+//   if (modelos.frontAR) {
+//     convertPromises.push(...modelos.frontAR.map((url, index) => imageToBase64(url).then(base64 => modelos.frontAR[index] = base64)));
+//   }
+//   if (modelos.backAR) {
+//     convertPromises.push(...modelos.backAR.map((url, index) => imageToBase64(url).then(base64 => modelos.backAR[index] = base64)));
+//   }
 
-  await Promise.all(convertPromises);
-  return modelos;
-}
+//   await Promise.all(convertPromises);
+//   return modelos;
+// }
 
 export async function updateData(newData) {
   try {

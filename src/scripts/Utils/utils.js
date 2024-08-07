@@ -1,11 +1,23 @@
 import {
   video, canvas, 
   buttonsCarousel, loaded, carousel, buttonPading,
-  buttonFloating1, buttonFloating2, buttonFloatingImg1, buttonFloatingImg2
+  buttonFloating1, buttonFloating2, buttonFloatingImg1, buttonFloatingImg2,
+  simulation
 } from "./var.js";
 import { updateData } from "./dataBase.js"
 
 var activeButton = buttonsCarousel[0]
+
+export function updateSimulationConfig(fetched, simulation) {
+  if (fetched.simConfig.length === 3) {
+    simulation.config.leftAndRight = fetched.simConfig[0];
+    simulation.config.upAndDown = fetched.simConfig[1];
+    simulation.config.zoomInAndOut = fetched.simConfig[2];
+    console.log("Settings Fetched");
+    console.log(simulation);
+    console.log(simulation.config);
+  }
+}
 
 export function handleWebLoaded(webLoaded) {
   if (!webLoaded) {
@@ -65,7 +77,7 @@ export function carouselButtonsLogic(buttonClicked) {
 }
 
 export function handleButtonClick(button,
-  simulation, fetched, flipCamera) {
+  fetched, flipCamera) {
   switch (button.className) {
     case "buttonCarousel":
     case "buttonCarousel active":
@@ -79,7 +91,7 @@ export function handleButtonClick(button,
       screenShot();
       break;
     case "buttonUpdate":
-      updateSimulationData(simulation, updateData)
+      updateSimulationData(updateData)
       break;
     case "buttonCam":
       flipCamera();
@@ -88,17 +100,17 @@ export function handleButtonClick(button,
       timerStart(button, 5);
       break;
     case "buttonFloating1":
-      floatingButtonsLogic(button, -1, simulation, fetched);
+      floatingButtonsLogic(button, -1, fetched);
       break;
     case "buttonFloating2":
-      floatingButtonsLogic(button, 1, simulation, fetched);
+      floatingButtonsLogic(button, 1, fetched);
       break;
     default:
       console.error("Unhandled button class: ", button.className);
       break;
   }
   
-  function floatingButtonsLogic(buttonClicked, factor, simulation, fetched) {
+  function floatingButtonsLogic(buttonClicked, factor, fetched) {
     const logicMap = {
       'Ajustar': () => simulation.config.leftAndRight = updateRelativeSimulationData(simulation.config.leftAndRight, factor),
       'Tamaño': () => simulation.config.zoomInAndOut = updateRelativeSimulationData(simulation.config.zoomInAndOut, factor),
@@ -110,18 +122,17 @@ export function handleButtonClick(button,
     const logicFunction = logicMap[buttonClicked.id];
     if (logicFunction) logicFunction();
   }
-  return  {
-    config: simulation.config,
-    img: simulation.img
-  };
 }
 
-export function updateSimulationData(simulation, updateData) {
-  const simSettings = `${simulation.config.leftAndRight},${simulation.config.upAndDown},${simulation.config.zoomInAndOut}`;
-  const newData = {
-    'arModel.name': simSettings
+export function updateSimulationData(updateData) {
+  let newData = {
+    "arModel.simConfig": [
+      simulation.config.leftAndRight,
+      simulation.config.upAndDown,
+      simulation.config.zoomInAndOut,
+    ],
   };
-  console.log("Update", newData);
+  console.log(newData["arModel.simConfig"]);
   updateData(newData);
 }
 
