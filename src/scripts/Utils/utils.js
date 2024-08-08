@@ -14,9 +14,11 @@ export function updateSimulationConfig(fetched, simulation) {
     simulation.config.upAndDown = fetched.simConfig[1];
     simulation.config.zoomInAndOut = fetched.simConfig[2];
     console.log("Settings Fetched");
-    console.log(simulation);
-    console.log(simulation.config);
+  }else{
+    console.log("Settings Not Fetched");
   }
+  console.log(simulation);
+  console.log(simulation.config);
 }
 
 export function handleWebLoaded(webLoaded) {
@@ -148,6 +150,7 @@ export function updateCounter(img, fetched, factor) {
 }
 
 function updateFinger(fingerId, operator) {
+  console.log(fingerId)
   fingerId = (operator > 0) ? (fingerId + 1) % 4 : (fingerId - 1 + 4) % 4;
   return fingerId;
 }
@@ -161,6 +164,7 @@ export function updateRelativeSimulationData(relativeData, factor) {
   if (Math.abs(relativeData + factor) <= 10) {
     relativeData += factor
   }
+  console.log(relativeData)
   return relativeData
 }
 

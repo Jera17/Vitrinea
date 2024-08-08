@@ -1,59 +1,19 @@
-console.log('Mesh');
-console.time('Mesh');
 import { fetched } from "./Utils/dataBase.js"
+import {
+  handleWebLoaded, updateSimulationConfig, setupCarouselScrollHandler,
+  handleButtonClick, updateModel
+} from "./Utils/utils.js"
+import {
+  video, canvas, ctx, buttons, simulation
+} from "./Utils/var.js";
 
-const video = document.getElementsByClassName('input_video')[0];
-const canvas = document.querySelector("#pose-canvas")
-const ctx = canvas.getContext("2d")
-const loaded = document.getElementsByClassName('loading')[0];
-
-const buttons = document.querySelectorAll('button');
-const buttonsCarousel = document.querySelectorAll('.buttonCarousel');
-const carousel = document.querySelector(".carouselButtons");
-const buttonPading = parseInt(window.getComputedStyle(buttons[0]).paddingLeft) * 2
-var activeButton = buttonsCarousel[0]
-
-const buttonFloating1 = document.querySelector('.buttonFloating1');
-const buttonFloating2 = document.querySelector('.buttonFloating2');
-
-const buttonFloatingImg1 = document.createElement('img');
-const buttonFloatingImg2 = document.createElement('img');
-
-buttonFloatingImg1.src = '../src/assets/icons/TamañoMenos.svg';
-buttonFloatingImg2.src = '../src/assets/icons/TamañoMas.svg';
-buttonFloating1.appendChild(buttonFloatingImg1);
-buttonFloating2.appendChild(buttonFloatingImg2);
-buttonFloating1.id = 'Tamaño'
-buttonFloating2.id = 'Tamaño'
-////////////////
-let idModel = 0
-let imgFront = new Image();
-let imgBack = new Image();
-let manualAjust = 10
-let translationDistance = 5
-let upAndDown = 0
-let newYposition = 0
-let leftAndRight = 0
-let newXposition = 0
-let zoomInAndOut = 0
-let newScale = 1
-let fingerId = 0
 let webLoaded = false;
-updateModel(idModel)
+updateModel(simulation.img, fetched);
+updateSimulationConfig(fetched, simulation);
 
 function onResultsHands(results) {
-  if (!webLoaded) {
-    webLoaded = true;
-    console.log("Mesh Loaded");
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    loaded.classList.add('fadeOut');
-    setTimeout(() => {
-      loaded.classList.remove('fadeOut');
-      loaded.style.display = 'none';
-    }, 500);
-  }
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  webLoaded = handleWebLoaded(webLoaded);
+  ctx.clearRect(0, 0, video.videoWidth, video.videoHeight);
   if (results.multiHandLandmarks[0]) {
     results.multiHandLandmarks[0].forEach(multiHandLandmarks => {
       multiHandLandmarks.x *= video.videoWidth
@@ -63,114 +23,13 @@ function onResultsHands(results) {
   }
 }
 
-carousel.addEventListener("scroll", () => {
-  const carouselRect = carousel.getBoundingClientRect();
-  buttonsCarousel.forEach(button => {
-    const buttonRect = button.getBoundingClientRect();
-    const buttonCenter = buttonRect.left + (buttonRect.width / 2) - carouselRect.left + buttonPading;
-    if (buttonCenter >= carouselRect.width / 2 && buttonCenter <= carouselRect.width / 2 + buttonRect.width) {
-      if (button != activeButton) {
-        buttonsCarousel.forEach(btn => btn.classList.remove("active"));
-        carouselButtonsLogic(button)
-        button.classList.add("active");
-        activeButton = button
-      }
-    }
-  });
-});
+setupCarouselScrollHandler();
 
 buttons.forEach(function (button) {
   button.addEventListener("click", function () {
-    if (webLoaded === true) {
-      switch (this.className) {
-        case "buttonCarousel":
-        case "buttonCarousel active":
-          const scrollLeft = button.offsetLeft - (carousel.offsetWidth - button.offsetWidth) / 2;
-          carousel.scrollTo({
-            left: scrollLeft,
-            behavior: "smooth"
-          });
-          break;
-        case "buttonPhoto":
-          screenShot()
-          break;
-        case "buttonCam":
-          flipCamera()
-          break;
-        case "timer":
-          timerStart(this, 5, screenShot)
-          break;
-        case "buttonFloating1":
-          floatingButtonsLogic(this, -1)
-          break;
-        case "buttonFloating2":
-          floatingButtonsLogic(this, 1)
-          break;
-        default:
-          console.error("Unhandled button class: ", this.className);
-          break;
-      }
-    }
+    handleButtonClick(this, fetched, flipCamera);
   });
 });
-
-function carouselButtonsLogic(buttonClicked) {
-  buttonsCarousel.forEach(button => button.classList.remove('active'));
-  buttonClicked.classList.add('active');
-  console.log('Botón clickeado:', buttonClicked.textContent);
-  const iconMap = {
-    'Ajustar': ['AjustarAcercar.svg', 'AjustarAlejar.svg', 'Ajustar'],
-    'Tamaño': ['TamañoMenos.svg', 'TamañoMas.svg', 'Tamaño'],
-    'Modelo': ['ModeloAnterior.svg', 'ModeloSiguiente.svg', 'Modelo'],
-    'Posición': ['PosicionAbajo.svg', 'PosicionArriba.svg', 'Posición'],
-    'Dedo': ['DedoAnterior.svg', 'DedoSiguiente.svg', 'Dedo']
-  };
-  const icons = iconMap[buttonClicked.textContent];
-  if (icons) {
-    [buttonFloatingImg1.src, buttonFloatingImg2.src] = icons.slice(0, 2).map(icon => `../src/assets/icons/${icon}`);
-    buttonFloating1.id = buttonFloating2.id = icons[2];
-  }
-}
-
-function floatingButtonsLogic(buttonClicked, factor) {
-  const logicMap = {
-    'Ajustar': () => updateX(factor),
-    'Tamaño': () => updateZoom(factor),
-    'Modelo': () => updateCounter(factor),
-    'Posición': () => updateY(factor),
-    'Dedo': () => updateFinger(factor)
-  };
-  const logicFunction = logicMap[buttonClicked.id];
-  if (logicFunction) logicFunction();
-}
-
-function updateY(factor) {
-  if (Math.abs(upAndDown + factor) <= manualAjust) {
-    upAndDown += factor
-    newYposition = upAndDown * translationDistance;
-  }
-}
-
-function updateZoom(factor) {
-  if (Math.abs(zoomInAndOut + factor) <= manualAjust) {
-    zoomInAndOut += factor;
-    newScale = 1 + (zoomInAndOut * 0.05);
-  }
-}
-
-function updateModel(newIdModel) {
-  imgFront.src = fetched.frontAR[newIdModel];
-  imgBack.src = fetched.backAR ? fetched.backAR[newIdModel] : fetched.frontAR[newIdModel];
-}
-
-function updateCounter(factor) {
-  idModel = (idModel + factor + fetched.frontAR.length) % fetched.frontAR.length;
-  updateModel(idModel)
-}
-
-function updateFinger(operator) {
-  fingerId = (operator > 0) ? (fingerId + 1) % 4 : (fingerId - 1 + 4) % 4;
-}
 
 function flipCamera() {
   camera.h.facingMode = camera.h.facingMode === "user" ? "environment" : "user";
@@ -179,105 +38,65 @@ function flipCamera() {
   camera.start();
 }
 
-function timerStart(botonTimer, segundos, callback) {
-  const cuentaRegresivaElemento = document.getElementById('cuenta-regresiva');
-  botonTimer.disabled = true;
-  console.log(botonTimer)
-  console.log("Deshabilitado")
-
-  const intervalo = setInterval(() => {
-    cuentaRegresivaElemento.textContent = segundos;
-    console.log(segundos);
-    segundos--;
-
-    if (segundos < 0) {
-      clearInterval(intervalo);
-      cuentaRegresivaElemento.textContent = "";
-      callback();
-      botonTimer.disabled = false;
-      console.log(botonTimer)
-      console.log("Habilitado")
-    }
-  }, 1000);
-}
-
-function screenShot() {
-  const cuentaRegresivaElemento = document.getElementById('cuenta-regresiva');
-  cuentaRegresivaElemento.classList.add('blink');
-  setTimeout(() => {
-    cuentaRegresivaElemento.classList.remove('blink');
-  }, 1000);
-
-  const combinedCanvas = document.createElement('canvas');
-  const combinedCtx = combinedCanvas.getContext('2d');
-
-  combinedCanvas.width = video.videoWidth;
-  combinedCanvas.height = video.videoHeight;
-  combinedCtx.drawImage(video, 0, 0, combinedCanvas.width, combinedCanvas.height);
-  combinedCtx.drawImage(canvas, 0, 0, combinedCanvas.width, combinedCanvas.height);
-
-  let image_data_url = combinedCanvas.toDataURL('image/jpeg');
-  const downloadLink = document.createElement('a');
-  downloadLink.href = image_data_url;
-  downloadLink.download = 'webcam_snapshot.jpg';
-  downloadLink.click();
-}
-
 function simImage(hand) {
-  const rslt = hand.multiHandLandmarks[0]
-  const handeness = hand.multiHandedness[0].label === "Left" ? -1 : 1;
+  try {
+    const rslt = hand.multiHandLandmarks[0]
+    const handeness = hand.multiHandedness[0].label === "Left" ? -1 : 1;
 
-  ctx.save();
-  const fingerIdNodes = [5, 9, 13, 17]
-  const x1 = rslt[fingerIdNodes[fingerId]].x
-  const y1 = rslt[fingerIdNodes[fingerId]].y
-  const x2 = rslt[fingerIdNodes[fingerId] + 1].x
-  const y2 = rslt[fingerIdNodes[fingerId] + 1].y
+    ctx.save();
+    const fingerIdNodes = [5, 9, 13, 17]
+    // console.log(simulation.img.id)
+    const x1 = rslt[fingerIdNodes[simulation.config.relativePosition]].x
+    const y1 = rslt[fingerIdNodes[simulation.config.relativePosition]].y
+    const x2 = rslt[fingerIdNodes[simulation.config.relativePosition] + 1].x
+    const y2 = rslt[fingerIdNodes[simulation.config.relativePosition] + 1].y
 
-  ctx.beginPath()
-  ctx.save()
-  //set the position center of the canva and from hand
-  const pstx = ((x1 + x2) / 2)
-  const psty = ((y1 + y2) / 2)
-  ctx.translate(pstx, psty)
+    ctx.beginPath()
+    ctx.save()
+    //set the position center of the canva and from hand
+    const pstx = ((x1 + x2) / 2)
+    const psty = ((y1 + y2) / 2)
+    ctx.translate(pstx, psty)
 
-  //set angle of the image
-  var componenteX = 1
-  if ((x1 - x2) > 0) {
-    componenteX = -1
+    //set angle of the image
+    var componenteX = 1
+    if ((x1 - x2) > 0) {
+      componenteX = -1
+    }
+    const pendiente = ((y2 - y1) / (x2 - x1))
+    const angleHand = Math.atan(pendiente)
+    ctx.rotate(angleHand + ((Math.PI / 2) * componenteX))
+
+    //Scale
+    var FingerLenght = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2)) * (1 + (simulation.config.zoomInAndOut * 0.05))
+
+    //Flip (Usando producto punto)
+    function crossProductFromPoints(point1A, point2A, point1B, point2B) {
+      const vectorA = [point2A[0] - point1A[0], point2A[1] - point1A[1], point2A[2] - point1A[2]];
+      const vectorB = [point2B[0] - point1B[0], point2B[1] - point1B[1], point2B[2] - point1B[2]];
+      const result = [
+        vectorA[1] * vectorB[2] - vectorA[2] * vectorB[1],
+        vectorA[2] * vectorB[0] - vectorA[0] * vectorB[2],
+        vectorA[0] * vectorB[1] - vectorA[1] * vectorB[0]
+      ];
+      return result;
+    }
+
+    const point1A = [rslt[9].x, rslt[9].y, 0];
+    const point2A = [rslt[10].x, rslt[10].y, 0];
+    const point1B = [rslt[9].x, rslt[9].y, 0];
+    const point2B = [rslt[13].x, rslt[13].y, 0];
+
+    const result = crossProductFromPoints(point1A, point2A, point1B, point2B);
+
+    const selectedImage = ((result[2] * handeness) < 0) ? simulation.img.front : simulation.img.back
+    ctx.drawImage(selectedImage, (0 - FingerLenght / 4) + (simulation.config.leftAndRight * simulation.config.translationDistance), ((0 - FingerLenght / 2) / 1.25) - (simulation.config.upAndDown * simulation.config.translationDistance), FingerLenght / 2, FingerLenght / 2)
+
+    ctx.restore()
+    ctx.closePath()
+  } catch (error) {
+    console.error('Error en simImage:', error);
   }
-  const pendiente = ((y2 - y1) / (x2 - x1))
-  const angleHand = Math.atan(pendiente)
-  ctx.rotate(angleHand + ((Math.PI / 2) * componenteX))
-
-  //Scale
-  var FingerLenght = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2)) * newScale
-
-  //Flip (Usando producto punto)
-  // console.log(results.multiHandedness[0].label, isRight)
-  function crossProductFromPoints(point1A, point2A, point1B, point2B) {
-    const vectorA = [point2A[0] - point1A[0], point2A[1] - point1A[1], point2A[2] - point1A[2]];
-    const vectorB = [point2B[0] - point1B[0], point2B[1] - point1B[1], point2B[2] - point1B[2]];
-    const result = [
-      vectorA[1] * vectorB[2] - vectorA[2] * vectorB[1],
-      vectorA[2] * vectorB[0] - vectorA[0] * vectorB[2],
-      vectorA[0] * vectorB[1] - vectorA[1] * vectorB[0]
-    ];
-    return result;
-  }
-
-  const point1A = [rslt[9].x, rslt[9].y, 0];
-  const point2A = [rslt[10].x, rslt[10].y, 0];
-  const point1B = [rslt[9].x, rslt[9].y, 0];
-  const point2B = [rslt[13].x, rslt[13].y, 0];
-
-  const result = crossProductFromPoints(point1A, point2A, point1B, point2B);
-
-  const selectedImage = ((result[2] * handeness) < 0) ? imgFront : imgBack
-  ctx.drawImage(selectedImage, (0 - FingerLenght / 4) + newXposition, ((0 - FingerLenght / 2) / 1.25) - newYposition, FingerLenght / 2, FingerLenght / 2)
-
-  ctx.restore()
-  ctx.closePath()
 }
 
 const hands = new Hands({
