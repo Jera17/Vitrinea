@@ -1,4 +1,5 @@
 import { fetched } from "./Utils/dataBase.js"
+import { initializePoseTracking } from "./Utils/simulation.js"
 import {
   handleWebLoaded, updateSimulationConfig, setupCarouselScrollHandler,
   handleButtonClick, updateModel
@@ -59,25 +60,4 @@ function drawImage(rst, node1, node2, node3) {
   }
 }
 
-const pose = new Pose({
-  locateFile: (file) => {
-    return `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`;
-  }
-});
-pose.setOptions({
-  modelComplexity: 1,
-  smoothLandmarks: true,
-  minDetectionConfidence: 0.5,
-  minTrackingConfidence: 0.5
-});
-pose.onResults(onResultsPose);
-
-const camera = new Camera(video, {
-  onFrame: async () => {
-    await pose.send({ image: video });
-  },
-  width: 854,
-  height: 480,
-  facingMode: "environment"
-});
-camera.start();
+initializePoseTracking(video, onResultsPose);

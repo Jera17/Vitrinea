@@ -1,5 +1,5 @@
 import {
-  video, canvas, 
+  video, canvas,
   buttonsCarousel, loaded, carousel, buttonPading,
   buttonFloating1, buttonFloating2, buttonFloatingImg1, buttonFloatingImg2,
   simulation
@@ -14,7 +14,7 @@ export function updateSimulationConfig(fetched, simulation) {
     simulation.config.upAndDown = fetched.simConfig[1];
     simulation.config.zoomInAndOut = fetched.simConfig[2];
     console.log("Settings Fetched");
-  }else{
+  } else {
     console.log("Settings Not Fetched");
   }
   console.log(simulation);
@@ -111,7 +111,7 @@ export function handleButtonClick(button,
       console.error("Unhandled button class: ", button.className);
       break;
   }
-  
+
   function floatingButtonsLogic(buttonClicked, factor, fetched) {
     const logicMap = {
       'Ajustar': () => simulation.config.leftAndRight = updateRelativeSimulationData(simulation.config.leftAndRight, factor),
@@ -209,4 +209,23 @@ export function timerStart(botonTimer, segundos) {
       console.log("Habilitado")
     }
   }, 1000);
+}
+
+export function crossProductFromPoints(point1A, point2A, point1B, point2B) {
+  const vectorA = [point2A[0] - point1A[0], point2A[1] - point1A[1], point2A[2] - point1A[2]];
+  const vectorB = [point2B[0] - point1B[0], point2B[1] - point1B[1], point2B[2] - point1B[2]];
+  const result = [
+    vectorA[1] * vectorB[2] - vectorA[2] * vectorB[1],
+    vectorA[2] * vectorB[0] - vectorA[0] * vectorB[2],
+    vectorA[0] * vectorB[1] - vectorA[1] * vectorB[0]
+  ];
+  return result;
+}
+
+export function drawPoint(ctx, x, y, r, color) {
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, 2 * Math.PI);
+  ctx.fillStyle = color;
+  ctx.fill();
+  ctx.closePath()
 }

@@ -1,7 +1,8 @@
 import { fetched } from "./Utils/dataBase.js"
+import { initializePoseTracking } from "./Utils/simulation.js"
 import {
   handleWebLoaded, updateSimulationConfig, setupCarouselScrollHandler,
-  handleButtonClick, updateModel
+  handleButtonClick, updateModel, crossProductFromPoints
 } from "./Utils/utils.js"
 import {
   video, canvas, ctx, buttons, simulation
@@ -61,16 +62,6 @@ function simImage(rsl, node1, node2, node3) {
     const magY = y1 - y0
 
 
-    function crossProductFromPoints(point1A, point2A, point1B, point2B) {
-      const vectorA = [point2A[0] - point1A[0], point2A[1] - point1A[1], point2A[2] - point1A[2]];
-      const vectorB = [point2B[0] - point1B[0], point2B[1] - point1B[1], point2B[2] - point1B[2]];
-      const result = [
-        vectorA[1] * vectorB[2] - vectorA[2] * vectorB[1],
-        vectorA[2] * vectorB[0] - vectorA[0] * vectorB[2],
-        vectorA[0] * vectorB[1] - vectorA[1] * vectorB[0]
-      ];
-      return result;
-    }
 
     // Ejemplo de uso:
     const point1A = [x0, y0, 0];
@@ -89,25 +80,4 @@ function simImage(rsl, node1, node2, node3) {
   }
 }
 
-const pose = new Pose({
-  locateFile: (file) => {
-    return `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`;
-  }
-});
-pose.setOptions({
-  modelComplexity: 1,
-  smoothLandmarks: true,
-  minDetectionConfidence: 0.5,
-  minTrackingConfidence: 0.5
-});
-pose.onResults(onResultsPose);
-
-const camera = new Camera(video, {
-  onFrame: async () => {
-    await pose.send({ image: video });
-  },
-  width: 854,
-  height: 480,
-  facingMode: "environment"
-});
-camera.start();
+initializePoseTracking(video, onResultsPose);

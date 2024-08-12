@@ -1,7 +1,8 @@
 import { fetched } from "./Utils/dataBase.js"
+import { initializeHandTracking } from "./Utils/simulation.js"
 import {
   handleWebLoaded, updateSimulationConfig, setupCarouselScrollHandler,
-  handleButtonClick, updateModel
+  handleButtonClick, updateModel, crossProductFromPoints, drawPoint
 } from "./Utils/utils.js"
 import {
   video, canvas, ctx, buttons, simulation
@@ -18,17 +19,10 @@ function onResultsHands(results) {
     results.multiHandLandmarks[0].forEach(multiHandLandmarks => {
       multiHandLandmarks.x *= video.videoWidth
       multiHandLandmarks.y *= video.videoHeight
-      drawPoint(multiHandLandmarks.x, multiHandLandmarks.y, 'red');
+      drawPoint(ctx, multiHandLandmarks.x, multiHandLandmarks.y, 5, 'red');
     });
     simImage(results);
   }
-}
-
-function drawPoint(x, y, color) {
-  ctx.beginPath();
-  ctx.arc(x, y, 5, 0, 2 * Math.PI);
-  ctx.fillStyle = color;
-  ctx.fill();
 }
 
 setupCarouselScrollHandler();
@@ -51,29 +45,21 @@ function simImage(hand) {
     const rslt = hand.multiHandLandmarks[0]
     const handeness = hand.multiHandedness[0].label === "Left" ? -1 : 1;
 
-    ctx.save();
     const x1 = rslt[0].x
     const y1 = rslt[0].y
     const x2 = rslt[9].x
     const y2 = rslt[9].y
-
     ctx.beginPath()
     ctx.save()
     //set the position center of the canva and from hand
-    const tanx = (x1 - x2)
-    const tany = (y1 - y2)
-    const pstx = x1 + tanx
-    const psty = y1 + tany
+    const pstx = x1 + (x1 - x2) //Muñeca + (punto medio entre la muñeca y el nudillo)
+    const psty = y1 + (y1 - y2)
     ctx.translate(pstx, psty)
 
     //set angle of the image
-    var componenteX = 1
-    if ((x1 - x2) > 0) {
-      componenteX = -1
-    }
-    const pendiente = ((y2 - y1) / (x2 - x1))
-    const angleHand = Math.atan(pendiente)
-    ctx.rotate(angleHand + ((Math.PI / 2)) * componenteX)
+    var componenteX = (x1 - x2) > 0 ? -1 : 1;
+    const angle = Math.atan((y2 - y1) / (x2 - x1))
+    ctx.rotate(angle + ((Math.PI / 2) * componenteX))
 
     //Scale
     var scaleHand = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2)) * 2 * (1 + (simulation.config.zoomInAndOut * 0.05))
@@ -81,16 +67,6 @@ function simImage(hand) {
     var sizeY = (sizeX * simulation.img.front.height) / simulation.img.front.width
 
     //Flip (Usando producto punto)
-    function crossProductFromPoints(point1A, point2A, point1B, point2B) {
-      const vectorA = [point2A[0] - point1A[0], point2A[1] - point1A[1], point2A[2] - point1A[2]];
-      const vectorB = [point2B[0] - point1B[0], point2B[1] - point1B[1], point2B[2] - point1B[2]];
-      const result = [
-        vectorA[1] * vectorB[2] - vectorA[2] * vectorB[1],
-        vectorA[2] * vectorB[0] - vectorA[0] * vectorB[2],
-        vectorA[0] * vectorB[1] - vectorA[1] * vectorB[0]
-      ];
-      return result;
-    }
 
     // Ejemplo de uso:
     const point1A = [rslt[9].x, rslt[9].y, 0];
@@ -102,37 +78,12 @@ function simImage(hand) {
 
     const selectedImage = ((result[2] * handeness) < 0) ? simulation.img.front : simulation.img.back
     ctx.drawImage(selectedImage, (0 - scaleHand / 4) + (simulation.config.leftAndRight * simulation.config.translationDistance), ((0 - scaleHand / 2) / 1.25) - (simulation.config.upAndDown * simulation.config.translationDistance), sizeX, sizeY)
-    drawPoint((0 - scaleHand / 4) + (simulation.config.leftAndRight * simulation.config.translationDistance) + (sizeX / 2), ((0 - scaleHand / 2) / 1.25) - (simulation.config.upAndDown * simulation.config.translationDistance) + (sizeY / 2), 'green')
+    drawPoint(ctx, (0 - scaleHand / 4) + (simulation.config.leftAndRight * simulation.config.translationDistance) + (sizeX / 2), ((0 - scaleHand / 2) / 1.25) - (simulation.config.upAndDown * simulation.config.translationDistance) + (sizeY / 2), 5, 'green')
     ctx.restore()
     ctx.closePath()
   } catch (error) {
     console.error('Error en simImage:', error);
   }
 }
-// newScale = (1 + (simulation.config.zoomInAndOut * 0.05))
-// newXposition = (simulation.config.leftAndRight * simulation.config.translationDistance)
-// newYposition = (simulation.config.upAndDown * simulation.config.translationDistance)
-// imgFront = simulation.img.front
 
-const hands = new Hands({
-  locateFile: (file) => {
-    return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
-  }
-});
-hands.setOptions({
-  maxNumHands: 1,
-  modelComplexity: 0,
-  minDetectionConfidence: 0.5,
-  minTrackingConfidence: 0.5
-});
-hands.onResults(onResultsHands);
-
-const camera = new Camera(video, {
-  onFrame: async () => {
-    await hands.send({ image: video });
-  },
-  width: { ideal: 1280 },
-  height: { ideal: 720 },
-  facingMode: "environment"
-});
-camera.start();
+initializeHandTracking(video, onResultsHands);

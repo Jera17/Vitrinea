@@ -1,4 +1,5 @@
 import { fetched } from "./Utils/dataBase.js"
+import { initializeFaceTracking } from "./Utils/simulation.js"
 import {
   handleWebLoaded, updateSimulationConfig, setupCarouselScrollHandler,
   handleButtonClick, updateModel
@@ -60,26 +61,4 @@ function simImage(rsl, Node1, Node2, Node3, Orientation) {
     console.error('Error en simImage:', error);
   }
 }
-
-const faceMesh = new FaceMesh({
-  locateFile: (file) => {
-    return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`;
-  }
-});
-faceMesh.setOptions({
-  maxNumFaces: 1,
-  refineLandmarks: true,
-  minDetectionConfidence: 0.5,
-  minTrackingConfidence: 0.5
-});
-faceMesh.onResults(onResultsFaceMesh);
-
-const camera = new Camera(video, {
-  onFrame: async () => {
-    await faceMesh.send({ image: video });
-  },
-  width: 854,
-  height: 480,
-  facingMode: "environment"
-});
-camera.start();
+initializeFaceTracking(video, onResultsFaceMesh);
