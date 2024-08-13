@@ -1,3 +1,5 @@
+let currentCamera;
+
 export function initializeFaceTracking(video, onResultsFaceMesh) {
   const faceMesh = new FaceMesh({
     locateFile: (file) => {
@@ -11,16 +13,8 @@ export function initializeFaceTracking(video, onResultsFaceMesh) {
     minTrackingConfidence: 0.5
   });
   faceMesh.onResults(onResultsFaceMesh);
-
-  const camera = new Camera(video, {
-    onFrame: async () => {
-      await faceMesh.send({ image: video });
-    },
-    width: 854,
-    height: 480,
-    facingMode: "environment"
-  });
-  camera.start();
+  
+  currentCamera = initializeCamera(video, faceMesh, () => {});
 }
 
 export function initializeHandTracking(video, onResultsHands) {
@@ -38,16 +32,7 @@ export function initializeHandTracking(video, onResultsHands) {
   });
   hands.onResults(onResultsHands);
 
-  const camera = new Camera(video, {
-    onFrame: async () => {
-      await hands.send({ image: video });
-    },
-    width: 854,
-    height: 480,
-    facingMode: "environment"
-  });
-
-  camera.start();
+  currentCamera = initializeCamera(video, hands, () => {});
 }
 
 export function initializePoseTracking(video, onResultsPose) {
@@ -63,14 +48,27 @@ export function initializePoseTracking(video, onResultsPose) {
     minTrackingConfidence: 0.5
   });
   pose.onResults(onResultsPose);
+  
+  currentCamera = initializeCamera(video, pose, () => {});
+}
 
+function initializeCamera(video, trackingObject, onFrame) {
   const camera = new Camera(video, {
     onFrame: async () => {
-      await pose.send({ image: video });
+      await trackingObject.send({ image: video });
+      onFrame();
     },
     width: 854,
     height: 480,
     facingMode: "environment"
   });
   camera.start();
+  return camera;
+}
+
+export function flipCamera(video, canvas) {
+  currentCamera.h.facingMode = currentCamera.h.facingMode === "user" ? "environment" : "user";
+  video.style.transform = canvas.style.transform = currentCamera.h.facingMode === "user" ? "scaleX(-1)" : "scaleX(1)";
+  currentCamera.stop();
+  currentCamera.start();
 }
