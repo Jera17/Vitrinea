@@ -31,16 +31,9 @@ setupCarouselScrollHandler();
 
 buttons.forEach(function (button) {
   button.addEventListener("click", function () {
-    handleButtonClick(this, fetched, flipCamera);
+    handleButtonClick(this, fetched);
   });
 });
-
-function flipCamera() {
-  camera.h.facingMode = camera.h.facingMode === "user" ? "environment" : "user";
-  video.style.transform = canvas.style.transform = camera.h.facingMode === "user" ? "scaleX(-1)" : "scaleX(1)";
-  camera.stop();
-  camera.start();
-}
 
 function simImage(rsl, nodes1, nodes2, nodes3) {
   try {

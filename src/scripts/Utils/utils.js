@@ -4,6 +4,7 @@ import {
   buttonFloating1, buttonFloating2, buttonFloatingImg1, buttonFloatingImg2,
   simulation
 } from "./var.js";
+import { flipCamera } from "./simulation.js"
 import { updateData } from "./dataBase.js"
 
 var activeButton = buttonsCarousel[0]
@@ -78,8 +79,7 @@ export function carouselButtonsLogic(buttonClicked) {
   }
 }
 
-export function handleButtonClick(button,
-  fetched, flipCamera) {
+export function handleButtonClick(button, fetched) {
   switch (button.className) {
     case "buttonCarousel":
     case "buttonCarousel active":
@@ -96,7 +96,8 @@ export function handleButtonClick(button,
       updateSimulationData(updateData)
       break;
     case "buttonCam":
-      flipCamera();
+      flipCamera(video, canvas)
+      // flipCamera;
       break;
     case "timer":
       timerStart(button, 5);
