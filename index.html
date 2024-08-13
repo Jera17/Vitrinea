@@ -1,51 +1,95 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 
 <head>
-  <link rel="icon" href="../src/assets/icon.png" type="image/x-icon">
   <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./src/styles/Navbar.css">
-    <title>Vitrinea Sims</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administración Firebase</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="index.js" type="module" defer></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th,
+    td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f4f4f4;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    tr:hover {
+      background-color: #f1f1f1;
+      cursor: pointer;
+    }
+
+    select {
+      padding: 8px;
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-weight: bold;
+    }
+
+    #linkOutput {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    #linkOutput a {
+      color: #1a73e8;
+      text-decoration: none;
+    }
+  </style>
 </head>
 
 <body>
-    <header>
-        <h1>Vitrinea Ar</h1>
-    </header>
+  <h1>Productos</h1>
+  <label for="filterSelect">Filtrar por tipo:</label>
+  <select id="filterSelect">
+    <option value="">Todos</option>
+    <!-- Opciones se llenarán dinámicamente -->
+  </select>
 
-    <nav>
-        <a href="/index.html">Home</a>
-        <div class="dropdown">
-            <button class="dropbtn">Face</button>
-            <div class="dropdown-content">
-                <a href="./public/glasses.html">Glases</a>
-                <a href="./public/earrings.html">Earring</a>
-                <a href="./public/hats.html">Hats</a>
-                <a href="#item3">Item 3</a>
-            </div>
-        </div>
-        <div class="dropdown">
-            <button class="dropbtn">Hand</button>
-            <div class="dropdown-content">
-                <a href="./public/rings.html">Ring</a>
-                <a href="./public/bracelets.html">Bracelet</a>
-            </div>
-        </div>
-        <div class="dropdown">
-            <button class="dropbtn">Body</button>
-            <div class="dropdown-content">
-                <a href="./public/clothes.html">Clothes</a>
-                <a href="./public/necklaces.html">Necklaces</a>
-                <a href="#item3">Item 3</a>
-            </div>
-        </div>
-    </nav>
+  <label for="addHash">Modo Admin:</label>
+  <input type="checkbox" id="addHash">
 
-    <section>
-        <h2>¡Bienvenido a la revolución de las compras en línea con Vitrinea!</h2>
-        <p>Transformamos tus compras en experiencias: Descubre, Prueba, Compra</p>
-    </section>
+
+  <div id="linkOutput">
+    <!-- Aquí se mostrará el enlace generado -->
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Tipo</th>
+        <th>Nombre</th>
+      </tr>
+    </thead>
+    <tbody id="dataOutput">
+      <!-- Los datos se mostrarán aquí -->
+    </tbody>
+  </table>
+
+
 </body>
 
 </html>
