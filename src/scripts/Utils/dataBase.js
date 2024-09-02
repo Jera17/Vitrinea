@@ -10,13 +10,13 @@ const firebaseConfig = {
   appId: "1:297078940338:web:1e3f94ec67a5e8cb2d5fab",
   measurementId: "G-CD1X17RQTG"
 };
-
 const queryString = window.location.search.substring(1);
 
 if (!queryString) {
   alert("Error: No reference to the image found in the query string.");
   throw new Error("Product reference not found. Stopping execution.");
 }
+console.log(queryString)
 
 initializeApp(firebaseConfig);
 const db = getFirestore();

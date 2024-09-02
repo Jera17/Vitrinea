@@ -150,6 +150,12 @@ export function updateCounter(img, fetched, factor) {
   return img;
 }
 
+export function updateCounterRotating(img, fetched, factor) {
+  img.id = factor;
+  updateModel(img, fetched);
+  return img;
+}
+
 function updateFinger(fingerId, operator) {
   console.log(fingerId)
   fingerId = (operator > 0) ? (fingerId + 1) % 4 : (fingerId - 1 + 4) % 4;

@@ -1,6 +1,22 @@
 let currentCamera;
 
+function initializeCamera(video, trackingObject, onFrame) {
+  console.log("Inicializando Camara")
+  const camera = new Camera(video, {
+    onFrame: async () => {
+      await trackingObject.send({ image: video });
+      onFrame();
+    },
+    width: 854,
+    height: 480,
+    facingMode: "environment"
+  });
+  camera.start();
+  return camera;
+}
+
 export function initializeFaceTracking(video, onResultsFaceMesh) {
+  console.log("Inicializando Face Tracking")
   const faceMesh = new FaceMesh({
     locateFile: (file) => {
       return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`;
@@ -18,6 +34,7 @@ export function initializeFaceTracking(video, onResultsFaceMesh) {
 }
 
 export function initializeHandTracking(video, onResultsHands) {
+  console.log("Inicializando Hand Tracking")
   const hands = new Hands({
     locateFile: (file) => {
       return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
@@ -36,6 +53,7 @@ export function initializeHandTracking(video, onResultsHands) {
 }
 
 export function initializePoseTracking(video, onResultsPose) {
+  console.log("Inicializando Pose Tracking")
   const pose = new Pose({
     locateFile: (file) => {
       return `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`;
@@ -50,20 +68,6 @@ export function initializePoseTracking(video, onResultsPose) {
   pose.onResults(onResultsPose);
   
   currentCamera = initializeCamera(video, pose, () => {});
-}
-
-function initializeCamera(video, trackingObject, onFrame) {
-  const camera = new Camera(video, {
-    onFrame: async () => {
-      await trackingObject.send({ image: video });
-      onFrame();
-    },
-    width: 854,
-    height: 480,
-    facingMode: "environment"
-  });
-  camera.start();
-  return camera;
 }
 
 export function flipCamera(video, canvas) {
