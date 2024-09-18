@@ -1,5 +1,5 @@
 import { fetched } from "./Utils/dataBase.js"
-import { initializeHandTracking } from "./Utils/simulation.js"
+import { initializeHandTracking2 } from "./Utils/simulation.js"
 import {
   handleWebLoaded, updateSimulationConfig, setupCarouselScrollHandler,
   handleButtonClick, updateModel, crossProductFromPoints, drawPoint
@@ -15,13 +15,55 @@ updateSimulationConfig(fetched, simulation);
 function onResultsHands(results) {
   webLoaded = handleWebLoaded(webLoaded);
   ctx.clearRect(0, 0, video.videoWidth, video.videoHeight);
+  // console.log(results);
   if (results.multiHandLandmarks[0]) {
     results.multiHandLandmarks[0].forEach(multiHandLandmarks => {
       multiHandLandmarks.x *= video.videoWidth
       multiHandLandmarks.y *= video.videoHeight
       drawPoint(ctx, multiHandLandmarks.x, multiHandLandmarks.y, 5, 'red');
     });
-    simImage(results);
+    simImage(results, 0);
+  }
+  if (results.multiHandLandmarks[1]) {
+    results.multiHandLandmarks[1].forEach(multiHandLandmarks => {
+      multiHandLandmarks.x *= video.videoWidth
+      multiHandLandmarks.y *= video.videoHeight
+      drawPoint(ctx, multiHandLandmarks.x, multiHandLandmarks.y, 5, 'red');
+    });
+    simImage(results, 1);
+  }
+  if (results.multiHandLandmarks[0] 
+    // && results.multiHandLandmarks[1]
+  ) {
+
+    // Acceder a los landmarks de los hombros
+
+    // const leftHand = results.multiHandWorldLandmarks[0][8];
+    // const rightHand = results.multiHandWorldLandmarks[1][8];
+
+    const leftHand = results.multiHandWorldLandmarks[0][4];
+    const rightHand = results.multiHandWorldLandmarks[0][8];
+
+    console.log(leftHand, rightHand);
+
+    // Extraer coordenadas
+    const x1 = leftHand.x;
+    const y1 = leftHand.y;
+    const z1 = leftHand.z;
+
+    const x2 = rightHand.x;
+    const y2 = rightHand.y;
+    const z2 = rightHand.z;
+
+    // Calcular la distancia entre los hombros
+    const distance = Math.sqrt(
+      Math.pow(x2 - x1, 2) +
+      Math.pow(y2 - y1, 2) +
+      Math.pow(z2 - z1, 2)
+    );
+
+    // Mostrar el resultado en consola
+    console.log(`Distancia entre los hombros: ${distance.toFixed(2)} metros`);
   }
 }
 
@@ -33,10 +75,10 @@ buttons.forEach(function (button) {
   });
 });
 
-function simImage(hand) {
+function simImage(hand, id) {
   try {
-    const rslt = hand.multiHandLandmarks[0]
-    const handeness = hand.multiHandedness[0].label === "Left" ? -1 : 1;
+    const rslt = hand.multiHandLandmarks[id]
+    const handeness = hand.multiHandedness[id].label === "Left" ? -1 : 1;
 
     const x1 = rslt[0].x
     const y1 = rslt[0].y
@@ -70,7 +112,7 @@ function simImage(hand) {
     const result = crossProductFromPoints(point1A, point2A, point1B, point2B);
 
     const selectedImage = ((result[2] * handeness) < 0) ? simulation.img.front : simulation.img.back
-    ctx.drawImage(selectedImage, (0 - scaleHand / 4) + (simulation.config.leftAndRight * simulation.config.translationDistance), ((0 - scaleHand / 2) / 1.25) - (simulation.config.upAndDown * simulation.config.translationDistance), sizeX, sizeY)
+    // ctx.drawImage(selectedImage, (0 - scaleHand / 4) + (simulation.config.leftAndRight * simulation.config.translationDistance), ((0 - scaleHand / 2) / 1.25) - (simulation.config.upAndDown * simulation.config.translationDistance), sizeX, sizeY)
     drawPoint(ctx, (0 - scaleHand / 4) + (simulation.config.leftAndRight * simulation.config.translationDistance) + (sizeX / 2), ((0 - scaleHand / 2) / 1.25) - (simulation.config.upAndDown * simulation.config.translationDistance) + (sizeY / 2), 5, 'green')
     ctx.restore()
     ctx.closePath()
@@ -79,4 +121,4 @@ function simImage(hand) {
   }
 }
 
-initializeHandTracking(video, onResultsHands);
+initializeHandTracking2(video, onResultsHands);

@@ -40,14 +40,14 @@ async function fetchArModel() {
 
 function getImagesArrays(obj) {
   if (!obj.frontAR) return null;
-  const images = { frontAR: obj.frontAR.slice() };
-  if (obj.backAR === null || obj.backAR === '' || obj.backAR === undefined || obj.backAR.length === 0) {
-    images.backAR = obj.frontAR.slice()
-  } else {
-    images.backAR = obj.backAR.slice()
-  }
-  images.name = obj.name
-  images.simConfig = obj.simConfig
+  const images = {
+    frontAR: obj.frontAR.slice(),
+    backAR: obj.backAR?.length ? obj.backAR.slice() : obj.frontAR.slice(),
+    frontRightAR: obj.frontRightAR?.length ? obj.frontRightAR.slice() : obj.frontAR.slice(),
+    frontLeftAR: obj.frontLeftAR?.length ? obj.frontLeftAR.slice() : obj.frontAR.slice(),
+    name: obj.name,
+    simConfig: obj.simConfig,
+  };
   return images;
 }
 

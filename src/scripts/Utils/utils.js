@@ -97,7 +97,6 @@ export function handleButtonClick(button, fetched) {
       break;
     case "buttonCam":
       flipCamera(video, canvas)
-      // flipCamera;
       break;
     case "timer":
       timerStart(button, 5);
@@ -141,7 +140,9 @@ export function updateSimulationData(updateData) {
 
 export function updateModel(img, fetched) {
   img.front.src = fetched.frontAR[img.id];
-  img.back.src = fetched.backAR ? fetched.backAR[img.id] : fetched.frontAR[newIdModel];
+  img.back.src = fetched.backAR ? fetched.backAR[img.id] : fetched.frontAR[img.id];
+  img.frontLeft.src = fetched.frontLeftAR ? fetched.frontLeftAR[img.id] : fetched.frontAR[img.id];
+  img.frontRight.src = fetched.frontRightAR ? fetched.frontRightAR[img.id] : fetched.frontAR[img.id];
 }
 
 export function updateCounter(img, fetched, factor) {
@@ -151,9 +152,21 @@ export function updateCounter(img, fetched, factor) {
 }
 
 export function updateCounterRotating(img, fetched, factor) {
-  img.id = factor;
-  updateModel(img, fetched);
-  return img;
+  switch (factor) {
+    case 1:
+      img.selectedImage.src = fetched.frontRightAR[img.id];
+      break;
+    case 0:
+      img.selectedImage.src = fetched.frontAR[img.id];
+      break;
+    case -1:
+      img.selectedImage.src = fetched.frontLeftAR[img.id];
+      break;
+    default:
+      console.log("Unhandled case");
+      break;
+  }
+  return img.selectedImage;
 }
 
 function updateFinger(fingerId, operator) {

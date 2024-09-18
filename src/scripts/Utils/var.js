@@ -23,7 +23,10 @@ let simulation = {
   img: {
     id: 0,
     front: new Image(),
-    back: new Image()
+    back: new Image(),
+    frontLeft: new Image(),
+    frontRight: new Image(),
+    selectedImage: new Image()
   },
   config: {
     upAndDown: 0,
@@ -34,8 +37,9 @@ let simulation = {
   }
 }
 
-simulation.img.front.crossOrigin = 'anonymous';
-simulation.img.back.crossOrigin = 'anonymous';
+// simulation.img.front.crossOrigin = 'anonymous';
+// simulation.img.back.crossOrigin = 'anonymous';
+simulation.img.selectedImage.crossOrigin = 'anonymous';
 
 export {
   video, canvas, ctx, loaded, buttons, buttonsCarousel, carousel, buttonPading,

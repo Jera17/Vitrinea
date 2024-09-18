@@ -47,10 +47,6 @@ function simImage(rsl, node1, node2) {
 
     const shoulderWidth = Math.sqrt(Math.pow((x1 - x0), 2) + Math.pow((y1 - y0), 2)) * 1.7 * (1 + (simulation.config.zoomInAndOut * 0.05))//ancho entre hombros
     const torsosHeight = (shoulderWidth * simulation.img.front.height) / simulation.img.front.width * 1.1 //largo del hombro a la cadera
-    const magX = x1 - x0
-    const magY = y1 - y0
-
-
 
     // Ejemplo de uso:
     const point1A = [x0, y0, 0];

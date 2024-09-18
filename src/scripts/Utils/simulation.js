@@ -51,8 +51,43 @@ export function initializeHandTracking(video, onResultsHands) {
 
   currentCamera = initializeCamera(video, hands, () => {});
 }
+export function initializeHandTracking2(video, onResultsHands) {
+  console.log("Inicializando Hand Tracking")
+  const hands = new Hands({
+    locateFile: (file) => {
+      return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+    }
+  });
+
+  hands.setOptions({
+    maxNumHands: 2,
+    modelComplexity: 0,
+    minDetectionConfidence: 0.5,
+    minTrackingConfidence: 0.5
+  });
+  hands.onResults(onResultsHands);
+
+  currentCamera = initializeCamera(video, hands, () => {});
+}
 
 export function initializePoseTracking(video, onResultsPose) {
+  console.log("Inicializando Pose Tracking")
+  const pose = new Pose({
+    locateFile: (file) => {
+      return `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`;
+    }
+  });
+  pose.setOptions({
+    modelComplexity: 1,
+    smoothLandmarks: true,
+    minDetectionConfidence: 0.5,
+    minTrackingConfidence: 0.5
+  });
+  pose.onResults(onResultsPose);
+  
+  currentCamera = initializeCamera(video, pose, () => {});
+}
+export function initializePoseTracking2(video, onResultsPose) {
   console.log("Inicializando Pose Tracking")
   const pose = new Pose({
     locateFile: (file) => {
