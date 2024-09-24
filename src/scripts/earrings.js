@@ -2,7 +2,7 @@ import { fetched } from "./Utils/dataBase.js"
 import { initializeFaceTracking } from "./Utils/simulation.js"
 import {
   handleWebLoaded, updateSimulationConfig, setupCarouselScrollHandler,
-  handleButtonClick, updateModel
+  handleButtonClick, updateModel, drawPoint
 } from "./Utils/utils.js"
 import {
   video, canvas, ctx, buttons, simulation
@@ -32,26 +32,45 @@ buttons.forEach(function (button) {
     handleButtonClick(this, fetched);
   });
 });
-
 function simImage(rsl, Node1, Node2, Node3, Orientation) {
   try {
-    const x0 = rsl[Node1].x
-    const y0 = rsl[Node1].y
-    const x1 = rsl[Node2].x
-    const y1 = rsl[Node2].y
-    const x2 = rsl[Node3].x
-    const y2 = rsl[Node3].y
-    const AuxOrigenX = ((x0 - x2) + (x0 + x2) / 2)
-    const AuxOrigenY = (y0 + y1) / 2
+    const x0 = rsl[Node1].x;
+    const y0 = rsl[Node1].y;
+    const x1 = rsl[Node2].x;
+    const y1 = rsl[Node2].y;
+    const x2 = rsl[Node3].x;
+    const y2 = rsl[Node3].y;
+    const AuxOrigenX = ((x0 - x2) + (x0 + x2) / 2);
+    const AuxOrigenY = (y0 + y1) / 2;
 
-    const xEarring = ((x0 + x1) / 2) + ((x0 - x1) * 0.75)
+    const imageWidth = Math.sqrt(Math.pow((x1 - x0), 2) + Math.pow((y1 - y0), 2)) * (1 + (simulation.config.zoomInAndOut * 0.1));
+    const imageHeight = (simulation.img.front.height * imageWidth) / simulation.img.front.width;
+    const translationX = AuxOrigenX - (imageWidth / 2) + ((simulation.config.leftAndRight * simulation.config.translationDistance) * Orientation);
+    const translationY = AuxOrigenY - (imageWidth / 2) - (simulation.config.upAndDown * simulation.config.translationDistance);
+
+    // Guardar el estado actual del contexto antes de aplicar transformaciones
+    ctx.save();
+
+    // Si la imagen debe girarse horizontalmente
     if (x0 * Orientation > x2 * Orientation) {
-      const imageWidth = Math.sqrt(Math.pow((x1 - x0), 2) + Math.pow((y1 - y0), 2)) * (1 + (simulation.config.zoomInAndOut * 0.05))
-      const imageHeight = (simulation.img.front.height * imageWidth) / simulation.img.front.width
-      ctx.drawImage(simulation.img.front, AuxOrigenX - (imageWidth / 2) + ((simulation.config.leftAndRight * simulation.config.translationDistance) * Orientation), AuxOrigenY - (imageWidth / 2) - (simulation.config.upAndDown * simulation.config.translationDistance), imageWidth, imageHeight)
+      // Dibujar la imagen invertida
+      if (Orientation === -1) {
+        // Trasladar el contexto al punto donde se dibujará la imagen invertida
+        ctx.translate(translationX + imageWidth, translationY);
+        // Invertir la imagen en el eje X
+        ctx.scale(-1, 1);
+        ctx.drawImage(simulation.img.front, 0, 0, imageWidth, imageHeight);
+
+      }else if(Orientation === 1){
+        ctx.drawImage(simulation.img.front, translationX, translationY, imageWidth, imageHeight);
+      }
     }
+
+    // Restaurar el estado original del contexto
+    ctx.restore();
   } catch (error) {
     console.error('Error en simImage:', error);
   }
 }
+
 initializeFaceTracking(video, onResultsFaceMesh);
