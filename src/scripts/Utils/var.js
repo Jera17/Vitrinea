@@ -39,6 +39,10 @@ let simulation = {
 
 // simulation.img.front.crossOrigin = 'anonymous';
 // simulation.img.back.crossOrigin = 'anonymous';
+simulation.img.front.crossOrigin = 'anonymous';
+simulation.img.back.crossOrigin = 'anonymous';
+simulation.img.frontLeft.crossOrigin = 'anonymous';
+simulation.img.frontRight.crossOrigin = 'anonymous';
 simulation.img.selectedImage.crossOrigin = 'anonymous';
 
 export {
