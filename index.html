@@ -46,6 +46,7 @@
 
     label {
       font-weight: bold;
+      margin-right: 10px;
     }
 
     #linkOutput {
@@ -62,9 +63,16 @@
 
 <body>
   <h1>Productos</h1>
+  
   <label for="filterSelect">Filtrar por tipo:</label>
   <select id="filterSelect">
     <option value="">Todos</option>
+    <!-- Opciones se llenarán dinámicamente -->
+  </select>
+
+  <label for="filterMarca">Filtrar por marca:</label>
+  <select id="filterMarca">
+    <option value="">Todas</option>
     <!-- Opciones se llenarán dinámicamente -->
   </select>
 
@@ -80,8 +88,10 @@
     <thead>
       <tr>
         <th>ID</th>
-        <th>Tipo</th>
-        <th>Nombre</th>
+        <th data-column="marca" data-order="asc">Marca</th>
+        <th data-column="type" data-order="asc">Tipo</th>
+        <th data-column="name" data-order="asc">Nombre</th>
+        <th data-column="date_creation" data-order="asc">Fecha de Creación</th>
       </tr>
     </thead>
     <tbody id="dataOutput">
