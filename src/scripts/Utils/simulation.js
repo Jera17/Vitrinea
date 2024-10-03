@@ -1,4 +1,4 @@
-let currentCamera;
+export let currentCamera;
 
 function initializeCamera(video, trackingObject, onFrame) {
   console.log("Inicializando Camara")
@@ -29,8 +29,8 @@ export function initializeFaceTracking(video, onResultsFaceMesh) {
     minTrackingConfidence: 0.5
   });
   faceMesh.onResults(onResultsFaceMesh);
-  
-  currentCamera = initializeCamera(video, faceMesh, () => {});
+
+  currentCamera = initializeCamera(video, faceMesh, () => { });
 }
 
 export function initializeHandTracking(video, onResultsHands) {
@@ -49,7 +49,7 @@ export function initializeHandTracking(video, onResultsHands) {
   });
   hands.onResults(onResultsHands);
 
-  currentCamera = initializeCamera(video, hands, () => {});
+  currentCamera = initializeCamera(video, hands, () => { });
 }
 export function initializeHandTracking2(video, onResultsHands) {
   console.log("Inicializando Hand Tracking")
@@ -67,7 +67,7 @@ export function initializeHandTracking2(video, onResultsHands) {
   });
   hands.onResults(onResultsHands);
 
-  currentCamera = initializeCamera(video, hands, () => {});
+  currentCamera = initializeCamera(video, hands, () => { });
 }
 
 export function initializePoseTracking(video, onResultsPose) {
@@ -84,8 +84,8 @@ export function initializePoseTracking(video, onResultsPose) {
     minTrackingConfidence: 0.5
   });
   pose.onResults(onResultsPose);
-  
-  currentCamera = initializeCamera(video, pose, () => {});
+
+  currentCamera = initializeCamera(video, pose, () => { });
 }
 export function initializePoseTracking2(video, onResultsPose) {
   console.log("Inicializando Pose Tracking")
@@ -98,11 +98,14 @@ export function initializePoseTracking2(video, onResultsPose) {
     modelComplexity: 1,
     smoothLandmarks: true,
     minDetectionConfidence: 0.5,
-    minTrackingConfidence: 0.5
+    minTrackingConfidence: 0.5,
+    enableSegmentation: true, // Habilitar segmentación
+    smoothSegmentation: true, // Suavizar la máscara de segmentación
+    outputSegmentationMasks: true, // Habilitar la salida de máscaras de segmentación
   });
   pose.onResults(onResultsPose);
-  
-  currentCamera = initializeCamera(video, pose, () => {});
+
+  currentCamera = initializeCamera(video, pose, () => { });
 }
 
 export function flipCamera(video, canvas) {
