@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movimientos y Giros del Celular</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Movimientos y Giros del Celular</h1>
+
+  <!-- Botón para solicitar permiso en iOS -->
+  <button id="request-permission-btn">Solicitar Permiso para iOS</button>
+  <br><br>
+
+  <!-- Muestra los datos de aceleración en tiempo real -->
+  <h3>Aceleración (m/s²)</h3>
+  <p>X: <span id="acc-x">0</span></p>
+  <p>Y: <span id="acc-y">0</span></p>
+  <p>Z: <span id="acc-z">0</span></p>
+
+  <!-- Muestra los datos de aceleración rotacional en tiempo real -->
+  <h3>Aceleración Rotacional (grados/s)</h3>
+  <p>Alpha (X): <span id="rot-alpha">0</span></p>
+  <p>Beta (Y): <span id="rot-beta">0</span></p>
+  <p>Gamma (Z): <span id="rot-gamma">0</span></p>
+
+  <!-- Temporizador y botón para comenzar a medir -->
+  <h3>Temporizador</h3>
+  <input type="number" id="time-input" placeholder="Tiempo en segundos">
+  <button id="start-timer-btn">Comenzar medición</button>
+  <p>Tiempo restante: <span id="timer">0</span> s</p>
+
+  <!-- Resultados -->
+  <h3>Resultados</h3>
+  <p>Distancia total en X: <span id="dist-x">0</span> m</p>
+  <p>Distancia total en Y: <span id="dist-y">0</span> m</p>
+  <p>Distancia total en Z: <span id="dist-z">0</span> m</p>
+  <p>Rotación total en Alpha (X): <span id="total-rot-alpha">0</span>°</p>
+  <p>Rotación total en Beta (Y): <span id="total-rot-beta">0</span>°</p>
+  <p>Rotación total en Gamma (Z): <span id="total-rot-gamma">0</span>°</p>
+  <p>Distancia total normalizada en X: <span id="final-x">0</span> m</p>
+
+  <!-- Nueva línea para mostrar la cantidad de medidas tomadas -->
+  <p>Cantidad de medidas tomadas: <span id="measure-count">0</span></p>
+
+  <script>
+    let acceleration = { x: 0, y: 0, z: 0 };
+    let rotation = { alpha: 0, beta: 0, gamma: 0 };
+
+    let totalDistance = { x: 0, y: 0, z: 0 };
+    let totalRotation = { alpha: 0, beta: 0, gamma: 0 };
+
+    let lastTimestamp = 0;
+
+    // Contador de medidas
+    let measureCount = 0;
+    let isMeasuring = false;
+
+    // Solicitar permiso en iOS
+    document.getElementById('request-permission-btn').addEventListener('click', () => {
+      if (DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === 'function') {
+        DeviceMotionEvent.requestPermission()
+          .then(permissionState => {
+            if (permissionState === 'granted') {
+              alert('Permiso concedido.');
+            } else {
+              alert('Permiso denegado.');
+            }
+          })
+          .catch(console.error);
+      } else {
+        alert('Este navegador no requiere permisos adicionales.');
+      }
+    });
+
+    // Actualizar los datos de aceleración y rotación en tiempo real
+    window.addEventListener('devicemotion', (event) => {
+      if (!isMeasuring) return; // No contar si no se está midiendo
+
+      const accel = event.acceleration;
+      const rotationRate = event.rotationRate;
+      const timestamp = event.timeStamp;
+
+      if (accel) {
+        acceleration.x = accel.x || 0;
+        acceleration.y = accel.y || 0;
+        acceleration.z = accel.z || 0;
+
+        document.getElementById('acc-x').textContent = acceleration.x.toFixed(2);
+        document.getElementById('acc-y').textContent = acceleration.y.toFixed(2);
+        document.getElementById('acc-z').textContent = acceleration.z.toFixed(2);
+      }
+
+      if (rotationRate) {
+        rotation.alpha = rotationRate.alpha || 0;
+        rotation.beta = rotationRate.beta || 0;
+        rotation.gamma = rotationRate.gamma || 0;
+
+        document.getElementById('rot-alpha').textContent = rotation.alpha.toFixed(2);
+        document.getElementById('rot-beta').textContent = rotation.beta.toFixed(2);
+        document.getElementById('rot-gamma').textContent = rotation.gamma.toFixed(2);
+      }
+
+      // Calcular deltaTime para el cálculo de la distancia y la rotación
+      if (lastTimestamp) {
+        const deltaTime = (timestamp - lastTimestamp) / 1000; // Convertir de ms a segundos
+
+        // Calcular el desplazamiento en cada eje usando el área bajo la curva (velocidad promedio)
+        totalDistance.x += (acceleration.x * deltaTime);
+        totalDistance.y += (acceleration.y * deltaTime);
+        totalDistance.z += (acceleration.z * deltaTime);
+
+        // Calcular la rotación en cada eje
+        totalRotation.alpha += (rotation.alpha * deltaTime);
+        totalRotation.beta += (rotation.beta * deltaTime);
+        totalRotation.gamma += (rotation.gamma * deltaTime);
+      }
+
+      lastTimestamp = timestamp;
+
+      // Incrementar el contador de medidas
+      measureCount++;
+      document.getElementById('measure-count').textContent = measureCount;
+    });
+
+    // Iniciar la medición cuando se presiona el botón
+    document.getElementById('start-timer-btn').addEventListener('click', () => {
+      const duration = parseInt(document.getElementById('time-input').value);
+      if (isNaN(duration)) {
+        alert("Por favor, ingresa un tiempo válido.");
+        return;
+      }
+
+      totalDistance = { x: 0, y: 0, z: 0 };
+      totalRotation = { alpha: 0, beta: 0, gamma: 0 };
+      lastTimestamp = 0;
+      measureCount = 0; // Reiniciar el contador de medidas
+      document.getElementById('measure-count').textContent = measureCount;
+
+      isMeasuring = true; // Activar el conteo de medidas
+
+      let startTime = Date.now();
+      document.getElementById('timer').textContent = duration;
+
+      // Iniciar la cuenta regresiva del temporizador
+      const timerInterval = setInterval(() => {
+        const remainingTime = duration - Math.floor((Date.now() - startTime) / 1000);
+        document.getElementById('timer').textContent = remainingTime;
+
+        if (remainingTime <= 0) {
+          clearInterval(timerInterval);
+          isMeasuring = false; // Detener el conteo de medidas
+          calcularResultados();
+        }
+      }, 1000);
+    });
+
+    // Calcular los resultados finales
+    function calcularResultados() {
+      document.getElementById('dist-x').textContent = totalDistance.x.toFixed(2);
+      document.getElementById('dist-y').textContent = totalDistance.y.toFixed(2);
+      document.getElementById('dist-z').textContent = totalDistance.z.toFixed(2);
+
+      document.getElementById('total-rot-alpha').textContent = totalRotation.alpha.toFixed(2);
+      document.getElementById('total-rot-beta').textContent = totalRotation.beta.toFixed(2);
+      document.getElementById('total-rot-gamma').textContent = totalRotation.gamma.toFixed(2);
+
+      const realX = totalDistance.z * Math.sin(totalRotation.beta * (Math.PI / 180))
+        + totalDistance.x * Math.cos(totalRotation.gamma * (Math.PI / 180)) * Math.cos(totalRotation.gamma * (Math.PI / 180))
+        - totalDistance.y * Math.cos(totalRotation.beta * (Math.PI / 180)) * Math.sin(totalRotation.gamma * (Math.PI / 180));
+
+      document.getElementById('final-x').textContent = realX.toFixed(2);
+    }
+  </script>
+</body>
+
+</html>
