@@ -30,6 +30,22 @@ export function handleWebLoaded(webLoaded) {
       document.querySelector('.buttonPhoto').querySelector('img').src = '../src/assets/icons/PosicionArriba.svg';
       document.querySelector('.buttonPhoto').classList.replace('buttonPhoto', 'buttonUpdate');
     }
+    if (window.location.hash.substring(1) === 'T') {
+      console.log("Modo Tester")
+      video.classList.add('totem');
+      canvas.classList.add('totem');
+      // video.style.transform = 'rotate(-90deg)';
+      // canvas.style.transform = 'rotate(-90deg)';
+
+      // console.log(window.innerHeight, window.innerWidth);
+      video.width = 'auto';  // Alto de la ventana como ancho del canvas
+      canvas.width = 'auto';  // Ancho de la ventana como alto del canvas
+      console.log("uwu")
+    }else{
+      video.classList.add('noTotem');
+      canvas.classList.add('noTotem');
+    }
+
     console.log("Mesh Loaded");
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;

@@ -44,7 +44,7 @@ function onResultsHands(results) {
     const leftHand = results.multiHandWorldLandmarks[0][4];
     const rightHand = results.multiHandWorldLandmarks[0][8];
 
-    console.log(leftHand, rightHand);
+    // console.log(leftHand, rightHand);
 
     // Extraer coordenadas
     const x1 = leftHand.x;
@@ -63,7 +63,7 @@ function onResultsHands(results) {
     );
 
     // Mostrar el resultado en consola
-    console.log(`Distancia entre los hombros: ${distance.toFixed(2)} metros`);
+    // console.log(`Distancia entre los hombros: ${distance.toFixed(2)} metros`);
   }
 }
 
