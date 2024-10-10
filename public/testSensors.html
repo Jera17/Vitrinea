@@ -13,6 +13,15 @@
 </head>
 
 <body>
+  <p>Ancho Pantalla: <span id="measure-width1">0</span></p>
+  <p>Alto Pantalla: <span id="measure-heigh1">0</span></p>
+  <p>Ancho Pantalla: <span id="measure-width2">0</span></p>
+  <p>Alto Pantalla: <span id="measure-heigh2">0</span></p>
+  <p>Ancho Pantalla: <span id="measure-width3">0</span></p>
+  <p>Alto Pantalla: <span id="measure-heigh3">0</span></p>
+  <p>Ancho Pantalla: <span id="measure-width4">0</span></p>
+  <p>Alto Pantalla: <span id="measure-heigh4">0</span></p>
+
   <h1>Movimientos y Giros del Celular</h1>
 
   <!-- Botón para solicitar permiso en iOS -->
@@ -50,7 +59,29 @@
   <!-- Nueva línea para mostrar la cantidad de medidas tomadas -->
   <p>Cantidad de medidas tomadas: <span id="measure-count">0</span></p>
 
+
   <script>
+    function getViewportSize() {
+      console.log(window.innerWidth, window.innerHeight);
+      console.log(window.outerWidth, window.outerHeight);
+      console.log(screen.width, screen.height);
+      console.log(document.documentElement.clientWidth, document.documentElement.clientHeight);
+      document.getElementById('measure-width1').textContent = window.innerWidth;
+      document.getElementById('measure-heigh1').textContent = window.innerHeight;
+      document.getElementById('measure-width2').textContent = window.outerWidth;
+      document.getElementById('measure-heigh2').textContent = window.outerHeight;
+      document.getElementById('measure-width3').textContent = screen.width;
+      document.getElementById('measure-heigh3').textContent = screen.height;
+      document.getElementById('measure-width4').textContent = document.documentElement.clientWidth;
+      document.getElementById('measure-heigh4').textContent = document.documentElement.clientHeight;
+    }
+
+    // Llamamos a la función al cargar la página
+    window.onload = getViewportSize;
+
+    // Actualizar el tamaño si la ventana cambia (por ejemplo, si el usuario rota la pantalla)
+    window.onresize = getViewportSize;
+
     let acceleration = { x: 0, y: 0, z: 0 };
     let rotation = { alpha: 0, beta: 0, gamma: 0 };
 
