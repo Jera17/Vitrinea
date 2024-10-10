@@ -31,19 +31,15 @@ export function handleWebLoaded(webLoaded) {
       document.querySelector('.buttonPhoto').classList.replace('buttonPhoto', 'buttonUpdate');
     }
     if (window.location.hash.substring(1) === 'T') {
-      console.log("Modo Tester")
-      video.classList.add('totem');
-      canvas.classList.add('totem');
-      // video.style.transform = 'rotate(-90deg)';
-      // canvas.style.transform = 'rotate(-90deg)';
+      console.log("Modo Totem")
 
-      // console.log(window.innerHeight, window.innerWidth);
-      video.width = 'auto';  // Alto de la ventana como ancho del canvas
-      canvas.width = 'auto';  // Ancho de la ventana como alto del canvas
-      console.log("uwu")
-    }else{
-      video.classList.add('noTotem');
-      canvas.classList.add('noTotem');
+      var css = document.getElementById("styles");
+      css.href = "../src/styles/cameraCanvaT.css";
+      // video.classList.add('totem');
+      // canvas.classList.add('totem');
+    } else {
+      // video.classList.add('noTotem');
+      // canvas.classList.add('noTotem');
     }
 
     console.log("Mesh Loaded");
@@ -106,6 +102,7 @@ export function handleButtonClick(button, fetched) {
       });
       break;
     case "buttonPhoto":
+
       screenShot();
       break;
     case "buttonUpdate":
@@ -205,6 +202,31 @@ export function updateRelativeSimulationData(relativeData, factor) {
 }
 
 export function screenShot() {
+  if (window.location.hash.substring(1) === 'T') {
+    console.log("FoTotem")
+    const combinedCanvas = document.createElement('canvas');
+    const combinedCtx = combinedCanvas.getContext('2d');
+    // Cambiamos las dimensiones del canvas para rotarlo 90 grados
+    combinedCanvas.width = video.videoHeight;
+    combinedCanvas.height = video.videoWidth;
+    // Guardamos el estado actual del canvas antes de rotarlo
+    combinedCtx.save();
+    // Movemos el origen (0,0) al centro y lo rotamos -90 grados
+    combinedCtx.translate(0, combinedCanvas.height);
+    combinedCtx.rotate(-Math.PI / 2);
+    // Dibujamos la imagen rotada
+    combinedCtx.drawImage(video, 0, 0, combinedCanvas.height, combinedCanvas.width);
+    combinedCtx.drawImage(canvas, 0, 0, combinedCanvas.height, combinedCanvas.width);
+    // Restauramos el estado del canvas
+    combinedCtx.restore();
+    // Convertimos el contenido del canvas a una imagen
+    let image_data_url = combinedCanvas.toDataURL('image/jpeg');
+    const downloadLink = document.createElement('a');
+    downloadLink.href = image_data_url;
+    downloadLink.download = 'webcam_snapshot.jpg';
+    downloadLink.click();
+    return;
+  }
   const combinedCanvas = document.createElement('canvas');
   const combinedCtx = combinedCanvas.getContext('2d');
 

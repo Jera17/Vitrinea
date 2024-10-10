@@ -17,22 +17,11 @@ html {
 
 .input_video,
 #pose-canvas {
-
-}
-
-.noTotem {
   height: 100%;
   left: 0;
   object-fit: cover;
   position: absolute;
   top: 0;
-  /* transform: scaleX(-1); */
-  width: 100%;
-}
-.totem {
-  position: absolute;
-  width: 100vh;
-  transform: rotate(-90deg);
   width: 100%;
 }
 
@@ -90,7 +79,7 @@ html {
 .buttonsContainer {
   bottom: 0;
   height: 280px;
-  position: fixed;
+  position: absolute;
   width: 100%;
 }
 
