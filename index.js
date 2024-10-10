@@ -172,13 +172,16 @@ document.getElementById('filterMarca').addEventListener('change', () => {
 // Manejar el clic en las filas de la tabla
 document.getElementById('dataOutput').addEventListener('click', (event) => {
   const targetRow = event.target.closest('tr');
+  let hashSuffix
   if (targetRow) {
     const currentUrl = window.location.href;
     const type = targetRow.querySelector('[data-type]').textContent;
     const mappedType = typeMappings[type] || type;
     const docId = targetRow.querySelector('[data-id]').textContent;
-    const addHash = document.getElementById('addHash').checked;
-    const hashSuffix = addHash ? '#A' : '';
+    const addHashA = document.getElementById('addHashA').checked;
+    const addHashT = document.getElementById('addHashT').checked;
+    hashSuffix = addHashA ? '#A' : '';
+    hashSuffix = addHashT ? '#T' : '';
     const linkOutput = document.getElementById('linkOutput');
     linkOutput.innerHTML = `<a href="${currentUrl}public/${mappedType}.html?${docId}${hashSuffix}">Enlace: ${currentUrl}public/${mappedType}.html?${docId}${hashSuffix}</a>`;
   }
