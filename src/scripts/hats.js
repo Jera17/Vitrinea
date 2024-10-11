@@ -2,13 +2,14 @@ import { fetched } from "./Utils/dataBase.js"
 import { initializeFaceTracking } from "./Utils/simulation.js"
 import {
   handleWebLoaded, updateSimulationConfig, setupCarouselScrollHandler,
-  handleButtonClick, updateModel
+  handleButtonClick, updateModel, startIntervals
 } from "./Utils/utils.js"
 import {
   video, canvas, ctx, buttons, simulation
 } from "./Utils/var.js";
 
 let webLoaded = false;
+startIntervals();
 updateModel(simulation.img, fetched);
 updateSimulationConfig(fetched, simulation);
 

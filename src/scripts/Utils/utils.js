@@ -1,13 +1,46 @@
 import {
-  video, canvas,
-  buttonsCarousel, loaded, carousel, buttonPading,
+  video, canvas, ctx, loaded, buttons, buttonsCarousel, carousel, buttonPading,
   buttonFloating1, buttonFloating2, buttonFloatingImg1, buttonFloatingImg2,
-  simulation
+  loadingTextDiv, simulation
 } from "./var.js";
 import { flipCamera } from "./simulation.js"
 import { updateData } from "./dataBase.js"
 
 var activeButton = buttonsCarousel[0]
+const texts = [
+  "Transformando la pantalla en tu pasarela personal", 
+  "Tus productos favoritos están a punto de cobrar vida", 
+  "Ajustando tu experiencia de prueba", 
+  // "Ajustando tu experiencia de prueba ¡No te vayas!", 
+  // "Finalizando"
+];
+let intervalId, dotIntervalId;
+let currentIndex = Math.floor(Math.random() * texts.length); // Índice del texto actual
+let dotCount = 0; // Contador de puntos suspensivos
+
+export function changeText() {
+  dotCount = 0; // Reiniciar contador de puntos cuando cambia el texto
+  loadingTextDiv.textContent = texts[currentIndex]; // Mostrar el texto sin puntos inicialmente
+  currentIndex = (currentIndex + 1) % texts.length;
+}
+
+export function updateDots() {
+  dotCount = (dotCount + 1) % 4; // Incrementar puntos, reiniciar cuando llega a 4 (3 puntos suspensivos)
+  const dots = '.'.repeat(dotCount); // Crear una cadena de puntos según dotCount
+  loadingTextDiv.textContent = texts[currentIndex] + dots; // Actualizar el texto con puntos
+}
+
+export function startIntervals() {
+  changeText(); // Mostrar el primer texto al iniciar
+  intervalId = setInterval(changeText, 5000); // Cambiar texto cada 3 segundos
+  dotIntervalId = setInterval(updateDots, 1000); // Agregar puntos cada 1 segundo
+}
+
+export function stopIntervals() {
+  loadingTextDiv.style.display = 'none'; // Ocultar el texto de carga
+  clearInterval(intervalId);
+  clearInterval(dotIntervalId);
+}
 
 export function updateSimulationConfig(fetched, simulation) {
   if (fetched.simConfig.length === 3) {
@@ -24,6 +57,7 @@ export function updateSimulationConfig(fetched, simulation) {
 
 export function handleWebLoaded(webLoaded) {
   if (!webLoaded) {
+    stopIntervals();
     webLoaded = true;
     if (window.location.hash.substring(1) === 'A') {
       console.log("Modo Admin")
@@ -243,7 +277,7 @@ export function screenShot() {
 }
 
 export function timerStart(botonTimer, segundos) {
-  const cuentaRegresivaElemento = document.getElementById('cuenta-regresiva');
+  let cuentaRegresivaElemento = document.getElementById('cuenta-regresiva');
   botonTimer.disabled = true;
   console.log("Deshabilitado")
 

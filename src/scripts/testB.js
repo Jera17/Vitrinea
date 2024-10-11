@@ -2,13 +2,14 @@ import { fetched } from "./Utils/dataBase.js"
 import { initializePoseTracking2 } from "./Utils/simulation.js"
 import {
   handleWebLoaded, updateSimulationConfig, setupCarouselScrollHandler,
-  handleButtonClick, updateModel, drawPoint, crossProductFromPoints, updateCounterRotating
+  handleButtonClick, updateModel, drawPoint, crossProductFromPoints, updateCounterRotating, startIntervals
 } from "./Utils/utils.js"
 import {
   video, canvas, ctx, buttons, simulation
 } from "./Utils/var.js";
 
 let webLoaded = false;
+startIntervals();
 let giroID = 0;
 console.log(simulation.img);
 updateModel(simulation.img, fetched);

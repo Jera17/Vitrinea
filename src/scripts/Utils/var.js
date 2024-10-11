@@ -2,6 +2,7 @@ const video = document.getElementsByClassName('input_video')[0];
 const canvas = document.querySelector("#pose-canvas")
 const ctx = canvas.getContext("2d")
 const loaded = document.getElementsByClassName('loading')[0];
+const loadingTextDiv = document.getElementById('loadingText');
 
 const buttons = document.querySelectorAll('button');
 const buttonsCarousel = document.querySelectorAll('.buttonCarousel');
@@ -48,5 +49,5 @@ simulation.img.selectedImage.crossOrigin = 'anonymous';
 export {
   video, canvas, ctx, loaded, buttons, buttonsCarousel, carousel, buttonPading,
   buttonFloating1, buttonFloating2, buttonFloatingImg1, buttonFloatingImg2,
-  simulation
+  loadingTextDiv, simulation
 };

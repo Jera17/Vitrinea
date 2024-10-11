@@ -2,20 +2,21 @@ import { fetched } from "./Utils/dataBase.js"
 import { initializeHandTracking2 } from "./Utils/simulation.js"
 import {
   handleWebLoaded, updateSimulationConfig, setupCarouselScrollHandler,
-  handleButtonClick, updateModel, crossProductFromPoints, drawPoint
+  handleButtonClick, updateModel, crossProductFromPoints, drawPoint,
+  startIntervals
 } from "./Utils/utils.js"
 import {
   video, canvas, ctx, buttons, simulation
 } from "./Utils/var.js";
 
 let webLoaded = false;
+startIntervals();
 updateModel(simulation.img, fetched);
 updateSimulationConfig(fetched, simulation);
 
 function onResultsHands(results) {
-  webLoaded = handleWebLoaded(webLoaded);
+  // webLoaded = handleWebLoaded(webLoaded);
   ctx.clearRect(0, 0, video.videoWidth, video.videoHeight);
-  // console.log(results);
   if (results.multiHandLandmarks[0]) {
     results.multiHandLandmarks[0].forEach(multiHandLandmarks => {
       multiHandLandmarks.x *= video.videoWidth
