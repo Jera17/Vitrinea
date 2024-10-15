@@ -8,14 +8,12 @@ import { updateData } from "./dataBase.js"
 
 var activeButton = buttonsCarousel[0]
 const texts = [
-  "Transformando la pantalla en tu pasarela personal", 
-  "Tus productos favoritos están a punto de cobrar vida", 
-  "Ajustando tu experiencia de prueba", 
-  // "Ajustando tu experiencia de prueba ¡No te vayas!", 
-  // "Finalizando"
+  "Transformando la pantalla en tu pasarela personal",
+  "Tus productos favoritos están a punto de cobrar vida",
+  "Ajustando tu experiencia de prueba"
 ];
 let intervalId, dotIntervalId;
-let currentIndex = Math.floor(Math.random() * texts.length); // Índice del texto actual
+let currentIndex = Math.floor(Math.random() * texts.length); // Índice del texto actual generado aleatoriamente
 let dotCount = 0; // Contador de puntos suspensivos
 
 export function changeText() {
@@ -32,7 +30,7 @@ export function updateDots() {
 
 export function startIntervals() {
   changeText(); // Mostrar el primer texto al iniciar
-  intervalId = setInterval(changeText, 5000); // Cambiar texto cada 3 segundos
+  intervalId = setInterval(changeText, 6000); // Cambiar texto cada 3 segundos
   dotIntervalId = setInterval(updateDots, 1000); // Agregar puntos cada 1 segundo
 }
 
@@ -55,27 +53,24 @@ export function updateSimulationConfig(fetched, simulation) {
   console.log(simulation.config);
 }
 
+export function modeSelector() {
+  if (window.location.hash.substring(1) === 'A') {
+    console.log("Modo Admin")
+    document.querySelector('.buttonPhoto').querySelector('img').src = '../src/assets/icons/PosicionArriba.svg';
+    document.querySelector('.buttonPhoto').classList.replace('buttonPhoto', 'buttonUpdate');
+  } else if (window.location.hash.substring(1) === 'T') {
+    console.log("Modo Totem")
+    var css = document.getElementById("styles");
+    css.href = "../src/styles/cameraCanvaT.css";
+  } else {
+    console.log("Modo Cliente")
+  }
+}
+
 export function handleWebLoaded(webLoaded) {
   if (!webLoaded) {
     stopIntervals();
     webLoaded = true;
-    if (window.location.hash.substring(1) === 'A') {
-      console.log("Modo Admin")
-      document.querySelector('.buttonPhoto').querySelector('img').src = '../src/assets/icons/PosicionArriba.svg';
-      document.querySelector('.buttonPhoto').classList.replace('buttonPhoto', 'buttonUpdate');
-    }
-    if (window.location.hash.substring(1) === 'T') {
-      console.log("Modo Totem")
-
-      var css = document.getElementById("styles");
-      css.href = "../src/styles/cameraCanvaT.css";
-      // video.classList.add('totem');
-      // canvas.classList.add('totem');
-    } else {
-      // video.classList.add('noTotem');
-      // canvas.classList.add('noTotem');
-    }
-
     console.log("Mesh Loaded");
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;

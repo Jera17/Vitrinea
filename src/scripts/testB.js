@@ -1,7 +1,7 @@
 import { fetched } from "./Utils/dataBase.js"
 import { initializePoseTracking2 } from "./Utils/simulation.js"
 import {
-  handleWebLoaded, updateSimulationConfig, setupCarouselScrollHandler,
+  handleWebLoaded, modeSelector, updateSimulationConfig, setupCarouselScrollHandler,
   handleButtonClick, updateModel, drawPoint, crossProductFromPoints, updateCounterRotating, startIntervals
 } from "./Utils/utils.js"
 import {
@@ -20,6 +20,7 @@ let min = Infinity;  // Inicializamos con el valor más alto posible
 let media = 0;
 let totalDistance = 0;
 let count = 0;
+modeSelector();
 
 function onResultsPose(results) {
   webLoaded = handleWebLoaded(webLoaded);

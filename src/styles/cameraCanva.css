@@ -8,6 +8,7 @@
 
 body,
 html {
+  font-family: 'Lato', sans-serif;
   background-color: rgb(214, 196, 255);
   background-position: center;
   background-size: cover;

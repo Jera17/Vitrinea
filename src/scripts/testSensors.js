@@ -1,7 +1,7 @@
 import { fetched } from "./Utils/dataBase.js"
 import { initializePoseTracking2, currentCamera } from "./Utils/simulation.js"
 import {
-  handleWebLoaded, updateSimulationConfig, setupCarouselScrollHandler,
+  handleWebLoaded, modeSelector, updateSimulationConfig, setupCarouselScrollHandler,
   handleButtonClick, updateModel, drawPoint, crossProductFromPoints, updateCounterRotating, startIntervals
 } from "./Utils/utils.js"
 import {
@@ -14,6 +14,7 @@ let giroID = 0;
 console.log(simulation.img);
 updateModel(simulation.img, fetched);
 updateSimulationConfig(fetched, simulation);
+modeSelector();
 
 function onResultsPose(results) {
   webLoaded = handleWebLoaded(webLoaded);

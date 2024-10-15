@@ -1,7 +1,7 @@
 import { fetched } from "./Utils/dataBase.js"
 import { initializeHandTracking } from "./Utils/simulation.js"
 import {
-  handleWebLoaded, updateSimulationConfig, setupCarouselScrollHandler,
+  handleWebLoaded, modeSelector, updateSimulationConfig, setupCarouselScrollHandler,
   handleButtonClick, updateModel, crossProductFromPoints, startIntervals
 } from "./Utils/utils.js"
 import {
@@ -12,6 +12,7 @@ let webLoaded = false;
 startIntervals();
 updateModel(simulation.img, fetched);
 updateSimulationConfig(fetched, simulation);
+modeSelector();
 
 function onResultsHands(results) {
   webLoaded = handleWebLoaded(webLoaded);

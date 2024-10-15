@@ -1,7 +1,7 @@
 import { fetched } from "./Utils/dataBase.js"
 import { initializeHandTracking2 } from "./Utils/simulation.js"
 import {
-  handleWebLoaded, updateSimulationConfig, setupCarouselScrollHandler,
+  handleWebLoaded, modeSelector, updateSimulationConfig, setupCarouselScrollHandler,
   handleButtonClick, updateModel, crossProductFromPoints, drawPoint,
   startIntervals
 } from "./Utils/utils.js"
@@ -9,13 +9,24 @@ import {
   video, canvas, ctx, buttons, simulation
 } from "./Utils/var.js";
 
+if (window.location.hash.substring(1) === 'T') {
+  console.log("Modo Totem")
+
+  var css = document.getElementById("styles");
+  css.href = "../src/styles/cameraCanvaT.css";
+} else {
+  console.log("Modo Totem")
+  
+}
+
 let webLoaded = false;
 startIntervals();
 updateModel(simulation.img, fetched);
 updateSimulationConfig(fetched, simulation);
+modeSelector();
 
 function onResultsHands(results) {
-  // webLoaded = handleWebLoaded(webLoaded);
+  webLoaded = handleWebLoaded(webLoaded);
   ctx.clearRect(0, 0, video.videoWidth, video.videoHeight);
   if (results.multiHandLandmarks[0]) {
     results.multiHandLandmarks[0].forEach(multiHandLandmarks => {
@@ -33,7 +44,7 @@ function onResultsHands(results) {
     });
     simImage(results, 1);
   }
-  if (results.multiHandLandmarks[0] 
+  if (results.multiHandLandmarks[0]
     // && results.multiHandLandmarks[1]
   ) {
 
