@@ -1,107 +1,25 @@
 <!DOCTYPE html>
-<html lang="es">
-
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Administración Firebase</title>
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <script src="index.js" type="module" defer></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-    }
+  <title>Productos con Firebase</title>
+  <link rel="stylesheet" href="styles.css">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.19.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.19.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.19.1/firebase-storage-compat.js"></script>
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
+  <!-- <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-analytics.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js"></script> -->
 
-    th,
-    td {
-      border: 1px solid #ddd;
-      padding: 8px;
-      text-align: left;
-    }
-
-    th {
-      background-color: #f4f4f4;
-    }
-
-    tr:nth-child(even) {
-      background-color: #f9f9f9;
-    }
-
-    tr:hover {
-      background-color: #f1f1f1;
-      cursor: pointer;
-    }
-
-    select {
-      padding: 8px;
-      margin-bottom: 20px;
-    }
-
-    label {
-      font-weight: bold;
-      margin-right: 10px;
-    }
-
-    #linkOutput {
-      margin-top: 20px;
-      font-weight: bold;
-    }
-
-    #linkOutput a {
-      color: #1a73e8;
-      text-decoration: none;
-    }
-  </style>
+  <!-- Vinculamos el archivo JavaScript externo -->
+  <script src="index.js" defer></script>
 </head>
-
-<body>
-  <h1>Productos</h1>
-  
-  <label for="filterSelect">Filtrar por tipo:</label>
-  <select id="filterSelect">
-    <option value="">Todos</option>
-    <!-- Opciones se llenarán dinámicamente -->
-  </select>
-
-  <label for="filterMarca">Filtrar por marca:</label>
-  <select id="filterMarca">
-    <option value="">Todas</option>
-    <!-- Opciones se llenarán dinámicamente -->
-  </select>
-
-  <label for="addHashA">Modo Admin:</label>
-  <input type="checkbox" id="addHashA">
-
-  <label for="addHashT">Modo Totem:</label>
-  <input type="checkbox" id="addHashT">
-
-  <div id="linkOutput">
-    <!-- Aquí se mostrará el enlace generado -->
-  </div>
-
-  <table>
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th data-column="marca" data-order="asc">Marca</th>
-        <th data-column="type" data-order="asc">Tipo</th>
-        <th data-column="name" data-order="asc">Nombre</th>
-        <th data-column="date_creation" data-order="asc">Fecha de Creación</th>
-      </tr>
-    </thead>
-    <tbody id="dataOutput">
-      <!-- Los datos se mostrarán aquí -->
-    </tbody>
-  </table>
-
-
+<body class="bg-gray-100 flex items-center justify-center min-h-screen mt-4">
+  <div id="product-container" class="flex flex-wrap justify-center gap-4"></div>
 </body>
-
 </html>
