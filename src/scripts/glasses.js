@@ -46,7 +46,8 @@ function simImage(rsl, nodes1, nodes2, nodes3) {
     const originX = rsl[nodes3].x
     const originY = rsl[nodes3].y
     ctx.translate(originX, originY)
-    const angle = Math.atan((y1 - y0) / (x1 - x0))
+    // const angle = Math.atan((y1 - y0) / (x1 - x0))
+    const angle = Math.atan2((y1 - y0), (x1 - x0))
     ctx.rotate(angle)
     ctx.drawImage(simulation.img.front, 0 - (sizeX / 2) + (simulation.config.leftAndRight * simulation.config.translationDistance), 0 - (sizeY / 3) - (simulation.config.upAndDown * simulation.config.translationDistance), sizeX, sizeY)
     ctx.restore()

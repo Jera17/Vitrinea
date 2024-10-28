@@ -36,6 +36,7 @@ buttons.forEach(function (button) {
 
 function simImage(rsl, node1, node2, node3) {
   try {
+    ctx.save()
     const x0 = (rsl[node1].x) //hombro izquierdo
     const y0 = (rsl[node1].y)
     const x1 = (rsl[node1 + 1].x) //hombro derecho
@@ -48,6 +49,7 @@ function simImage(rsl, node1, node2, node3) {
     const y4 = (rsl[node3 + 1].y)
     const Xcenter = (x0 + x1 + x2 + x3) / 4
     const Ycenter = (y0 + y1 + y2 + y3) / 4
+    ctx.translate(Xcenter, Ycenter)
 
     const torsosHeightAux = Math.sqrt(Math.pow((x4 - x0), 2) + Math.pow((y4 - y0), 2)) * 0.3 //largo del hombro a la cadera
     const torsosHeight = (Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2)) * 1.2) + torsosHeightAux * (1 + (simulation.config.zoomInAndOut * 0.05)) //largo del cadera a la rodilla
@@ -56,7 +58,9 @@ function simImage(rsl, node1, node2, node3) {
     const magX = x1 - x0
     const magY = y1 - y0
 
-
+    //set angle of the image
+    const angle = Math.atan2((y1 - y0), (x1 - x0))
+    ctx.rotate(angle + Math.PI)
 
     // Ejemplo de uso:
     const point1A = [x0, y0, 0];
@@ -67,9 +71,10 @@ function simImage(rsl, node1, node2, node3) {
     const result = crossProductFromPoints(point1A, point2A, point1B, point2B);
     const selectedImage = result[2] < 0 ? simulation.img.front : simulation.img.back
     ctx.drawImage(selectedImage,
-      Xcenter - (sizeX / 2) + (simulation.config.leftAndRight * simulation.config.translationDistance),
-      Ycenter - (torsosHeight / 2) - (simulation.config.upAndDown * simulation.config.translationDistance),
+      0 - (sizeX / 2) + (simulation.config.leftAndRight * simulation.config.translationDistance),
+      0 - (torsosHeight / 2) - (simulation.config.upAndDown * simulation.config.translationDistance),
       sizeX + (simulation.config.leftAndRight * simulation.config.translationDistance), torsosHeight)
+    ctx.restore()
   } catch (error) {
     console.error('Error en simImage:', error);
   }

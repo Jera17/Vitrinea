@@ -2,7 +2,8 @@ import { fetched } from "./Utils/dataBase.js"
 import { initializeFaceTracking } from "./Utils/simulation.js"
 import {
   handleWebLoaded, modeSelector, updateSimulationConfig, setupCarouselScrollHandler,
-  handleButtonClick, updateModel, startIntervals
+  handleButtonClick, updateModel, startIntervals,
+  drawPoint
 } from "./Utils/utils.js"
 import {
   video, canvas, ctx, buttons, simulation
@@ -48,12 +49,13 @@ function simImage(rsl, Node1, Node2, Node3, Node4) {
 
     const sizeY = Math.sqrt(Math.pow((x3 - x2), 2) + Math.pow((y3 - y2), 2)) * (1 + (simulation.config.zoomInAndOut * 0.05)) * 1.25
     const sizeX = (sizeY * simulation.img.front.width) / simulation.img.front.height
-    // const originX = x2
-    const originX = (x1 + x0) / 2
+    const originX = x2
     const originY = y2
     ctx.translate(originX, originY)
-    const angle = Math.atan((y1 - y0) / (x1 - x0))
-    ctx.rotate(angle)
+    //set angle of the image
+    const angle = Math.atan2((y1 - y0), (x1 - x0))
+    ctx.rotate(angle + 2*Math.PI)
+    
     ctx.drawImage(simulation.img.front, 0 - (sizeX / 2) + (simulation.config.leftAndRight * simulation.config.translationDistance), 0 - (sizeY / 1.3) - (simulation.config.upAndDown * simulation.config.translationDistance), sizeX, sizeY)
     ctx.restore()
   } catch (error) {

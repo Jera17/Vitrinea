@@ -54,9 +54,8 @@ function simImage(hand) {
     ctx.translate(pstx, psty)
 
     //set angle of the image
-    var componenteX = (x1 - x2) > 0 ? -1 : 1;
-    const angle = Math.atan((y2 - y1) / (x2 - x1))
-    ctx.rotate(angle + ((Math.PI / 2) * componenteX))
+    const angle = Math.atan2((y2 - y1), (x2 - x1))
+    ctx.rotate(angle + (Math.PI / 2))
 
     //Scale
     var FingerLenght = Math.sqrt(Math.pow((x2 - x1), 2) + Math.pow((y2 - y1), 2)) * (1 + (simulation.config.zoomInAndOut * 0.05))

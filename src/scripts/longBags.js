@@ -36,15 +36,22 @@ buttons.forEach(function (button) {
 
 function simImage(rsl, node1, node2) {
   try {
+    ctx.save()
     const x0 = (rsl[node1 + simulation.config.relativePosition].x) //hombro izquierdo
     const y0 = (rsl[node1 + simulation.config.relativePosition].y)
     const x1 = (rsl[node2 + simulation.config.relativePosition].x) //cadera izquierdo
     const y1 = (rsl[node2 + simulation.config.relativePosition].y)
+    ctx.translate(x0, y0)
 
     const torsosHeight = Math.sqrt(Math.pow((x1 - x0), 2) + Math.pow((y1 - y0), 2)) * 0.8 * (1 + (simulation.config.zoomInAndOut * 0.05)) //ancho entre hombros
     const torsosWidth = (torsosHeight * simulation.img.front.width) / simulation.img.front.height * 1.0 //largo del hombro a la cadera
 
-    ctx.drawImage(simulation.img.front, x0 - (torsosWidth / 2) - (simulation.config.leftAndRight * simulation.config.translationDistance), y0 * 0.9 - (simulation.config.upAndDown * simulation.config.translationDistance), torsosWidth, torsosHeight)
+    //set angle of the image
+    const angle = Math.atan2((y1 - y0), (x1 - x0))
+    ctx.rotate(angle + -Math.PI/2)
+
+    ctx.drawImage(simulation.img.front, 0 - (torsosWidth / 2) - (simulation.config.leftAndRight * simulation.config.translationDistance), 0 * 0.9 - (simulation.config.upAndDown * simulation.config.translationDistance), torsosWidth, torsosHeight)
+    ctx.restore()
   } catch (error) {
     console.error('Error en simImage:', error);
   }
