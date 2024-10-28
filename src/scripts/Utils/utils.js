@@ -193,6 +193,18 @@ export function updateCounter(img, fetched, factor) {
   return img;
 }
 
+export function getRangeValue(value) {
+  //TO DO: Revisar la logica de que valor hay que retornar
+  let range = 1.0;
+  if (value < -range) {
+    return -1;
+  } else if (value > range) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
 export function updateCounterRotating(img, fetched, factor) {
   switch (factor) {
     case 1:

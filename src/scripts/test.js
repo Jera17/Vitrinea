@@ -9,16 +9,6 @@ import {
   video, canvas, ctx, buttons, simulation
 } from "./Utils/var.js";
 
-if (window.location.hash.substring(1) === 'T') {
-  console.log("Modo Totem")
-
-  var css = document.getElementById("styles");
-  css.href = "../src/styles/cameraCanvaT.css";
-} else {
-  console.log("Modo Totem")
-  
-}
-
 let webLoaded = false;
 startIntervals();
 updateModel(simulation.img, fetched);

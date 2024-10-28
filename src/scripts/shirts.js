@@ -2,13 +2,14 @@ import { fetched } from "./Utils/dataBase.js"
 import { initializePoseTracking } from "./Utils/simulation.js"
 import {
   handleWebLoaded, modeSelector, updateSimulationConfig, setupCarouselScrollHandler,
-  handleButtonClick, updateModel, crossProductFromPoints, startIntervals
+  handleButtonClick, updateModel, crossProductFromPoints, startIntervals, getRangeValue
 } from "./Utils/utils.js"
 import {
   video, canvas, ctx, buttons, simulation
 } from "./Utils/var.js";
 
 let webLoaded = false;
+let giroID = 0;
 startIntervals();
 updateModel(simulation.img, fetched);
 updateSimulationConfig(fetched, simulation);
@@ -21,6 +22,7 @@ function onResultsPose(results) {
     results.poseLandmarks.forEach(poseLandmarks => {
       poseLandmarks.x *= video.videoWidth
       poseLandmarks.y *= video.videoHeight
+      poseLandmarks.z *= video.videoWidth
     });
     simImage(results.poseLandmarks, 11, 23)
   }
@@ -36,6 +38,7 @@ buttons.forEach(function (button) {
 
 function simImage(rsl, node1, node2) {
   try {
+    ctx.save()
     const x0 = (rsl[node1].x) //hombro izquierdo
     const y0 = (rsl[node1].y)
     const x1 = (rsl[node1 + 1].x) //hombro derecho
@@ -46,20 +49,44 @@ function simImage(rsl, node1, node2) {
     const y3 = (rsl[node2 + 1].y)
     const Xcenter = (x0 + x1 + x2 + x3) / 4
     const Ycenter = (y0 + y1 + y2 + y3) / 4
+    ctx.translate(Xcenter, Ycenter)
 
-    const shoulderWidth = Math.sqrt(Math.pow((x1 - x0), 2) + Math.pow((y1 - y0), 2)) * 1.7 * (1 + (simulation.config.zoomInAndOut * 0.05))//ancho entre hombros
-    const torsosHeight = (shoulderWidth * simulation.img.front.height) / simulation.img.front.width * 1.1 //largo del hombro a la cadera
+    const torsosHeight = Math.sqrt(Math.pow((x2 - x0), 2) + Math.pow((y2 - y0), 2)) * 1.3 * (1 + (simulation.config.zoomInAndOut * 0.05))
+    const shoulderWidth = (torsosHeight * simulation.img.front.width) / simulation.img.front.height * 1.0
 
-    // Ejemplo de uso:
-    const point1A = [x0, y0, 0];
-    const point2A = [x1, y1, 0];
-    const point1B = [x0, y0, 0];
-    const point2B = [x2, y2, 0];
+    const x = Math.abs(rsl[11].x - rsl[12].x);
+    const z = Math.abs(rsl[11].z - rsl[12].z);
 
-    const result = crossProductFromPoints(point1A, point2A, point1B, point2B);
-    const selectedImage = result[2] < 0 ? simulation.img.front : simulation.img.back
-    ctx.drawImage(selectedImage,
-      Xcenter - (shoulderWidth / 2) + (simulation.config.leftAndRight * simulation.config.translationDistance), Ycenter - (torsosHeight / 2) - (simulation.config.upAndDown * simulation.config.translationDistance), shoulderWidth + (simulation.config.leftAndRight * simulation.config.translationDistance), torsosHeight)
+    const valor = rsl[11].z - rsl[12].z < 0 ? 1 : -1;
+    const resultado = z / x;
+
+    giroID = getRangeValue(resultado * valor);
+    let giroAux
+
+    // simulation.img.selectedImage = updateCounterRotating(simulation.img, fetched, giroID)
+
+    const angle = Math.atan2((y1 - y0), (x1 - x0))
+    ctx.rotate(angle + Math.PI)
+
+    if (giroID != giroAux) {
+      switch (giroID) {
+        case 0:
+          simulation.img.selectedImage = simulation.img.front;
+          break;
+        case 1:
+          simulation.img.selectedImage = simulation.img.frontRight;
+          break;
+        case -1:
+          simulation.img.selectedImage = simulation.img.frontLeft;
+          break;
+      }
+      giroID = giroAux;
+    }
+
+    ctx.drawImage(
+      simulation.img.selectedImage,
+      0 - (shoulderWidth / 2) + (simulation.config.leftAndRight * simulation.config.translationDistance), 0 - (torsosHeight / 2) - (simulation.config.upAndDown * simulation.config.translationDistance), shoulderWidth + (simulation.config.leftAndRight * simulation.config.translationDistance), torsosHeight)
+    ctx.restore()
   } catch (error) {
     console.error('Error en simImage:', error);
   }
