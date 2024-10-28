@@ -7,8 +7,16 @@ function initializeCamera(video, trackingObject, onFrame) {
       await trackingObject.send({ image: video });
       onFrame();
     },
+    // 480p:
     // width: 854,
     // height: 480,
+    // qHD:
+    // width: 960,
+    // height: 540,
+    // HD:
+    // width: 1280,
+    // height: 720,
+    // 1080p:
     width: 1920,
     height: 1080,
     facingMode: "environment"
