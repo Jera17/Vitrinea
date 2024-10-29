@@ -53,7 +53,7 @@ function drawImage(rsl, node1, node2) {
     ctx.translate(Xcenter, Ycenter)
 
     const torsosHeight = Math.sqrt(Math.pow((x2 - x0), 2) + Math.pow((y2 - y0), 2)) * 1.3 * (1 + (simulation.config.zoomInAndOut * 0.05))
-    const shoulderWidth = (torsosHeight * simulation.img.front.width) / simulation.img.front.height * 1.0
+    const shoulderWidth = (torsosHeight * simulation.img.front.width) / simulation.img.front.height
 
     const x = Math.abs(rsl[11].x - rsl[12].x);
     const z = Math.abs(rsl[11].z - rsl[12].z);

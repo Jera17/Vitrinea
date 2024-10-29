@@ -44,7 +44,7 @@ function simImage(rsl, node1, node2) {
     ctx.translate(x0, y0)
 
     const torsosHeight = Math.sqrt(Math.pow((x1 - x0), 2) + Math.pow((y1 - y0), 2)) * 0.8 * (1 + (simulation.config.zoomInAndOut * 0.05)) //ancho entre hombros
-    const torsosWidth = (torsosHeight * simulation.img.front.width) / simulation.img.front.height * 1.0 //largo del hombro a la cadera
+    const torsosWidth = (torsosHeight * simulation.img.front.width) / simulation.img.front.height //largo del hombro a la cadera
 
     //set angle of the image
     const angle = Math.atan2((y1 - y0), (x1 - x0))

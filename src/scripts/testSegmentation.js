@@ -131,7 +131,7 @@ function drawImage(rsl, node1, node2) {
   const Ycenter = (y0 + y1 + y2 + y3) / 4
 
   const torsosHeight = Math.sqrt(Math.pow((x2 - x0), 2) + Math.pow((y2 - y0), 2)) * 1.3 * (1 + (simulation.config.zoomInAndOut * 0.05))
-  const shoulderWidth = (torsosHeight * simulation.img.front.width) / simulation.img.front.height * 1.0
+  const shoulderWidth = (torsosHeight * simulation.img.front.width) / simulation.img.front.height
 
   drawPoint(ctx, x0, y0, 5, 'green');
   drawPoint(ctx, x1, y1, 5, 'green');

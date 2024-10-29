@@ -205,6 +205,25 @@ export function getRangeValue(value) {
   }
 }
 
+export function girarModelo(giroID, giroAux, simulation) {
+  if (giroID !== giroAux) {
+    console.log(giroAux, giroID)
+    switch (giroID) {
+      case 0:
+        simulation.img.selectedImage = simulation.img.front;
+        break;
+      case 1:
+        simulation.img.selectedImage = simulation.img.frontRight;
+        break;
+      case -1:
+        simulation.img.selectedImage = simulation.img.frontLeft;
+        break;
+    }
+    giroAux = giroID;
+  }
+  return giroAux;
+}
+
 export function updateCounterRotating(img, fetched, factor) {
   switch (factor) {
     case 1:
