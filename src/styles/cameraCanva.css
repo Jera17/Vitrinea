@@ -1,7 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap');
 :root {
-  --fondoHUD: rgba(32, 32, 32, 0.35);
-  --fondoBotones: rgb(112, 112, 112);
+  --fondoHUD: rgb(32, 32, 32);
+  /* --fondoHUD: rgba(32, 32, 32, 0.35); */
+  --fondoBotonesFlotantes: rgb(112, 112, 112);
+  --fondoBotones: rgb(52, 52, 52);
   --colorBotones: rgb(214, 214, 214);
   --moradoVitr: #805cfe;
 }
@@ -9,7 +11,7 @@
 body,
 html {
   font-family: 'Lato', sans-serif;
-  background-color: rgb(214, 196, 255);
+  background-color: var(--fondoHUD);
   background-position: center;
   background-size: cover;
   height: 100%;
@@ -19,12 +21,14 @@ html {
 
 .input_video,
 #pose-canvas {
-  height: 100%;
+  height: 84%;
   left: 0;
   object-fit: cover;
   position: absolute;
   top: 0;
   width: 100%;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
 }
 
 #loadingText{
@@ -92,14 +96,14 @@ html {
 
 .buttonsContainer {
   bottom: 0;
-  height: 280px;
+  /* height: 280px; */
   position: absolute;
   width: 100%;
 }
 
 .grid-container {
   display: grid;
-  grid-template-rows: 1fr 1fr 1fr 1fr;
+  /* grid-template-rows: 1fr 1fr 1fr; */
   height: 100%;
 }
 
@@ -107,7 +111,7 @@ html {
 .grid-container .carouselContainer,
 .grid-container .mainContainer,
 .grid-container .emptyContainer {
-  background-color: var(--fondoHUD);
+  /* background-color: var(--fondoHUD); */
 }
 
 #cuenta-regresiva {
@@ -144,27 +148,32 @@ html {
 }
 
 .floatingContainer {
+  top: 35%;
   align-content: center;
-  background-color: rgba(112, 112, 112, 0.8);
-  border-radius: 50px / 100%;
+  background-color: rgba(117, 117, 117, 0.5);
+  border-radius: 30px / 30px;
   box-shadow: inset 0px 3px 6px rgba(0, 0, 0, 0.16);
   display: flex;
   display: inline-block;
-  margin: 0 auto;
+  position: absolute;
+  margin: 4px 4px;
   padding: 2px;
-  z-index: 2;
+  position: absolute;
+  z-index: 4;
 }
 
 .floatingButtons {
   display: flex;
+  flex-direction: column;
   justify-content: space-around;
-  padding: 4px;
+  padding: 2px;
+  z-index: 4;
 }
 
 .floatingButtons .buttonFloating1,
 .floatingButtons .buttonFloating2 {
   align-items: center;
-  background-color: var(--fondoBotones);
+  background-color: var(--fondoBotonesFlotantes);
   border: none;
   border-radius: 50%;
   color: var(--colorBotones);
@@ -172,8 +181,9 @@ html {
   display: flex;
   height: 40px;
   justify-content: center;
-  margin: 0 5px;
+  margin: 4px 0;
   width: 40px;
+  z-index: 4;
 }
 
 .carouselContainer {
@@ -182,9 +192,9 @@ html {
   border-top-right-radius: 10px;
   display: flex;
   justify-content: space-around;
-  margin-top: 26px;
+  /* margin-top: 26px; */
   overflow: hidden;
-  padding: 40px 0 30px;
+  padding: 10px 0 10px;
   position: relative;
   text-align: center;
   white-space: nowrap;
@@ -222,7 +232,7 @@ html {
 }
 
 .carouselButtons .buttonCarousel.active {
-  background-color: rgba(32, 32, 32, 0.6);
+  background-color: var(--fondoBotones);
   box-shadow: inset 0px 3px 6px rgba(0, 0, 0, 0.16);
   box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.16);
   color: #ffffff;
@@ -236,16 +246,15 @@ html {
 .mainButtons {
   align-self: center;
   display: flex;
-  /* gap: 12%; */
-  height: 100%;
+  /* height: 100%; */
   justify-content: space-around;
-  padding-bottom: 40px;
+  /* padding-bottom: 40px; */
 }
 
 .mainButtons .timer,
 .mainButtons .buttonCam {
   align-items: center;
-  align-self: center;
+  align-self: flex-end;
   background-color: var(--fondoBotones);
   border: none;
   border-radius: 50%;
