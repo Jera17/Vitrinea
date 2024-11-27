@@ -1,5 +1,5 @@
 import { fetched } from "./Utils/dataBase.js"
-import { initializeHandTracking2 } from "./Utils/simulation.js"
+import { initializeHandTracking2, currentCamera } from "./Utils/simulation.js"
 import {
   handleWebLoaded, modeSelector, updateSimulationConfig, setupCarouselScrollHandler,
   handleButtonClick, updateModel, crossProductFromPoints, drawPoint,

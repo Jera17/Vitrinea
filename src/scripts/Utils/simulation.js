@@ -19,7 +19,8 @@ function initializeCamera(video, trackingObject, onFrame) {
     // 1080p:
     width: 1920,
     height: 1080,
-    facingMode: "environment"
+    facingMode: "user"
+    // facingMode: "environment"
   });
   camera.start();
   return camera;
@@ -120,6 +121,7 @@ export function initializePoseTracking2(video, onResultsPose) {
 
 export function flipCamera(video, canvas) {
   currentCamera.h.facingMode = currentCamera.h.facingMode === "user" ? "environment" : "user";
+  console.log(currentCamera.h.facingMode)
   video.style.transform = canvas.style.transform = currentCamera.h.facingMode === "user" ? "scaleX(-1)" : "scaleX(1)";
   currentCamera.stop();
   currentCamera.start();

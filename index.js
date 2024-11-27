@@ -76,6 +76,7 @@ async function cargarProductos() {
         // Redirige a una nueva página con el ID del producto en la URL
         const mappedType = typeMappings[productType] || productType;
         let linkToTryOn = `${window.location.href.substring(0, window.location.href.lastIndexOf('/'))}/public/${mappedType}.html?${productId}#T`;
+        // let linkToTryOn = `${window.location.href.substring(0, window.location.href.lastIndexOf('/'))}/public/${mappedType}.html?${productId}#A`;
         // let linkToTryOn = `${window.location.href.substring(0, window.location.href.lastIndexOf('/'))}/public/${mappedType}.html?${productId}${window.location.hash}`;
         window.location.href = linkToTryOn
       });

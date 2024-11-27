@@ -3,7 +3,7 @@ import {
   buttonFloating1, buttonFloating2, buttonFloatingImg1, buttonFloatingImg2,
   loadingTextDiv, simulation
 } from "./var.js";
-import { flipCamera } from "./simulation.js"
+import { flipCamera, currentCamera } from "./simulation.js"
 import { updateData } from "./dataBase.js"
 
 var activeButton = buttonsCarousel[0]
@@ -58,12 +58,17 @@ export function modeSelector() {
     console.log("Modo Admin")
     document.querySelector('.buttonPhoto').querySelector('img').src = '../src/assets/icons/PosicionArriba.svg';
     document.querySelector('.buttonPhoto').classList.replace('buttonPhoto', 'buttonUpdate');
+    document.querySelector('.buttonShop').style.display = 'none';
   } else if (window.location.hash.substring(1) === 'T') {
     console.log("Modo Totem")
-    var css = document.getElementById("styles");
-    css.href = "../src/styles/cameraCanvaT.css";
+    document.querySelector('.buttonCam').querySelector('img').src = '../src/assets/icons/home.svg';
+    document.querySelector('.buttonCam').classList.replace('buttonCam', 'buttonBack');
+    // var css = document.getElementById("styles");
+    // css.href = "../src/styles/cameraCanvaT.css";
+    // document.querySelector('.buttonShop').style.display = 'none';
   } else {
     console.log("Modo Cliente")
+    document.querySelector('.buttonShop').style.display = 'none';
   }
 }
 
@@ -131,7 +136,6 @@ export function handleButtonClick(button, fetched) {
       });
       break;
     case "buttonPhoto":
-
       screenShot();
       break;
     case "buttonUpdate":
@@ -148,6 +152,92 @@ export function handleButtonClick(button, fetched) {
       break;
     case "buttonFloating2":
       floatingButtonsLogic(button, 1, fetched);
+      break;
+    case "buttonBack":
+      window.location.href = "https://vitrinea-4433b.web.app/totem";
+      break;
+    case "buttonShop":
+
+      const modal = document.createElement('div');
+      modal.style.position = 'fixed';
+      modal.style.top = '40%';
+      modal.style.left = '50%';
+      modal.style.transform = 'translate(-50%, -50%)';
+      modal.style.backgroundColor = 'white';
+      modal.style.padding = '0vw';
+      modal.style.borderRadius = '10px';
+      modal.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.2)';
+      modal.style.fontFamily = 'Lato, sans-serif';
+      modal.style.fontSize = '2vw'; // Adjust text size relative to screen width
+      modal.style.maxWidth = '50vw';  // Ensures the modal width doesn't exceed 80% of the viewport width
+      modal.style.width = '50vw'; // Modal width will take 80% of the screen
+      modal.style.maxHeight = '70vh'; // Limits the modal height to 70% of the screen height
+      modal.style.height = 'auto';
+      modal.style.textAlign = 'center';
+      modal.style.overflowY = 'auto'; // Allows the modal to scroll if the content overflows
+      modal.style.zIndex = '1000'; // Ensures the modal is on top of other elements
+
+      // Text content for the modal
+      const textContent = document.createElement('p');
+      textContent.textContent = "Vitrinea desde tu celular.";
+      textContent.style.fontSize = '3vw'; // Make text size responsive
+      textContent.style.marginBottom = '0vw'; // Space between text and QR code
+      modal.appendChild(textContent);
+
+      // Close Button
+      const closeButton = document.createElement('button');
+      closeButton.textContent = '×';
+      closeButton.style.position = 'absolute';
+      closeButton.style.top = '1vw';
+      closeButton.style.right = '1vw';
+      closeButton.style.background = 'none';
+      closeButton.style.border = 'none';
+      closeButton.style.fontSize = '3vw';
+      closeButton.style.color = '#333';
+      closeButton.style.cursor = 'pointer';
+      closeButton.style.transition = 'all 0.3s ease';
+      closeButton.onclick = () => document.body.removeChild(modal);
+      closeButton.onmouseover = () => closeButton.style.color = '#f44336'; // On hover change color
+      closeButton.onmouseleave = () => closeButton.style.color = '#333'; // Revert color
+      modal.appendChild(closeButton);
+
+      // QR code generation
+      const queryString = window.location.search.substring(1);
+      const data = `https://vitrinea-4433b.web.app/product/${queryString}`;
+      console.log(data);
+
+      const qrCanvas = document.createElement('canvas');
+      qrCanvas.id = 'qrcode';
+      qrCanvas.style.marginTop = '2vw'; // Space between text and QR code
+      qrCanvas.style.maxWidth = '100%'; // Ensures the QR doesn't exceed the container width
+      qrCanvas.style.maxHeight = '60vh'; // Prevents QR from being too large vertically
+      modal.appendChild(qrCanvas);
+
+      const options = {
+        width: 500,  // QR Code size (smaller for responsiveness)
+        height: 500,
+        color: {
+          dark: '#000000',  // dark color of the QR
+          light: '#ffffff'  // light color of the QR (background)
+        }
+      };
+
+      QRCode.toCanvas(qrCanvas, data, options, function (error) {
+        if (error) console.error(error);
+        console.log('QR Code generated!');
+      });
+
+      // Append the modal to the body
+      document.body.appendChild(modal);
+
+      // Close modal when clicking outside of it
+      window.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          document.body.removeChild(modal);
+        }
+      });
+
+
       break;
     default:
       console.error("Unhandled button class: ", button.className);
@@ -195,7 +285,7 @@ export function updateCounter(img, fetched, factor) {
 
 export function getRangeValue(value) {
   //TO DO: Revisar la logica de que valor hay que retornar
-  let range = 1.0;
+  let range = 2.0;
   if (value < -range) {
     return -1;
   } else if (value > range) {
@@ -283,23 +373,38 @@ export function screenShot() {
     let image_data_url = combinedCanvas.toDataURL('image/jpeg');
     const downloadLink = document.createElement('a');
     downloadLink.href = image_data_url;
-    downloadLink.download = 'webcam_snapshot.jpg';
+    downloadLink.download = 'vitrinea.jpg';
     downloadLink.click();
     return;
   }
   const combinedCanvas = document.createElement('canvas');
   const combinedCtx = combinedCanvas.getContext('2d');
+  const watermarkImage = document.querySelector('.vitrineaWatermark');
 
   combinedCanvas.width = video.videoWidth;
   combinedCanvas.height = video.videoHeight;
-  combinedCtx.drawImage(video, 0, 0, combinedCanvas.width, combinedCanvas.height);
-  combinedCtx.drawImage(canvas, 0, 0, combinedCanvas.width, combinedCanvas.height);
 
+  // If the camera is front-facing, flip the canvas horizontally
+  if (currentCamera.h.facingMode === "user") {
+    combinedCtx.save(); // Save the current canvas state
+    combinedCtx.scale(-1, 1); // Flip horizontally
+
+    combinedCtx.drawImage(video, -combinedCanvas.width, 0, combinedCanvas.width, combinedCanvas.height);
+    combinedCtx.drawImage(canvas, -combinedCanvas.width, 0, combinedCanvas.width, combinedCanvas.height);
+
+    combinedCtx.restore();
+  } else {
+    combinedCtx.drawImage(video, 0, 0, combinedCanvas.width, combinedCanvas.height);
+    combinedCtx.drawImage(canvas, 0, 0, combinedCanvas.width, combinedCanvas.height);
+  }
+  combinedCtx.drawImage(watermarkImage, (combinedCanvas.width - watermarkImage.width) / 2, 0, watermarkImage.width, watermarkImage.height);
+  // Convert the canvas to an image data URL and trigger the download
   let image_data_url = combinedCanvas.toDataURL('image/jpeg');
   const downloadLink = document.createElement('a');
   downloadLink.href = image_data_url;
-  downloadLink.download = 'webcam_snapshot.jpg';
+  downloadLink.download = 'vitrinea_flipped_or_not.jpg';
   downloadLink.click();
+
 }
 
 export function timerStart(botonTimer, segundos) {

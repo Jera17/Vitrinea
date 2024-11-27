@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap');
+
 :root {
   --fondoHUD: rgb(32, 32, 32);
   --fondoBotonesFlotantes: rgb(112, 112, 112);
@@ -34,7 +35,7 @@ html {
   height: 110vw;
 }
 
-#loadingText{
+#loadingText {
   font-family: 'Lato', sans-serif;
   text-align: center;
   position: absolute;
@@ -111,12 +112,12 @@ html {
   height: 100%;
 }
 
-.grid-container .floatingContainer,
+/* .grid-container .floatingContainer,
 .grid-container .carouselContainer,
 .grid-container .mainContainer,
 .grid-container .emptyContainer {
-  /* background-color: var(--fondoHUD); */
-}
+  background-color: var(--fondoHUD);
+} */
 
 #cuenta-regresiva {
   position: absolute;
@@ -191,7 +192,7 @@ html {
 }
 
 .floatingButtons .buttonFloating1 img,
-.floatingButtons .buttonFloating2 img{
+.floatingButtons .buttonFloating2 img {
   /* width: 40px; */
 }
 
@@ -237,7 +238,8 @@ html {
   padding: 16px;
   position: relative;
   scroll-snap-align: center;
-  font-size: 150%; /* Tamaño letra Carrousel */
+  font-size: 150%;
+  /* Tamaño letra Carrousel */
   width: auto;
   z-index: 2;
 }
@@ -307,7 +309,7 @@ html {
 }
 
 .mainButtons .buttonPhoto img,
-.mainButtons .buttonUpdate img{
+.mainButtons .buttonUpdate img {
   width: 60%;
 }
 

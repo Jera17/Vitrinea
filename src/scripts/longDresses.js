@@ -54,7 +54,7 @@ function simImage(rsl, node1, node2) {
     const Ycenter = (y0 + y1 + y2 + y3) / 4
     ctx.translate(Xcenter, Ycenter)
     //Tamaño de la simulacion
-    const torsosHeight = Math.sqrt(Math.pow((x2 - x0), 2) + Math.pow((y2 - y0), 2)) * 1.1 * (1 + (simulation.config.zoomInAndOut * 0.05))
+    const torsosHeight = Math.sqrt(Math.pow((x2 - x0), 2) + Math.pow((y2 - y0), 2)) * 1.2 * (1 + (simulation.config.zoomInAndOut * 0.05))
     const shoulderWidth = (torsosHeight * simulation.img.front.width) / simulation.img.front.height
     //Rotacion de la simulacion
     const x = Math.abs(rsl[11].x - rsl[12].x);
