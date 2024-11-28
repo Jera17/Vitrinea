@@ -112,13 +112,6 @@ html {
   height: 100%;
 }
 
-.grid-container .floatingContainer,
-.grid-container .carouselContainer,
-.grid-container .mainContainer,
-.grid-container .emptyContainer {
-  /* background-color: var(--fondoHUD); */
-}
-
 #cuenta-regresiva {
   position: absolute;
   width: 100%;

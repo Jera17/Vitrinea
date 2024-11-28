@@ -352,31 +352,6 @@ export function updateRelativeSimulationData(relativeData, factor) {
 }
 
 export function screenShot() {
-  if (window.location.hash.substring(1) === 'T') {
-    console.log("FoTotem")
-    const combinedCanvas = document.createElement('canvas');
-    const combinedCtx = combinedCanvas.getContext('2d');
-    // Cambiamos las dimensiones del canvas para rotarlo 90 grados
-    combinedCanvas.width = video.videoHeight;
-    combinedCanvas.height = video.videoWidth;
-    // Guardamos el estado actual del canvas antes de rotarlo
-    combinedCtx.save();
-    // Movemos el origen (0,0) al centro y lo rotamos -90 grados
-    combinedCtx.translate(0, combinedCanvas.height);
-    combinedCtx.rotate(-Math.PI / 2);
-    // Dibujamos la imagen rotada
-    combinedCtx.drawImage(video, 0, 0, combinedCanvas.height, combinedCanvas.width);
-    combinedCtx.drawImage(canvas, 0, 0, combinedCanvas.height, combinedCanvas.width);
-    // Restauramos el estado del canvas
-    combinedCtx.restore();
-    // Convertimos el contenido del canvas a una imagen
-    let image_data_url = combinedCanvas.toDataURL('image/jpeg');
-    const downloadLink = document.createElement('a');
-    downloadLink.href = image_data_url;
-    downloadLink.download = 'vitrinea.jpg';
-    downloadLink.click();
-    return;
-  }
   const combinedCanvas = document.createElement('canvas');
   const combinedCtx = combinedCanvas.getContext('2d');
   const watermarkImage = document.querySelector('.vitrineaWatermark');
@@ -397,7 +372,7 @@ export function screenShot() {
     combinedCtx.drawImage(video, 0, 0, combinedCanvas.width, combinedCanvas.height);
     combinedCtx.drawImage(canvas, 0, 0, combinedCanvas.width, combinedCanvas.height);
   }
-  combinedCtx.drawImage(watermarkImage, (combinedCanvas.width - watermarkImage.width) / 2, 0, watermarkImage.width, watermarkImage.height);
+  combinedCtx.drawImage(watermarkImage, (combinedCanvas.width - (combinedCanvas.height*0.2)) / 2, 0, combinedCanvas.height*0.2, combinedCanvas.height*0.1);
   // Convert the canvas to an image data URL and trigger the download
   let image_data_url = combinedCanvas.toDataURL('image/jpeg');
   const downloadLink = document.createElement('a');
