@@ -128,6 +128,15 @@ html {
   pointer-events: none;
 }
 
+#flash {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  z-index: 8;
+  pointer-events: none;
+}
+
 .blink {
   animation: blink-animation 0.5s;
 }

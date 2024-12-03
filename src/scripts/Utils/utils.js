@@ -352,6 +352,7 @@ export function updateRelativeSimulationData(relativeData, factor) {
 }
 
 export function screenShot() {
+  let flashLayer = document.getElementById('flash');
   const combinedCanvas = document.createElement('canvas');
   const combinedCtx = combinedCanvas.getContext('2d');
   const watermarkImage = document.querySelector('.vitrineaWatermark');
@@ -372,14 +373,24 @@ export function screenShot() {
     combinedCtx.drawImage(video, 0, 0, combinedCanvas.width, combinedCanvas.height);
     combinedCtx.drawImage(canvas, 0, 0, combinedCanvas.width, combinedCanvas.height);
   }
-  combinedCtx.drawImage(watermarkImage, (combinedCanvas.width - (combinedCanvas.height*0.2)) / 2, 0, combinedCanvas.height*0.2, combinedCanvas.height*0.1);
+  combinedCtx.drawImage(watermarkImage, (combinedCanvas.width - (combinedCanvas.height * 0.2)) / 2, 0, combinedCanvas.height * 0.2, combinedCanvas.height * 0.1);
   // Convert the canvas to an image data URL and trigger the download
+
+  flashLayer.classList.add('blink');
+  setTimeout(() => {
+    flashLayer.classList.remove('blink');
+  }, 1000);
+
   let image_data_url = combinedCanvas.toDataURL('image/jpeg');
   const downloadLink = document.createElement('a');
   downloadLink.href = image_data_url;
-  downloadLink.download = 'vitrinea_flipped_or_not.jpg';
-  downloadLink.click();
 
+  const now = new Date();
+  const formattedDate = now.toISOString().replace(/[-T:.Z]/g, ''); // Formato: YYYYMMDDHHMMSS
+
+  const fileName = `Vitrinea-${formattedDate}.jpg`;
+  downloadLink.download = fileName;
+  downloadLink.click();
 }
 
 export function timerStart(botonTimer, segundos) {
@@ -396,12 +407,6 @@ export function timerStart(botonTimer, segundos) {
       clearInterval(intervalo);
       cuentaRegresivaElemento.textContent = "";
       screenShot();
-
-      cuentaRegresivaElemento.classList.add('blink');
-      setTimeout(() => {
-        cuentaRegresivaElemento.classList.remove('blink');
-      }, 1000);
-
       botonTimer.disabled = false;
       console.log(botonTimer)
       console.log("Habilitado")
