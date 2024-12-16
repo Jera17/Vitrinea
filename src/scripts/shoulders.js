@@ -28,6 +28,7 @@ function onResultsPose(results) {
       poseLandmarks.z *= video.videoWidth
     });
     simImage(results.poseLandmarks, 11, 23)
+
   }
 }
 
@@ -51,8 +52,10 @@ function simImage(rsl, node1, node2) {
     const x3 = (rsl[node2 + 1].x)
     const y3 = (rsl[node2 + 1].y)
     //Punto de origen
-    const Xcenter = (x0 + x1 + x2 + x3) / 4
-    const Ycenter = Math.abs((y0 + y1)/2 - Math.sqrt(Math.pow((x1 - x0), 2))*0.2)
+    const additionalHeight = ((y0 + y1)/2) - ((y2 + y3) / 2)
+    const additionalWidth = ((x0 + x1)/2) - ((x2 + x3) / 2)
+    const Xcenter = (x0 + x1)/2 + additionalWidth * 0.15
+    const Ycenter = ((y0 + y1)/2) + additionalHeight*0.15
 
     ctx.translate(Xcenter, Ycenter)
     //Tamaño de la simulacion
@@ -88,11 +91,6 @@ function simImage(rsl, node1, node2) {
       simulation.img.selectedImage,
       imgX, imgY, imgWidth, imgHeight
     );
-
-    ctx.strokeStyle = 'red'; // Color del borde
-    ctx.lineWidth = 2; // Grosor del borde
-    ctx.strokeRect(imgX, imgY, imgWidth, imgHeight); // Dibuja el cuadrado
-    drawPoint(ctx, imgX, imgY, 5, 'red')
     ctx.restore()
 
   } catch (error) {
