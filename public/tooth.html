@@ -40,12 +40,12 @@
   <h1>Recorte de Rostro con MediaPipe</h1>
   <!-- Entrada para cargar la imagen -->
   <input type="file" id="imageInput" accept="image/*">
+  <button id="downloadButton" style="display: none;">Descargar Rostro</button>
   <!-- Canvas para mostrar la imagen original -->
   <canvas id="canvasInput"></canvas>
   <!-- Canvas para recortar la cara (oculto) -->
   <canvas id="canvasOutput" style="display: none;"></canvas>
   <!-- Botón para descargar la imagen recortada -->
-  <button id="downloadButton" style="display: none;">Descargar Rostro</button>
 
   <!-- Archivo de JavaScript -->
   <script src="../src/scripts/tooth.js" type="module"></script>
