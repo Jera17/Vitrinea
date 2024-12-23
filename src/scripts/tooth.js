@@ -13,7 +13,7 @@ faceMesh.setOptions({
 
 faceMesh.onResults(onResults);
 
-// Variables
+// Inicialización de variables
 const imageInput = document.getElementById('imageInput');
 const canvasInput = document.getElementById('canvasInput');
 const canvasOutput = document.getElementById('canvasOutput');
@@ -21,25 +21,38 @@ const downloadButton = document.getElementById('downloadButton');
 const ctxInput = canvasInput.getContext('2d');
 const ctxOutput = canvasOutput.getContext('2d');
 
-// Índices de los landmarks de la boca
+// Elemento para mostrar el progreso
+const progressText = document.getElementById('progressText');
+
+// Variables para procesar las imágenes
 const MOUTH_LANDMARKS = [61, 146, 91, 181, 84, 17, 314, 405, 321, 375, 291, 409, 270, 269, 267, 0, 37, 39, 40, 185, 61];
 
-// Función principal
-imageInput.addEventListener('change', (event) => {
-  const file = event.target.files[0];
-  if (file) {
-    const img = new Image();
-    img.src = URL.createObjectURL(file);
-    img.onload = () => {
-      canvasInput.width = img.width;
-      canvasInput.height = img.height;
-      ctxInput.drawImage(img, 0, 0, img.width, img.height);
-      faceMesh.send({ image: img });
-    };
-  }
-});
+// Cola de imágenes para procesar
+let imageQueue = [];
+let totalImages = 0;  // Total de imágenes subidas
+let processedImages = 0;  // Número de imágenes procesadas
 
-// Procesar resultados de Face Mesh
+// Función para actualizar el progreso
+function updateProgress() {
+  progressText.textContent = `Fotos procesadas (${processedImages}/${totalImages})`;
+}
+
+// Función para procesar cada imagen
+function processImage(file) {
+  const img = new Image();
+  img.src = URL.createObjectURL(file);
+  img.onload = () => {
+    // Configurar canvas para la imagen
+    canvasInput.width = img.width;
+    canvasInput.height = img.height;
+    ctxInput.drawImage(img, 0, 0, img.width, img.height);
+
+    // Procesar con FaceMesh
+    faceMesh.send({ image: img });
+  };
+}
+
+// Función para procesar los resultados de Face Mesh
 function onResults(results) {
   if (!results.multiFaceLandmarks || results.multiFaceLandmarks.length === 0) {
     alert('No se detectó ningún rostro.');
@@ -60,21 +73,53 @@ function onResults(results) {
   const maxY = Math.max(...mouthCoords.map(p => p.y));
   const width = maxX - minX;
   const height = maxY - minY;
-  
+
+  // Aumentar el tamaño de la caja
+  const padding = 20;
+  const newMinX = Math.max(minX - padding, 0);
+  const newMaxX = Math.min(maxX + padding, canvasInput.width);
+  const newMinY = Math.max(minY - padding, 0);
+  const newMaxY = Math.min(maxY + padding, canvasInput.height);
+
+  // Calcular el nuevo tamaño del bounding box
+  const newWidth = newMaxX - newMinX;
+  const newHeight = newMaxY - newMinY;
+
   // Recortar y dibujar en el canvas de salida
-  canvasOutput.width = width;
-  canvasOutput.height = height;
-  ctxOutput.clearRect(0, 0, width, height);
-  ctxOutput.drawImage(canvasInput, minX, minY, width, height, 0, 0, width, height);
+  canvasOutput.width = newWidth;
+  canvasOutput.height = newHeight;
+  ctxOutput.clearRect(0, 0, newWidth, newHeight);
+  ctxOutput.drawImage(canvasInput, newMinX, newMinY, newWidth, newHeight, 0, 0, newWidth, newHeight);
 
-  // Mostrar botón de descarga
-  downloadButton.style.display = 'inline';
-}
-
-// Descargar la imagen de la boca
-downloadButton.addEventListener('click', () => {
+  // Descargar la imagen recortada
   const link = document.createElement('a');
   link.download = 'boca_recortada.png';
   link.href = canvasOutput.toDataURL();
   link.click();
+
+  // Incrementar el contador de imágenes procesadas
+  processedImages++;
+  updateProgress();
+
+  // Procesar la siguiente imagen si hay más archivos
+  const nextFile = imageQueue.shift();
+  if (nextFile) {
+    processImage(nextFile);
+  }
+}
+
+// Función para manejar la subida de múltiples imágenes
+imageInput.addEventListener('change', (event) => {
+  // Agregar todas las imágenes seleccionadas a la cola
+  imageQueue = Array.from(event.target.files);
+  totalImages = imageQueue.length;  // Establecer el total de imágenes subidas
+  processedImages = 0;  // Reiniciar el contador de imágenes procesadas
+
+  // Mostrar el progreso inicial
+  updateProgress();
+
+  // Iniciar el procesamiento de la primera imagen
+  if (imageQueue.length > 0) {
+    processImage(imageQueue.shift());
+  }
 });

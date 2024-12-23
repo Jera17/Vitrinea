@@ -6,7 +6,6 @@
   <title>Recorte de Rostro con MediaPipe</title>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.min.js"></script>
   <style>
-    /* Estilos CSS */
     body {
       font-family: Arial, sans-serif;
       text-align: center;
@@ -34,20 +33,27 @@
       font-size: 16px;
       cursor: pointer;
     }
+
+    #loading {
+      display: none;
+      font-size: 18px;
+      color: #a856ff;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
   <h1>Recorte de Rostro con MediaPipe</h1>
   <!-- Entrada para cargar la imagen -->
-  <input type="file" id="imageInput" accept="image/*">
+  <input type="file" id="imageInput" accept="image/*" multiple>
   <button id="downloadButton" style="display: none;">Descargar Rostro</button>
-  <!-- Canvas para mostrar la imagen original -->
-  <canvas id="canvasInput"></canvas>
-  <!-- Canvas para recortar la cara (oculto) -->
+  <div id="loading">Procesando...</div>
+  <p id="progressText">Fotos procesadas (0/0)</p>
+  <!-- Canvas para mostrar la imagen original (oculto) -->
+  <canvas id="canvasInput" style="display: none;"></canvas>
+  <!-- Canvas para recortar la cara (visible) -->
   <canvas id="canvasOutput" style="display: none;"></canvas>
-  <!-- Botón para descargar la imagen recortada -->
-
-  <!-- Archivo de JavaScript -->
+  
   <script src="../src/scripts/tooth.js" type="module"></script>
 </body>
 </html>
