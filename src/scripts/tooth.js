@@ -1,4 +1,4 @@
-// Importar MediaPipe Face Mesh
+// Inicialización de MediaPipe Face Mesh
 const faceMesh = new FaceMesh({
   locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`
 });
@@ -13,24 +13,22 @@ faceMesh.setOptions({
 
 faceMesh.onResults(onResults);
 
-// Inicialización de variables
+// Variables
 const imageInput = document.getElementById('imageInput');
 const canvasInput = document.getElementById('canvasInput');
 const canvasOutput = document.getElementById('canvasOutput');
-const downloadButton = document.getElementById('downloadButton');
+const processButton = document.getElementById('processButton');
+const progressText = document.getElementById('progressText');
 const ctxInput = canvasInput.getContext('2d');
 const ctxOutput = canvasOutput.getContext('2d');
 
-// Elemento para mostrar el progreso
-const progressText = document.getElementById('progressText');
-
-// Variables para procesar las imágenes
-const MOUTH_LANDMARKS = [61, 146, 91, 181, 84, 17, 314, 405, 321, 375, 291, 409, 270, 269, 267, 0, 37, 39, 40, 185, 61];
-
-// Cola de imágenes para procesar
+// Lista para almacenar las imágenes a procesar
 let imageQueue = [];
 let totalImages = 0;  // Total de imágenes subidas
 let processedImages = 0;  // Número de imágenes procesadas
+
+// Índices de los landmarks de la boca
+const MOUTH_LANDMARKS = [61, 146, 91, 181, 84, 17, 314, 405, 321, 375, 291, 409, 270, 269, 267, 0, 37, 39, 40, 185, 61];
 
 // Función para actualizar el progreso
 function updateProgress() {
@@ -54,6 +52,7 @@ function processImage(file) {
 
 // Función para procesar los resultados de Face Mesh
 function onResults(results) {
+  console.log(processedImages)
   if (!results.multiFaceLandmarks || results.multiFaceLandmarks.length === 0) {
     alert('No se detectó ningún rostro.');
     return;
@@ -93,7 +92,7 @@ function onResults(results) {
 
   // Descargar la imagen recortada
   const link = document.createElement('a');
-  link.download = 'boca_recortada.png';
+  link.download = `boca_recortada_${processedImages + 1}.png`;
   link.href = canvasOutput.toDataURL();
   link.click();
 
@@ -101,10 +100,12 @@ function onResults(results) {
   processedImages++;
   updateProgress();
 
-  // Procesar la siguiente imagen si hay más archivos
+  // Si hay más imágenes, procesar la siguiente
   const nextFile = imageQueue.shift();
   if (nextFile) {
     processImage(nextFile);
+  } else {
+    processButton.style.display = 'none';  // Ocultar el botón cuando se terminan de procesar todas las imágenes
   }
 }
 
@@ -119,6 +120,14 @@ imageInput.addEventListener('change', (event) => {
   updateProgress();
 
   // Iniciar el procesamiento de la primera imagen
+  if (imageQueue.length > 0) {
+    processImage(imageQueue.shift());
+    processButton.style.display = 'inline';  // Mostrar el botón para procesar la siguiente foto
+  }
+});
+
+// Función para procesar la siguiente imagen al hacer clic en el botón
+processButton.addEventListener('click', () => {
   if (imageQueue.length > 0) {
     processImage(imageQueue.shift());
   }
